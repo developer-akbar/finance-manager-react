@@ -152,6 +152,44 @@
   margin: 0;
 }
 
+.toggle-mode-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.toggle-mode-btn:hover {
+  color: #1e3a8a;
+  text-decoration: underline;
+}
+
+.demo-info {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.login-btn:disabled,
+.demo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-btn:disabled:hover,
+.demo-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 @media (max-width: 480px) {
   .login-card {
     padding: 2rem 1.5rem;

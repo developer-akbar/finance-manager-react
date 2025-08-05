@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { initializeDefaultData } from '../utils/defaultData';
+import { transactionsAPI, settingsAPI } from '../services/api';
+import { useAuth } from './AuthContext';
 
 const AppContext = createContext();
 
@@ -25,11 +26,17 @@ const initialState = {
     category: 'all',
     type: 'all'
   },
-  searchTerm: ''
+  searchTerm: '',
+  loading: false,
+  error: null
 };
 
 const appReducer = (state, action) => {
   switch (action.type) {
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
     case 'SET_TRANSACTIONS':
       return { ...state, transactions: action.payload };
     case 'ADD_TRANSACTION':
@@ -71,63 +78,162 @@ const appReducer = (state, action) => {
 
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    initializeDefaultData();
-    loadDataFromStorage();
-  }, []);
+    if (isAuthenticated) {
+      loadData();
+    }
+  }, [isAuthenticated]);
 
-  const loadDataFromStorage = () => {
+  const loadData = async () => {
     try {
-      const transactions = JSON.parse(localStorage.getItem('masterExpenses') || '[]');
-      const accounts = JSON.parse(localStorage.getItem('accounts') || '[]');
-      const categories = JSON.parse(localStorage.getItem('categories') || '{}');
-      const accountGroups = JSON.parse(localStorage.getItem('accountGroups') || '[]');
-      const accountMapping = JSON.parse(localStorage.getItem('accountMapping') || '{}');
-      const csvConversionDetails = JSON.parse(localStorage.getItem('csvConversionDetails') || '{}');
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
 
-      dispatch({
-        type: 'INITIALIZE_DATA',
-        payload: {
-          transactions,
-          accounts,
-          categories,
-          accountGroups,
-          accountMapping,
-          csvConversionDetails
-        }
-      });
+      // Load settings and transactions in parallel
+      const [settingsResponse, transactionsResponse] = await Promise.all([
+        settingsAPI.get(),
+        transactionsAPI.getAll()
+      ]);
+
+      if (settingsResponse.success) {
+        const { accounts, categories, accountGroups, accountMapping, csvConversionDetails } = settingsResponse.data;
+        dispatch({
+          type: 'INITIALIZE_DATA',
+          payload: {
+            accounts,
+            categories,
+            accountGroups,
+            accountMapping,
+            csvConversionDetails
+          }
+        });
+      }
+
+      if (transactionsResponse.success) {
+        dispatch({ type: 'SET_TRANSACTIONS', payload: transactionsResponse.data });
+      }
     } catch (error) {
-      console.error('Error loading data from localStorage:', error);
+      console.error('Error loading data:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  const saveTransactionsToStorage = (transactions) => {
-    localStorage.setItem('masterExpenses', JSON.stringify(transactions));
+  const addTransaction = async (transaction) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
+      const newTransaction = {
+        ...transaction,
+        ID: Date.now().toString()
+      };
+
+      const response = await transactionsAPI.create(newTransaction);
+      
+      if (response.success) {
+        dispatch({ type: 'ADD_TRANSACTION', payload: response.data });
+        return { success: true, message: 'Transaction added successfully' };
+      } else {
+        return { success: false, message: response.message || 'Failed to add transaction' };
+      }
+    } catch (error) {
+      console.error('Add transaction error:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      return { success: false, message: error.message || 'Failed to add transaction' };
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const addTransaction = (transaction) => {
-    const newTransaction = {
-      ...transaction,
-      ID: Date.now().toString()
-    };
-    const updatedTransactions = [...state.transactions, newTransaction];
-    dispatch({ type: 'ADD_TRANSACTION', payload: newTransaction });
-    saveTransactionsToStorage(updatedTransactions);
+  const updateTransaction = async (transaction) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
+      const response = await transactionsAPI.update(transaction.ID, transaction);
+      
+      if (response.success) {
+        dispatch({ type: 'UPDATE_TRANSACTION', payload: response.data });
+        return { success: true, message: 'Transaction updated successfully' };
+      } else {
+        return { success: false, message: response.message || 'Failed to update transaction' };
+      }
+    } catch (error) {
+      console.error('Update transaction error:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      return { success: false, message: error.message || 'Failed to update transaction' };
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const updateTransaction = (transaction) => {
-    const updatedTransactions = state.transactions.map(t =>
-      t.ID === transaction.ID ? transaction : t
-    );
-    dispatch({ type: 'UPDATE_TRANSACTION', payload: transaction });
-    saveTransactionsToStorage(updatedTransactions);
+  const deleteTransaction = async (id) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
+      const response = await transactionsAPI.delete(id);
+      
+      if (response.success) {
+        dispatch({ type: 'DELETE_TRANSACTION', payload: id });
+        return { success: true, message: 'Transaction deleted successfully' };
+      } else {
+        return { success: false, message: response.message || 'Failed to delete transaction' };
+      }
+    } catch (error) {
+      console.error('Delete transaction error:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      return { success: false, message: error.message || 'Failed to delete transaction' };
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
   };
 
-  const deleteTransaction = (id) => {
-    const updatedTransactions = state.transactions.filter(t => t.ID !== id);
-    dispatch({ type: 'DELETE_TRANSACTION', payload: id });
-    saveTransactionsToStorage(updatedTransactions);
+  const updateSettings = async (settingsData) => {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ERROR', payload: null });
+
+      const response = await settingsAPI.update(settingsData);
+      
+      if (response.success) {
+        const { accounts, categories, accountGroups, accountMapping, csvConversionDetails } = response.data;
+        dispatch({
+          type: 'INITIALIZE_DATA',
+          payload: {
+            accounts,
+            categories,
+            accountGroups,
+            accountMapping,
+            csvConversionDetails
+          }
+        });
+        return { success: true, message: 'Settings updated successfully' };
+      } else {
+        return { success: false, message: response.message || 'Failed to update settings' };
+      }
+    } catch (error) {
+      console.error('Update settings error:', error);
+      dispatch({ type: 'SET_ERROR', payload: error.message });
+      return { success: false, message: error.message || 'Failed to update settings' };
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  const refreshTransactions = async () => {
+    try {
+      const response = await transactionsAPI.getAll();
+      if (response.success) {
+        dispatch({ type: 'SET_TRANSACTIONS', payload: response.data });
+      }
+    } catch (error) {
+      console.error('Refresh transactions error:', error);
+    }
   };
 
   const value = {
@@ -136,7 +242,9 @@ export const AppProvider = ({ children }) => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
-    loadDataFromStorage
+    updateSettings,
+    refreshTransactions,
+    loadData
   };
 
   return (
