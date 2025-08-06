@@ -9,6 +9,81 @@ const router = express.Router();
 // Apply authentication middleware to all routes
 router.use(protect);
 
+// Helper function to parse dates from various formats
+const parseDate = (dateValue) => {
+  if (dateValue instanceof Date) {
+    return dateValue.toLocaleDateString();
+  }
+  
+  if (typeof dateValue === 'number') {
+    // Excel serial number - convert to Date
+    // Excel dates are number of days since 1900-01-01
+    // Subtract 25569 to convert to Unix timestamp (days since 1970-01-01)
+    const unixTimestamp = (dateValue - 25569) * 24 * 60 * 60 * 1000;
+    const excelDate = new Date(unixTimestamp);
+    if (!isNaN(excelDate.getTime())) {
+      return excelDate.toLocaleDateString();
+    }
+  }
+  
+  // Try to parse date string
+  const dateStr = dateValue.toString().trim();
+  
+  // Remove time portion if present
+  const dateOnly = dateStr.split(' ')[0];
+  
+  // Try multiple date formats
+  const dateFormats = [
+    /^\d{1,2}-\d{1,2}-\d{4}$/, // DD-MM-YYYY or MM-DD-YYYY
+    /^\d{1,2}\/\d{1,2}\/\d{4}$/, // DD/MM/YYYY or MM/DD/YYYY
+    /^\d{4}-\d{1,2}-\d{1,2}$/, // YYYY-MM-DD
+    /^\d{4}\/\d{1,2}\/\d{1,2}$/, // YYYY/MM/DD
+    /^\d{1,2}-\d{1,2}-\d{2}$/, // DD-MM-YY or MM-DD-YY
+    /^\d{1,2}\/\d{1,2}\/\d{2}$/, // DD/MM/YY or MM/DD/YY
+  ];
+  
+  // Check if it matches any of our expected formats
+  const isFormattedDate = dateFormats.some(format => format.test(dateOnly));
+  
+  if (isFormattedDate) {
+    // Try parsing with different assumptions
+    const parts = dateOnly.replace(/[\/\-]/g, '-').split('-');
+    
+    if (parts.length === 3) {
+      // Try different interpretations
+      const interpretations = [
+        // DD-MM-YYYY
+        () => new Date(parts[2], parts[1] - 1, parts[0]),
+        // MM-DD-YYYY  
+        () => new Date(parts[2], parts[0] - 1, parts[1]),
+        // YYYY-MM-DD
+        () => new Date(parts[0], parts[1] - 1, parts[2]),
+      ];
+      
+      for (const interpret of interpretations) {
+        try {
+          const testDate = interpret();
+          if (!isNaN(testDate.getTime()) && 
+              testDate.getFullYear() >= 1900 && 
+              testDate.getFullYear() <= 2100) {
+            return testDate.toLocaleDateString();
+          }
+        } catch (e) {
+          // Continue to next interpretation
+        }
+      }
+    }
+  }
+  
+  // Try standard Date parsing as fallback
+  const parsedDate = new Date(dateStr);
+  if (!isNaN(parsedDate.getTime())) {
+    return parsedDate.toLocaleDateString();
+  }
+  
+  return null; // Could not parse
+};
+
 // Configure multer for file upload
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -48,8 +123,13 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     
-    // Convert to JSON
-    const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    // Convert to JSON with better date handling
+    const rawData = XLSX.utils.sheet_to_json(worksheet, { 
+      header: 1,
+      cellDates: true, // Convert Excel dates to JavaScript Date objects
+      cellNF: false,
+      cellText: false
+    });
     
     if (rawData.length < 2) {
       return res.status(400).json({
@@ -106,6 +186,12 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     const transactions = [];
     const errors = [];
     
+    // Log some sample data for debugging
+    console.log('Sample headers:', headers);
+    console.log('Sample first row:', rawData[1]);
+    console.log('Date column index:', dateIndex);
+    console.log('Sample date value:', rawData[1] ? rawData[1][dateIndex] : 'No data');
+    
     for (let i = 1; i < rawData.length; i++) {
       const row = rawData[i];
       
@@ -115,19 +201,11 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           continue;
         }
 
-        // Parse date
-        let date;
-        if (row[dateIndex] instanceof Date) {
-          date = row[dateIndex].toLocaleDateString();
-        } else {
-          // Try to parse date string
-          const dateStr = row[dateIndex].toString();
-          const parsedDate = new Date(dateStr);
-          if (isNaN(parsedDate.getTime())) {
-            errors.push(`Row ${i + 1}: Invalid date format - ${dateStr}`);
-            continue;
-          }
-          date = parsedDate.toLocaleDateString();
+        // Parse date using helper function
+        const date = parseDate(row[dateIndex]);
+        if (!date) {
+          errors.push(`Row ${i + 1}: Invalid date format - ${row[dateIndex]}`);
+          continue;
         }
 
         // Parse INR amount
@@ -209,6 +287,8 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       message: `Successfully imported ${result.length} transactions`,
       data: {
         imported: result.length,
+        totalRows: rawData.length - 1, // Exclude header row
+        skippedRows: rawData.length - 1 - result.length,
         errors: errors.length > 0 ? errors : null
       }
     });

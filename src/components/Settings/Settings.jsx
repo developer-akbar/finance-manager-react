@@ -96,10 +96,22 @@ const Settings = () => {
               const response = await importAPI.importJSON({ transactions: data.transactions });
               
               if (response.success) {
-                alert(`Data imported successfully! ${response.data.imported} transactions imported.`);
-                if (response.data.errors && response.data.errors.length > 0) {
-                  console.warn('Import warnings:', response.data.errors);
+                const stats = response.data;
+                const message = `Data imported successfully!\n\n` +
+                  `📊 Import Statistics:\n` +
+                  `• Total rows processed: ${stats.totalRows || 'N/A'}\n` +
+                  `• Successfully imported: ${stats.imported}\n` +
+                  `• Skipped rows: ${stats.skippedRows || 'N/A'}\n` +
+                  `• Errors: ${stats.errors ? stats.errors.length : 0}`;
+                
+                alert(message);
+                
+                if (stats.errors && stats.errors.length > 0) {
+                  console.warn('Import warnings:', stats.errors);
+                  // Show first few errors in console for debugging
+                  console.log('First 5 errors:', stats.errors.slice(0, 5));
                 }
+                
                 setShowImportModal(false);
                 setSelectedFile(null);
                 // Refresh transactions to show imported data
@@ -128,10 +140,22 @@ const Settings = () => {
         const response = await importAPI.importExcel(formData);
         
         if (response.success) {
-          alert(`Data imported successfully! ${response.data.imported} transactions imported.`);
-          if (response.data.errors && response.data.errors.length > 0) {
-            console.warn('Import warnings:', response.data.errors);
+          const stats = response.data;
+          const message = `Data imported successfully!\n\n` +
+            `📊 Import Statistics:\n` +
+            `• Total rows processed: ${stats.totalRows || 'N/A'}\n` +
+            `• Successfully imported: ${stats.imported}\n` +
+            `• Skipped rows: ${stats.skippedRows || 'N/A'}\n` +
+            `• Errors: ${stats.errors ? stats.errors.length : 0}`;
+          
+          alert(message);
+          
+          if (stats.errors && stats.errors.length > 0) {
+            console.warn('Import warnings:', stats.errors);
+            // Show first few errors in console for debugging
+            console.log('First 5 errors:', stats.errors.slice(0, 5));
           }
+          
           setShowImportModal(false);
           setSelectedFile(null);
           // Refresh transactions to show imported data
