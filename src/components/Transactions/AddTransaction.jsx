@@ -118,11 +118,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
   // Get categories for the current transaction type
   const availableCategories = categories[formData['Income/Expense']] || [];
 
-  const availableSubcategories = formData.Category && categories[formData['Income/Expense']] && 
-    categories[formData['Income/Expense']].find(cat => cat === formData.Category) ? 
-    ['Default'] : []; // For now, just show 'Default' subcategory
-    ? categories[formData.Category].subcategories
-    : [];
+  const availableSubcategories = ['Default']; // For now, just show 'Default' subcategory
 
   return (
     <div className="add-transaction">
