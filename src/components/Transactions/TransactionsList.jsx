@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { formatCurrency, formatDate } from '../../utils/calculations';
+import { formatCurrency, formatDate, convertDateFormat } from '../../utils/calculations';
 import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, ArrowLeft, ArrowRight, Calendar, BarChart3, TrendingUp } from 'lucide-react';
 import TransactionFilters from './TransactionFilters';
 import EditTransactionModal from './EditTransactionModal';
@@ -71,13 +71,11 @@ const TransactionsList = () => {
       }
       
       if (filterDate) {
-        // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
+        // Helper function to parse date using user's proven approach
         const parseDate = (dateStr) => {
-          if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
-            const [day, month, year] = dateStr.split('/');
-            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-          } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
-            const [day, month, year] = dateStr.split('-');
+          const convertedDate = convertDateFormat(dateStr);
+          if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(convertedDate)) {
+            const [day, month, year] = convertedDate.split('/');
             return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
           }
           return new Date(dateStr);
@@ -89,13 +87,11 @@ const TransactionsList = () => {
 
     // Sort transactions
     filtered.sort((a, b) => {
-      // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
+      // Helper function to parse date using user's proven approach
       const parseDate = (dateStr) => {
-        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
-          const [day, month, year] = dateStr.split('/');
-          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
-          const [day, month, year] = dateStr.split('-');
+        const convertedDate = convertDateFormat(dateStr);
+        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(convertedDate)) {
+          const [day, month, year] = convertedDate.split('/');
           return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         }
         return new Date(dateStr);
@@ -182,13 +178,11 @@ const TransactionsList = () => {
     const monthlyData = {};
     const currentYear = currentDate.getFullYear();
     
-    // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
+    // Helper function to parse date using user's proven approach
     const parseDate = (dateStr) => {
-      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
-        const [day, month, year] = dateStr.split('/');
-        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
-        const [day, month, year] = dateStr.split('-');
+      const convertedDate = convertDateFormat(dateStr);
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(convertedDate)) {
+        const [day, month, year] = convertedDate.split('/');
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       }
       return new Date(dateStr);
@@ -219,13 +213,11 @@ const TransactionsList = () => {
   const getYearlyData = () => {
     const yearlyData = {};
     
-    // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
+    // Helper function to parse date using user's proven approach
     const parseDate = (dateStr) => {
-      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
-        const [day, month, year] = dateStr.split('/');
-        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
-        const [day, month, year] = dateStr.split('-');
+      const convertedDate = convertDateFormat(dateStr);
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(convertedDate)) {
+        const [day, month, year] = convertedDate.split('/');
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       }
       return new Date(dateStr);

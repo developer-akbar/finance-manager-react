@@ -23,13 +23,11 @@ export const getMonthlyData = (transactions) => {
   const monthlyData = {};
   
   transactions.forEach(transaction => {
-    // Parse date from DD/MM/YYYY or DD-MM-YYYY format
+    // Parse date using user's proven approach
     let date;
-    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(transaction.Date)) {
-      const [day, month, year] = transaction.Date.split('/');
-      date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(transaction.Date)) {
-      const [day, month, year] = transaction.Date.split('-');
+    const convertedDate = convertDateFormat(transaction.Date);
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(convertedDate)) {
+      const [day, month, year] = convertedDate.split('/');
       date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     } else {
       date = new Date(transaction.Date);
@@ -83,6 +81,7 @@ export const formatCurrency = (amount, currency = 'INR') => {
   return formatter.format(amount);
 };
 
+// Based on user's proven date handling approach
 export const formatDate = (dateString) => {
   if (!dateString) return '';
   
@@ -118,4 +117,25 @@ export const formatDate = (dateString) => {
   }
   
   return dateString; // Return as is if can't parse
+};
+
+// Helper function to convert date format (based on user's convertDateFormat)
+export const convertDateFormat = (dateString) => {
+  if (!dateString) return '';
+  
+  // If already in DD/MM/YYYY format, return as is
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
+    return dateString;
+  }
+  
+  // If in MM/DD/YYYY or MM-DD-YYYY format, convert to DD/MM/YYYY
+  if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(dateString)) {
+    const parts = dateString.includes('/') ? dateString.split("/") : dateString.split("-");
+    if (parts.length === 3) {
+      const [month, day, year] = parts;
+      return `${day}/${month}/${year}`;
+    }
+  }
+  
+  return dateString;
 };
