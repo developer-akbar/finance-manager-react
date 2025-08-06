@@ -13,15 +13,33 @@ const transactionSchema = new mongoose.Schema({
   },
   Account: {
     type: String,
-    required: [true, 'Account is required']
+    required: function() {
+      return this['Income/Expense'] !== 'Transfer';
+    }
+  },
+  FromAccount: {
+    type: String,
+    required: function() {
+      return this['Income/Expense'] === 'Transfer';
+    }
+  },
+  ToAccount: {
+    type: String,
+    required: function() {
+      return this['Income/Expense'] === 'Transfer';
+    }
   },
   Category: {
     type: String,
-    required: [true, 'Category is required']
+    required: function() {
+      return this['Income/Expense'] !== 'Transfer';
+    }
   },
   Subcategory: {
     type: String,
-    required: [true, 'Subcategory is required']
+    required: function() {
+      return this['Income/Expense'] !== 'Transfer';
+    }
   },
   Note: {
     type: String,
@@ -33,7 +51,7 @@ const transactionSchema = new mongoose.Schema({
   },
   'Income/Expense': {
     type: String,
-    enum: ['Income', 'Expense'],
+    enum: ['Income', 'Expense', 'Transfer'],
     required: [true, 'Transaction type is required']
   },
   Description: {

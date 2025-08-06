@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { importAPI } from '../../services/api';
 import { 
   Download, 
   Upload, 
@@ -16,12 +17,14 @@ import CategoryManager from './CategoryManager';
 import './Settings.css';
 
 const Settings = () => {
-  const { state, loadDataFromStorage } = useApp();
+  const { state, loadDataFromStorage, refreshTransactions } = useApp();
   const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState('accounts');
   const [showExportModal, setShowExportModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState('');
 
   const sections = [
     { id: 'accounts', label: 'Accounts' },
@@ -53,37 +56,75 @@ const Settings = () => {
     setShowExportModal(false);
   };
 
-  const importData = (event) => {
+  const importData = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
+    setImportLoading(true);
+    setImportError('');
+
+    try {
+      if (file.type === 'application/json' || file.name.endsWith('.json')) {
+        // Handle JSON file
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            
+            if (data.transactions && Array.isArray(data.transactions)) {
+              const response = await importAPI.importJSON({ transactions: data.transactions });
+              
+              if (response.success) {
+                alert(`Data imported successfully! ${response.data.imported} transactions imported.`);
+                if (response.data.errors && response.data.errors.length > 0) {
+                  console.warn('Import warnings:', response.data.errors);
+                }
+                setShowImportModal(false);
+                // Refresh transactions to show imported data
+                await refreshTransactions();
+              } else {
+                setImportError(response.message || 'Import failed');
+              }
+            } else {
+              setImportError('Invalid JSON format. Expected transactions array.');
+            }
+          } catch (error) {
+            setImportError('Error reading JSON file. Please check the file format.');
+          } finally {
+            setImportLoading(false);
+          }
+        };
+        reader.readAsText(file);
+      } else if (file.type === 'text/csv' || file.name.endsWith('.csv') || 
+                 file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                 file.type === 'application/vnd.ms-excel' ||
+                 file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        // Handle Excel/CSV file
+        const formData = new FormData();
+        formData.append('file', file);
         
-        // Validate data structure
-        if (data.transactions && data.accounts && data.categories) {
-          // Save to localStorage
-          localStorage.setItem('masterExpenses', JSON.stringify(data.transactions));
-          localStorage.setItem('accounts', JSON.stringify(data.accounts));
-          localStorage.setItem('categories', JSON.stringify(data.categories));
-          localStorage.setItem('accountGroups', JSON.stringify(data.accountGroups || []));
-          localStorage.setItem('accountMapping', JSON.stringify(data.accountMapping || {}));
-          
-          // Reload data
-          loadDataFromStorage();
-          
-          alert('Data imported successfully!');
+        const response = await importAPI.importExcel(formData);
+        
+        if (response.success) {
+          alert(`Data imported successfully! ${response.data.imported} transactions imported.`);
+          if (response.data.errors && response.data.errors.length > 0) {
+            console.warn('Import warnings:', response.data.errors);
+          }
           setShowImportModal(false);
+          // Refresh transactions to show imported data
+          await refreshTransactions();
         } else {
-          alert('Invalid file format. Please select a valid backup file.');
+          setImportError(response.message || 'Import failed');
         }
-      } catch (error) {
-        alert('Error reading file. Please check the file format.');
+      } else {
+        setImportError('Unsupported file format. Please use JSON, CSV, or Excel files.');
       }
-    };
-    reader.readAsText(file);
+    } catch (error) {
+      console.error('Import error:', error);
+      setImportError(error.message || 'Error importing file');
+    } finally {
+      setImportLoading(false);
+    }
   };
 
   const clearAllData = () => {
@@ -297,9 +338,12 @@ const Settings = () => {
                 <input
                   type="file"
                   id="import-file"
-                  accept=".json"
+                  accept=".json,.csv,.xlsx,.xls"
                   onChange={importData}
+                  disabled={importLoading}
                 />
+                {importLoading && <p>Importing data...</p>}
+                {importError && <p style={{ color: 'red' }}>{importError}</p>}
               </div>
             </div>
             <div className="modal-actions">

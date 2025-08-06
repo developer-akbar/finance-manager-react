@@ -17,19 +17,21 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    // Accept Excel files
+    // Accept Excel and CSV files
     if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         file.mimetype === 'application/vnd.ms-excel' ||
+        file.mimetype === 'text/csv' ||
         file.originalname.endsWith('.xlsx') ||
-        file.originalname.endsWith('.xls')) {
+        file.originalname.endsWith('.xls') ||
+        file.originalname.endsWith('.csv')) {
       cb(null, true);
     } else {
-      cb(new Error('Only Excel files are allowed'), false);
+      cb(new Error('Only Excel and CSV files are allowed'), false);
     }
   }
 });
 
-// @desc    Import transactions from Excel file
+// @desc    Import transactions from Excel/CSV file
 // @route   POST /api/import/excel
 // @access  Private
 router.post('/excel', upload.single('file'), async (req, res) => {
@@ -59,28 +61,44 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     // Extract headers (first row)
     const headers = rawData[0];
     
-    // Find required column indices
+    // Find required column indices based on expected format
+    // Expected columns: Date, Account, Category, Subcategory, Note, INR, Income/Expense, Description, Currency, ID
     const dateIndex = headers.findIndex(h => 
       h && h.toString().toLowerCase().includes('date')
-    );
-    const amountIndex = headers.findIndex(h => 
-      h && (h.toString().toLowerCase().includes('amount') || 
-           h.toString().toLowerCase().includes('inr'))
-    );
-    const descriptionIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('description')
-    );
-    const categoryIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('category')
     );
     const accountIndex = headers.findIndex(h => 
       h && h.toString().toLowerCase().includes('account')
     );
+    const categoryIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('category')
+    );
+    const subcategoryIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('subcategory')
+    );
+    const noteIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('note')
+    );
+    const inrIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('inr')
+    );
+    const typeIndex = headers.findIndex(h => 
+      h && (h.toString().toLowerCase().includes('income/expense') || 
+           h.toString().toLowerCase().includes('type'))
+    );
+    const descriptionIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('description')
+    );
+    const currencyIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('currency')
+    );
+    const idIndex = headers.findIndex(h => 
+      h && h.toString().toLowerCase().includes('id')
+    );
 
-    if (dateIndex === -1 || amountIndex === -1) {
+    if (dateIndex === -1 || inrIndex === -1) {
       return res.status(400).json({
         success: false,
-        message: 'Excel file must contain Date and Amount columns'
+        message: 'Excel file must contain Date and INR columns'
       });
     }
 
@@ -93,7 +111,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       
       try {
         // Skip empty rows
-        if (!row[dateIndex] || !row[amountIndex]) {
+        if (!row[dateIndex] || !row[inrIndex]) {
           continue;
         }
 
@@ -112,21 +130,35 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           date = parsedDate.toLocaleDateString();
         }
 
-        // Parse amount
+        // Parse INR amount
         let amount;
-        if (typeof row[amountIndex] === 'number') {
-          amount = row[amountIndex];
+        if (typeof row[inrIndex] === 'number') {
+          amount = row[inrIndex];
         } else {
-          const amountStr = row[amountIndex].toString().replace(/[^\d.-]/g, '');
+          const amountStr = row[inrIndex].toString().replace(/[^\d.-]/g, '');
           amount = parseFloat(amountStr);
           if (isNaN(amount)) {
-            errors.push(`Row ${i + 1}: Invalid amount - ${row[amountIndex]}`);
+            errors.push(`Row ${i + 1}: Invalid INR amount - ${row[inrIndex]}`);
             continue;
           }
         }
 
-        // Determine transaction type based on amount
-        const transactionType = amount >= 0 ? 'Income' : 'Expense';
+        // Determine transaction type
+        let transactionType = 'Expense'; // Default
+        if (typeIndex !== -1 && row[typeIndex]) {
+          const typeStr = row[typeIndex].toString().toLowerCase();
+          if (typeStr.includes('income')) {
+            transactionType = 'Income';
+          } else if (typeStr.includes('expense')) {
+            transactionType = 'Expense';
+          } else if (typeStr.includes('transfer')) {
+            transactionType = 'Transfer';
+          }
+        } else {
+          // Fallback: determine by amount sign
+          transactionType = amount >= 0 ? 'Income' : 'Expense';
+        }
+
         const absAmount = Math.abs(amount);
 
         // Create transaction object
@@ -134,14 +166,14 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           Date: date,
           Account: row[accountIndex] || 'Cash',
           Category: row[categoryIndex] || 'Other',
-          Subcategory: 'Imported',
-          Note: '',
+          Subcategory: row[subcategoryIndex] || 'Imported',
+          Note: row[noteIndex] || '',
           INR: absAmount,
           'Income/Expense': transactionType,
           Description: row[descriptionIndex] || 'Imported transaction',
           Amount: absAmount.toString(),
-          Currency: 'INR',
-          ID: `import_${Date.now()}_${i}`,
+          Currency: row[currencyIndex] || 'INR',
+          ID: row[idIndex] || `import_${Date.now()}_${i}`,
           user: req.user.id
         };
 
