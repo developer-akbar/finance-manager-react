@@ -40,45 +40,67 @@ const parseDate = (dateValue) => {
   // Remove time portion if present
   const dateOnly = dateStr.split(' ')[0];
   
-  // Try multiple date formats
-  const dateFormats = [
-    /^\d{1,2}-\d{1,2}-\d{4}$/, // DD-MM-YYYY or MM-DD-YYYY
-    /^\d{1,2}\/\d{1,2}\/\d{4}$/, // DD/MM/YYYY or MM/DD/YYYY
-    /^\d{4}-\d{1,2}-\d{1,2}$/, // YYYY-MM-DD
-    /^\d{4}\/\d{1,2}\/\d{1,2}$/, // YYYY/MM/DD
-    /^\d{1,2}-\d{1,2}-\d{2}$/, // DD-MM-YY or MM-DD-YY
-    /^\d{1,2}\/\d{1,2}\/\d{2}$/, // DD/MM/YY or MM/DD/YY
-  ];
-  
-  // Check if it matches any of our expected formats
-  const isFormattedDate = dateFormats.some(format => format.test(dateOnly));
-  
-  if (isFormattedDate) {
-    // Try parsing with different assumptions
-    const parts = dateOnly.replace(/[\/\-]/g, '-').split('-');
+  // First, try to identify the format more intelligently
+  // Check for DD-MM-YYYY format (most common in Indian context)
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateOnly)) {
+    const [day, month, year] = dateOnly.split('-');
+    const dayNum = parseInt(day);
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
     
-    if (parts.length === 3) {
-      // Try different interpretations
-      const interpretations = [
-        // DD-MM-YYYY
-        () => new Date(parts[2], parts[1] - 1, parts[0]),
-        // MM-DD-YYYY  
-        () => new Date(parts[2], parts[0] - 1, parts[1]),
-        // YYYY-MM-DD
-        () => new Date(parts[0], parts[1] - 1, parts[2]),
-      ];
-      
-      for (const interpret of interpretations) {
-        try {
-          const testDate = interpret();
-          if (!isNaN(testDate.getTime()) && 
-              testDate.getFullYear() >= 1900 && 
-              testDate.getFullYear() <= 2100) {
-            return formatDate(testDate);
-          }
-        } catch (e) {
-          // Continue to next interpretation
-        }
+    // Validate the date components
+    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
+      const testDate = new Date(yearNum, monthNum - 1, dayNum);
+      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
+        return formatDate(testDate);
+      }
+    }
+  }
+  
+  // Check for DD/MM/YYYY format
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateOnly)) {
+    const [day, month, year] = dateOnly.split('/');
+    const dayNum = parseInt(day);
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+    
+    // Validate the date components
+    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
+      const testDate = new Date(yearNum, monthNum - 1, dayNum);
+      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
+        return formatDate(testDate);
+      }
+    }
+  }
+  
+  // Check for YYYY-MM-DD format
+  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(dateOnly)) {
+    const [year, month, day] = dateOnly.split('-');
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
+    const dayNum = parseInt(day);
+    
+    // Validate the date components
+    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
+      const testDate = new Date(yearNum, monthNum - 1, dayNum);
+      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
+        return formatDate(testDate);
+      }
+    }
+  }
+  
+  // Check for YYYY/MM/DD format
+  if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(dateOnly)) {
+    const [year, month, day] = dateOnly.split('/');
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
+    const dayNum = parseInt(day);
+    
+    // Validate the date components
+    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
+      const testDate = new Date(yearNum, monthNum - 1, dayNum);
+      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
+        return formatDate(testDate);
       }
     }
   }
