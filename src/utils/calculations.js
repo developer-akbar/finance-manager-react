@@ -23,7 +23,17 @@ export const getMonthlyData = (transactions) => {
   const monthlyData = {};
   
   transactions.forEach(transaction => {
-    const date = new Date(transaction.Date);
+    // Parse date from DD/MM/YYYY format
+    let date;
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(transaction.Date)) {
+      const [day, month, year] = transaction.Date.split('/');
+      date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    } else {
+      date = new Date(transaction.Date);
+    }
+    
+    if (isNaN(date.getTime())) return; // Skip invalid dates
+    
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
     if (!monthlyData[monthKey]) {
@@ -71,10 +81,27 @@ export const formatCurrency = (amount, currency = 'INR') => {
 };
 
 export const formatDate = (dateString) => {
+  if (!dateString) return '';
+  
+  // If already in DD/MM/YYYY format, return as is
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
+    return dateString;
+  }
+  
+  // If in YYYY-MM-DD format, convert to DD/MM/YYYY
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  }
+  
+  // Try to parse with Date constructor as fallback
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
+  if (!isNaN(date.getTime())) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+  
+  return dateString; // Return as is if can't parse
 };
