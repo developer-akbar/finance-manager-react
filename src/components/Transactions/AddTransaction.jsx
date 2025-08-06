@@ -3,22 +3,31 @@ import { useApp } from '../../contexts/AppContext';
 import { Save, ArrowLeft } from 'lucide-react';
 import './AddTransaction.css';
 
-const AddTransaction = () => {
-  const { state, addTransaction, dispatch } = useApp();
+const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = null, setIsSubmitting = null }) => {
+  const { state, addTransaction, updateTransaction, dispatch } = useApp();
   const { accounts, categories } = state;
 
-  const [formData, setFormData] = useState({
-    Date: new Date().toISOString().split('T')[0],
-    Account: accounts[0] || '',
-    FromAccount: accounts[0] || '',
-    ToAccount: accounts[1] || '',
-    Category: '',
-    Subcategory: '',
-    'Income/Expense': 'Expense',
-    Amount: '',
-    Currency: 'INR',
-    Note: '',
-    Description: ''
+  const [formData, setFormData] = useState(() => {
+    if (isEditMode && editTransaction) {
+      return {
+        ...editTransaction,
+        Date: editTransaction.Date.split('T')[0], // Convert to YYYY-MM-DD format
+        Amount: editTransaction.INR || editTransaction.Amount || ''
+      };
+    }
+    return {
+      Date: new Date().toISOString().split('T')[0],
+      Account: accounts[0] || '',
+      FromAccount: accounts[0] || '',
+      ToAccount: accounts[1] || '',
+      Category: '',
+      Subcategory: '',
+      'Income/Expense': 'Expense',
+      Amount: '',
+      Currency: 'INR',
+      Note: '',
+      Description: ''
+    };
   });
 
   const [errors, setErrors] = useState({});
@@ -46,37 +55,50 @@ const AddTransaction = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validateForm()) return;
 
-    const transaction = {
-      ...formData,
-      INR: parseFloat(formData.Amount),
-      // For Transfer-Out transactions, set Account to FromAccount for display purposes
-      Account: formData['Income/Expense'] === 'Transfer-Out' ? formData.FromAccount : formData.Account
-    };
+    if (setIsSubmitting) setIsSubmitting(true);
 
-    addTransaction(transaction);
-    
-    // Reset form
-    setFormData({
-      Date: new Date().toISOString().split('T')[0],
-      Account: accounts[0] || '',
-      FromAccount: accounts[0] || '',
-      ToAccount: accounts[1] || '',
-      Category: '',
-      Subcategory: '',
-      'Income/Expense': 'Expense',
-      Amount: '',
-      Currency: 'INR',
-      Note: '',
-      Description: ''
-    });
+    try {
+      const transaction = {
+        ...formData,
+        INR: parseFloat(formData.Amount),
+        // For Transfer-Out transactions, set Account to FromAccount for display purposes
+        Account: formData['Income/Expense'] === 'Transfer-Out' ? formData.FromAccount : formData.Account
+      };
 
-    // Show success message or redirect
-    dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
+      if (isEditMode) {
+        await updateTransaction(transaction);
+        if (onClose) onClose();
+      } else {
+        await addTransaction(transaction);
+        
+        // Reset form
+        setFormData({
+          Date: new Date().toISOString().split('T')[0],
+          Account: accounts[0] || '',
+          FromAccount: accounts[0] || '',
+          ToAccount: accounts[1] || '',
+          Category: '',
+          Subcategory: '',
+          'Income/Expense': 'Expense',
+          Amount: '',
+          Currency: 'INR',
+          Note: '',
+          Description: ''
+        });
+
+        // Show success message or redirect
+        dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
+      }
+    } catch (error) {
+      console.error('Transaction operation failed:', error);
+    } finally {
+      if (setIsSubmitting) setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -93,11 +115,12 @@ const AddTransaction = () => {
     }
   };
 
-  const availableCategories = Object.entries(categories).filter(
-    ([, categoryData]) => categoryData.type === formData['Income/Expense']
-  );
+  // Get categories for the current transaction type
+  const availableCategories = categories[formData['Income/Expense']] || [];
 
-  const availableSubcategories = formData.Category && categories[formData.Category]
+  const availableSubcategories = formData.Category && categories[formData['Income/Expense']] && 
+    categories[formData['Income/Expense']].find(cat => cat === formData.Category) ? 
+    ['Default'] : []; // For now, just show 'Default' subcategory
     ? categories[formData.Category].subcategories
     : [];
 
@@ -222,7 +245,7 @@ const AddTransaction = () => {
                 className={errors.Category ? 'error' : ''}
               >
                 <option value="">Select Category</option>
-                {availableCategories.map(([categoryName]) => (
+                {availableCategories.map((categoryName) => (
                   <option key={categoryName} value={categoryName}>{categoryName}</option>
                 ))}
               </select>
@@ -272,13 +295,19 @@ const AddTransaction = () => {
           <button
             type="button"
             className="cancel-btn"
-            onClick={() => dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' })}
+            onClick={() => {
+              if (isEditMode && onClose) {
+                onClose();
+              } else {
+                dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
+              }
+            }}
           >
             Cancel
           </button>
           <button type="submit" className="save-btn">
             <Save size={18} />
-            Save Transaction
+            {isEditMode ? 'Update Transaction' : 'Save Transaction'}
           </button>
         </div>
       </form>
