@@ -10,8 +10,9 @@ const router = express.Router();
 router.use(protect);
 
 // Helper function to parse dates from various formats and return DD/MM/YYYY format
+// Based on the user's proven date handling approach
 const parseDate = (dateValue) => {
-  // Helper function to format date as DD/MM/YYYY
+  // Helper function to format date as DD/MM/YYYY (same as user's formatDateField with 'add-date')
   const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -40,24 +41,27 @@ const parseDate = (dateValue) => {
   // Remove time portion if present
   const dateOnly = dateStr.split(' ')[0];
   
-  // First, try to identify the format more intelligently
-  // Check for DD-MM-YYYY format (most common in Indian context)
-  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateOnly)) {
-    const [day, month, year] = dateOnly.split('-');
-    const dayNum = parseInt(day);
-    const monthNum = parseInt(month);
-    const yearNum = parseInt(year);
-    
-    // Validate the date components
-    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
-      const testDate = new Date(yearNum, monthNum - 1, dayNum);
-      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-        return formatDate(testDate);
+  // Based on user's convertDateFormat function, assume input is MM/DD/YYYY or MM-DD-YYYY
+  // and convert to DD/MM/YYYY format
+  if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(dateOnly)) {
+    const parts = dateOnly.includes('/') ? dateOnly.split("/") : dateOnly.split("-");
+    if (parts.length === 3) {
+      const [month, day, year] = parts;
+      const monthNum = parseInt(month);
+      const dayNum = parseInt(day);
+      const yearNum = parseInt(year);
+      
+      // Validate the date components
+      if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
+        const testDate = new Date(yearNum, monthNum - 1, dayNum);
+        if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
+          return `${day}/${month}/${year}`; // Return in DD/MM/YYYY format
+        }
       }
     }
   }
   
-  // Check for DD/MM/YYYY format
+  // Also handle DD/MM/YYYY format (if already in correct format)
   if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateOnly)) {
     const [day, month, year] = dateOnly.split('/');
     const dayNum = parseInt(day);
@@ -68,39 +72,23 @@ const parseDate = (dateValue) => {
     if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
       const testDate = new Date(yearNum, monthNum - 1, dayNum);
       if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-        return formatDate(testDate);
+        return dateOnly; // Already in DD/MM/YYYY format
       }
     }
   }
   
-  // Check for YYYY-MM-DD format
-  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(dateOnly)) {
-    const [year, month, day] = dateOnly.split('-');
-    const yearNum = parseInt(year);
-    const monthNum = parseInt(month);
+  // Handle DD-MM-YYYY format
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateOnly)) {
+    const [day, month, year] = dateOnly.split('-');
     const dayNum = parseInt(day);
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
     
     // Validate the date components
     if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
       const testDate = new Date(yearNum, monthNum - 1, dayNum);
       if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-        return formatDate(testDate);
-      }
-    }
-  }
-  
-  // Check for YYYY/MM/DD format
-  if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(dateOnly)) {
-    const [year, month, day] = dateOnly.split('/');
-    const yearNum = parseInt(year);
-    const monthNum = parseInt(month);
-    const dayNum = parseInt(day);
-    
-    // Validate the date components
-    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
-      const testDate = new Date(yearNum, monthNum - 1, dayNum);
-      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-        return formatDate(testDate);
+        return `${day}/${month}/${year}`; // Convert to DD/MM/YYYY format
       }
     }
   }
@@ -147,6 +135,9 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         message: 'Please upload an Excel file'
       });
     }
+
+    // Get import mode from request body (merge or override)
+    const { mode = 'override' } = req.body;
 
     // Parse Excel file
     const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
@@ -338,8 +329,43 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       }
     });
 
+    // Check for existing transactions if mode is merge
+    let finalTransactions = transactions;
+    let duplicates = [];
+    
+    if (mode === 'merge') {
+      // Get existing transactions for this user
+      const existingTransactions = await Transaction.find({ user: req.user.id });
+      
+      // Check for duplicates based on user's legacy logic
+      const nonDuplicates = [];
+      
+      transactions.forEach(newTransaction => {
+        const isDuplicate = existingTransactions.some(existingTransaction => {
+          // Check if transactions are duplicates based on key fields
+          return (
+            existingTransaction.Date === newTransaction.Date &&
+            existingTransaction.Account === newTransaction.Account &&
+            existingTransaction.Category === newTransaction.Category &&
+            existingTransaction.Subcategory === newTransaction.Subcategory &&
+            existingTransaction.Note === newTransaction.Note &&
+            existingTransaction.INR === newTransaction.INR &&
+            existingTransaction['Income/Expense'] === newTransaction['Income/Expense']
+          );
+        });
+        
+        if (isDuplicate) {
+          duplicates.push(newTransaction);
+        } else {
+          nonDuplicates.push(newTransaction);
+        }
+      });
+      
+      finalTransactions = nonDuplicates;
+    }
+    
     // Insert transactions into database
-    const result = await Transaction.insertMany(transactions);
+    const result = finalTransactions.length > 0 ? await Transaction.insertMany(finalTransactions) : [];
 
     // Update user settings with extracted accounts and categories
     const UserSettings = require('../models/UserSettings');
@@ -379,6 +405,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       - Total rows processed: ${totalRows}
       - Successfully imported: ${importedCount}
       - Skipped rows: ${skippedCount}
+      - Duplicates found: ${duplicates.length}
       - Errors: ${errors.length}
       - New accounts found: ${newAccounts.length}
       - New categories found: ${Object.keys(uniqueCategories).reduce((sum, type) => sum + uniqueCategories[type].size, 0)}`);
@@ -390,6 +417,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         imported: result.length,
         totalRows: totalRows,
         skippedRows: skippedCount,
+        duplicates: duplicates.length > 0 ? duplicates.length : null,
         errors: errors.length > 0 ? errors : null,
         newAccounts: newAccounts,
         newCategories: Object.fromEntries(
