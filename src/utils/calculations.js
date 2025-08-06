@@ -119,13 +119,19 @@ export const formatDate = (dateString) => {
   return dateString; // Return as is if can't parse
 };
 
-// Helper function to convert date format (based on user's convertDateFormat)
+// Helper function to convert date format (based on user's Excel file format)
 export const convertDateFormat = (dateString) => {
   if (!dateString) return '';
   
   // If already in DD/MM/YYYY format, return as is
   if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
     return dateString;
+  }
+  
+  // If in DD-MM-YYYY format, convert to DD/MM/YYYY
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateString)) {
+    const [day, month, year] = dateString.split("-");
+    return `${day}/${month}/${year}`;
   }
   
   // If in MM/DD/YYYY or MM-DD-YYYY format, convert to DD/MM/YYYY

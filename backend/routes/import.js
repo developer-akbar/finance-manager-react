@@ -41,14 +41,14 @@ const parseDate = (dateValue) => {
   // Remove time portion if present
   const dateOnly = dateStr.split(' ')[0];
   
-  // Based on user's convertDateFormat function, assume input is MM/DD/YYYY or MM-DD-YYYY
-  // and convert to DD/MM/YYYY format
+  // Based on user's Excel file format, assume input is DD-MM-YYYY or DD/MM/YYYY
+  // and convert to DD/MM/YYYY format for storage
   if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(dateOnly)) {
     const parts = dateOnly.includes('/') ? dateOnly.split("/") : dateOnly.split("-");
     if (parts.length === 3) {
-      const [month, day, year] = parts;
-      const monthNum = parseInt(month);
+      const [day, month, year] = parts; // Changed: [day, month, year] instead of [month, day, year]
       const dayNum = parseInt(day);
+      const monthNum = parseInt(month);
       const yearNum = parseInt(year);
       
       // Validate the date components
