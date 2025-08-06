@@ -17,7 +17,7 @@ import CategoryManager from './CategoryManager';
 import './Settings.css';
 
 const Settings = () => {
-  const { state, loadDataFromStorage, refreshTransactions } = useApp();
+  const { state, loadData, refreshTransactions } = useApp();
   const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState('accounts');
   const [showExportModal, setShowExportModal] = useState(false);
