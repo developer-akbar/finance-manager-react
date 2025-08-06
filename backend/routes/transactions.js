@@ -193,6 +193,26 @@ router.put('/:id', [
   }
 });
 
+// @desc    Clear all transactions for user
+// @route   DELETE /api/transactions/clear
+// @access  Private
+router.delete('/clear', async (req, res) => {
+  try {
+    const result = await Transaction.deleteMany({ user: req.user.id });
+
+    res.json({
+      success: true,
+      message: `Successfully deleted ${result.deletedCount} transactions`
+    });
+  } catch (error) {
+    console.error('Clear transactions error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while clearing transactions'
+    });
+  }
+});
+
 // @desc    Delete transaction
 // @route   DELETE /api/transactions/:id
 // @access  Private
@@ -261,26 +281,6 @@ router.post('/bulk', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Server error while importing transactions'
-    });
-  }
-});
-
-// @desc    Clear all transactions for user
-// @route   DELETE /api/transactions/clear
-// @access  Private
-router.delete('/clear', async (req, res) => {
-  try {
-    const result = await Transaction.deleteMany({ user: req.user.id });
-
-    res.json({
-      success: true,
-      message: `Successfully deleted ${result.deletedCount} transactions`
-    });
-  } catch (error) {
-    console.error('Clear transactions error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while clearing transactions'
     });
   }
 });
