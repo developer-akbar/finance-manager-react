@@ -10,6 +10,8 @@ const AddTransaction = () => {
   const [formData, setFormData] = useState({
     Date: new Date().toISOString().split('T')[0],
     Account: accounts[0] || '',
+    FromAccount: accounts[0] || '',
+    ToAccount: accounts[1] || '',
     Category: '',
     Subcategory: '',
     'Income/Expense': 'Expense',
@@ -25,10 +27,19 @@ const AddTransaction = () => {
     const newErrors = {};
 
     if (!formData.Date) newErrors.Date = 'Date is required';
-    if (!formData.Account) newErrors.Account = 'Account is required';
-    if (!formData.Category) newErrors.Category = 'Category is required';
     if (!formData.Amount || parseFloat(formData.Amount) <= 0) {
       newErrors.Amount = 'Valid amount is required';
+    }
+
+    if (formData['Income/Expense'] === 'Transfer') {
+      if (!formData.FromAccount) newErrors.FromAccount = 'From Account is required';
+      if (!formData.ToAccount) newErrors.ToAccount = 'To Account is required';
+      if (formData.FromAccount === formData.ToAccount) {
+        newErrors.ToAccount = 'From Account and To Account must be different';
+      }
+    } else {
+      if (!formData.Account) newErrors.Account = 'Account is required';
+      if (!formData.Category) newErrors.Category = 'Category is required';
     }
 
     setErrors(newErrors);
@@ -42,7 +53,9 @@ const AddTransaction = () => {
 
     const transaction = {
       ...formData,
-      INR: parseFloat(formData.Amount)
+      INR: parseFloat(formData.Amount),
+      // For Transfer transactions, set Account to FromAccount for display purposes
+      Account: formData['Income/Expense'] === 'Transfer' ? formData.FromAccount : formData.Account
     };
 
     addTransaction(transaction);
@@ -51,6 +64,8 @@ const AddTransaction = () => {
     setFormData({
       Date: new Date().toISOString().split('T')[0],
       Account: accounts[0] || '',
+      FromAccount: accounts[0] || '',
+      ToAccount: accounts[1] || '',
       Category: '',
       Subcategory: '',
       'Income/Expense': 'Expense',
@@ -110,6 +125,7 @@ const AddTransaction = () => {
             >
               <option value="Expense">Expense</option>
               <option value="Income">Income</option>
+              <option value="Transfer">Transfer</option>
             </select>
           </div>
 
@@ -127,21 +143,57 @@ const AddTransaction = () => {
         </div>
 
         <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="account">Account</label>
-            <select
-              id="account"
-              value={formData.Account}
-              onChange={(e) => handleInputChange('Account', e.target.value)}
-              className={errors.Account ? 'error' : ''}
-            >
-              <option value="">Select Account</option>
-              {accounts.map(account => (
-                <option key={account} value={account}>{account}</option>
-              ))}
-            </select>
-            {errors.Account && <span className="error-text">{errors.Account}</span>}
-          </div>
+          {formData['Income/Expense'] === 'Transfer' ? (
+            <>
+              <div className="form-group">
+                <label htmlFor="fromAccount">From Account</label>
+                <select
+                  id="fromAccount"
+                  value={formData.FromAccount}
+                  onChange={(e) => handleInputChange('FromAccount', e.target.value)}
+                  className={errors.FromAccount ? 'error' : ''}
+                >
+                  <option value="">Select From Account</option>
+                  {accounts.map(account => (
+                    <option key={account} value={account}>{account}</option>
+                  ))}
+                </select>
+                {errors.FromAccount && <span className="error-text">{errors.FromAccount}</span>}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="toAccount">To Account</label>
+                <select
+                  id="toAccount"
+                  value={formData.ToAccount}
+                  onChange={(e) => handleInputChange('ToAccount', e.target.value)}
+                  className={errors.ToAccount ? 'error' : ''}
+                >
+                  <option value="">Select To Account</option>
+                  {accounts.map(account => (
+                    <option key={account} value={account}>{account}</option>
+                  ))}
+                </select>
+                {errors.ToAccount && <span className="error-text">{errors.ToAccount}</span>}
+              </div>
+            </>
+          ) : (
+            <div className="form-group">
+              <label htmlFor="account">Account</label>
+              <select
+                id="account"
+                value={formData.Account}
+                onChange={(e) => handleInputChange('Account', e.target.value)}
+                className={errors.Account ? 'error' : ''}
+              >
+                <option value="">Select Account</option>
+                {accounts.map(account => (
+                  <option key={account} value={account}>{account}</option>
+                ))}
+              </select>
+              {errors.Account && <span className="error-text">{errors.Account}</span>}
+            </div>
+          )}
 
           <div className="form-group">
             <label htmlFor="amount">Amount</label>
@@ -159,38 +211,40 @@ const AddTransaction = () => {
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label htmlFor="category">Category</label>
-            <select
-              id="category"
-              value={formData.Category}
-              onChange={(e) => handleInputChange('Category', e.target.value)}
-              className={errors.Category ? 'error' : ''}
-            >
-              <option value="">Select Category</option>
-              {availableCategories.map(([categoryName]) => (
-                <option key={categoryName} value={categoryName}>{categoryName}</option>
-              ))}
-            </select>
-            {errors.Category && <span className="error-text">{errors.Category}</span>}
-          </div>
+        {formData['Income/Expense'] !== 'Transfer' && (
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="category">Category</label>
+              <select
+                id="category"
+                value={formData.Category}
+                onChange={(e) => handleInputChange('Category', e.target.value)}
+                className={errors.Category ? 'error' : ''}
+              >
+                <option value="">Select Category</option>
+                {availableCategories.map(([categoryName]) => (
+                  <option key={categoryName} value={categoryName}>{categoryName}</option>
+                ))}
+              </select>
+              {errors.Category && <span className="error-text">{errors.Category}</span>}
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="subcategory">Subcategory</label>
-            <select
-              id="subcategory"
-              value={formData.Subcategory}
-              onChange={(e) => handleInputChange('Subcategory', e.target.value)}
-              disabled={!availableSubcategories.length}
-            >
-              <option value="">Select Subcategory</option>
-              {availableSubcategories.map(subcategory => (
-                <option key={subcategory} value={subcategory}>{subcategory}</option>
-              ))}
-            </select>
+            <div className="form-group">
+              <label htmlFor="subcategory">Subcategory</label>
+              <select
+                id="subcategory"
+                value={formData.Subcategory}
+                onChange={(e) => handleInputChange('Subcategory', e.target.value)}
+                disabled={!availableSubcategories.length}
+              >
+                <option value="">Select Subcategory</option>
+                {availableSubcategories.map(subcategory => (
+                  <option key={subcategory} value={subcategory}>{subcategory}</option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="form-group">
           <label htmlFor="note">Note</label>
