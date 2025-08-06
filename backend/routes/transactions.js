@@ -8,6 +8,33 @@ const router = express.Router();
 // Apply authentication middleware to all routes
 router.use(protect);
 
+// Helper function to convert YYYY-MM-DD to DD/MM/YYYY for database storage
+const convertDateForStorage = (dateStr) => {
+  if (!dateStr) return null;
+  
+  // If already in DD/MM/YYYY format, return as is
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+    return dateStr;
+  }
+  
+  // If in YYYY-MM-DD format, convert to DD/MM/YYYY
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  }
+  
+  // Try to parse and convert other formats
+  const date = new Date(dateStr);
+  if (!isNaN(date.getTime())) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+  
+  return dateStr; // Return as is if can't parse
+};
+
 // @desc    Get all transactions for user
 // @route   GET /api/transactions
 // @access  Private
@@ -125,6 +152,7 @@ router.post('/', [
 
     const transaction = await Transaction.create({
       ...req.body,
+      Date: convertDateForStorage(req.body.Date),
       user: req.user.id
     });
 
@@ -175,7 +203,7 @@ router.put('/:id', [
 
     transaction = await Transaction.findOneAndUpdate(
       { ID: req.params.id, user: req.user.id },
-      req.body,
+      { ...req.body, Date: convertDateForStorage(req.body.Date) },
       { new: true, runValidators: true }
     );
 

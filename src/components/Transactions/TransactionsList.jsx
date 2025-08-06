@@ -71,17 +71,35 @@ const TransactionsList = () => {
       }
       
       if (filterDate) {
-        filtered = filtered.filter(t => new Date(t.Date) >= filterDate);
+        // Helper function to parse date from DD/MM/YYYY format
+        const parseDate = (dateStr) => {
+          if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+            const [day, month, year] = dateStr.split('/');
+            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          }
+          return new Date(dateStr);
+        };
+        
+        filtered = filtered.filter(t => parseDate(t.Date) >= filterDate);
       }
     }
 
     // Sort transactions
     filtered.sort((a, b) => {
+      // Helper function to parse date from DD/MM/YYYY format
+      const parseDate = (dateStr) => {
+        if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+          const [day, month, year] = dateStr.split('/');
+          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        }
+        return new Date(dateStr);
+      };
+      
       switch (sortBy) {
         case 'date-desc':
-          return new Date(b.Date) - new Date(a.Date);
+          return parseDate(b.Date) - parseDate(a.Date);
         case 'date-asc':
-          return new Date(a.Date) - new Date(b.Date);
+          return parseDate(a.Date) - parseDate(b.Date);
         case 'amount-desc':
           return parseFloat(b.INR || b.Amount) - parseFloat(a.INR || a.Amount);
         case 'amount-asc':
@@ -101,15 +119,24 @@ const TransactionsList = () => {
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
 
+    // Helper function to parse date from DD/MM/YYYY format
+    const parseDate = (dateStr) => {
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+        const [day, month, year] = dateStr.split('/');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      return new Date(dateStr);
+    };
+
     switch (currentView) {
       case 'daily':
         return filteredTransactions.filter(t => {
-          const tDate = new Date(t.Date);
+          const tDate = parseDate(t.Date);
           return tDate.getFullYear() === currentYear && tDate.getMonth() === currentMonth;
         });
       case 'monthly':
         return filteredTransactions.filter(t => {
-          const tDate = new Date(t.Date);
+          const tDate = parseDate(t.Date);
           return tDate.getFullYear() === currentYear;
         });
       case 'total':
@@ -149,8 +176,17 @@ const TransactionsList = () => {
     const monthlyData = {};
     const currentYear = currentDate.getFullYear();
     
+    // Helper function to parse date from DD/MM/YYYY format
+    const parseDate = (dateStr) => {
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+        const [day, month, year] = dateStr.split('/');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      return new Date(dateStr);
+    };
+    
     viewTransactions.forEach(t => {
-      const tDate = new Date(t.Date);
+      const tDate = parseDate(t.Date);
       if (tDate.getFullYear() === currentYear) {
         const monthKey = tDate.getMonth();
         if (!monthlyData[monthKey]) {
@@ -174,8 +210,17 @@ const TransactionsList = () => {
   const getYearlyData = () => {
     const yearlyData = {};
     
+    // Helper function to parse date from DD/MM/YYYY format
+    const parseDate = (dateStr) => {
+      if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+        const [day, month, year] = dateStr.split('/');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      }
+      return new Date(dateStr);
+    };
+    
     viewTransactions.forEach(t => {
-      const tDate = new Date(t.Date);
+      const tDate = parseDate(t.Date);
       const year = tDate.getFullYear();
       
       if (!yearlyData[year]) {
