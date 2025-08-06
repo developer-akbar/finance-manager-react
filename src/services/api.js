@@ -190,13 +190,24 @@ export const settingsAPI = {
 
 // Import API
 export const importAPI = {
-  // Import from Excel file
+  // Import from Excel/CSV file (expects FormData)
+  importExcel: async (formData) => {
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/import/excel`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // Do not set Content-Type for FormData
+      },
+      body: formData,
+    });
+    return await response.json();
+  },
+  // Import from Excel file (legacy, single file param)
   fromExcel: async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-
     const token = getAuthToken();
-    
     const response = await fetch(`${API_BASE_URL}/import/excel`, {
       method: 'POST',
       headers: {
@@ -204,9 +215,7 @@ export const importAPI = {
       },
       body: formData,
     });
-
     const data = await response.json();
-
     if (!response.ok) {
       if (response.status === 401) {
         setAuthToken(null);
@@ -215,10 +224,8 @@ export const importAPI = {
       }
       throw new Error(data.message || 'Import failed');
     }
-
     return data;
   },
-
   // Import from JSON data
   fromJSON: async (transactions) => {
     return await apiRequest('/import/json', {

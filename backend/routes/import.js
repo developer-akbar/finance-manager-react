@@ -152,7 +152,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           } else if (typeStr.includes('expense')) {
             transactionType = 'Expense';
           } else if (typeStr.includes('transfer')) {
-            transactionType = 'Transfer';
+            transactionType = 'Transfer-Out';
           }
         } else {
           // Fallback: determine by amount sign
@@ -161,12 +161,9 @@ router.post('/excel', upload.single('file'), async (req, res) => {
 
         const absAmount = Math.abs(amount);
 
-        // Create transaction object
-        const transaction = {
+        // Create transaction object based on type
+        let transaction = {
           Date: date,
-          Account: row[accountIndex] || 'Cash',
-          Category: row[categoryIndex] || 'Other',
-          Subcategory: row[subcategoryIndex] || 'Imported',
           Note: row[noteIndex] || '',
           INR: absAmount,
           'Income/Expense': transactionType,
@@ -176,6 +173,19 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           ID: row[idIndex] || `import_${Date.now()}_${i}`,
           user: req.user.id
         };
+
+        // Handle different transaction types
+        if (transactionType === 'Transfer-Out') {
+          // For Transfer-Out: Account = FromAccount, Category = ToAccount
+          transaction.FromAccount = row[accountIndex] || 'Cash';
+          transaction.ToAccount = row[categoryIndex] || 'Other';
+          transaction.Account = row[accountIndex] || 'Cash'; // For display purposes
+        } else {
+          // For Income/Expense: regular fields
+          transaction.Account = row[accountIndex] || 'Cash';
+          transaction.Category = row[categoryIndex] || 'Other';
+          transaction.Subcategory = row[subcategoryIndex] || 'Imported';
+        }
 
         transactions.push(transaction);
       } catch (error) {
