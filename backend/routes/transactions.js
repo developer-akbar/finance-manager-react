@@ -95,11 +95,8 @@ router.get('/:id', async (req, res) => {
 // @access  Private
 router.post('/', [
   body('Date').notEmpty().withMessage('Date is required'),
-  body('Account').notEmpty().withMessage('Account is required'),
-  body('Category').notEmpty().withMessage('Category is required'),
-  body('Subcategory').notEmpty().withMessage('Subcategory is required'),
   body('INR').isNumeric().withMessage('Amount must be a number'),
-  body('Income/Expense').isIn(['Income', 'Expense']).withMessage('Type must be Income or Expense'),
+  body('Income/Expense').isIn(['Income', 'Expense', 'Transfer-Out']).withMessage('Type must be Income, Expense, or Transfer-Out'),
   body('Amount').notEmpty().withMessage('Amount string is required'),
   body('ID').notEmpty().withMessage('Transaction ID is required')
 ], async (req, res) => {
@@ -150,11 +147,8 @@ router.post('/', [
 // @access  Private
 router.put('/:id', [
   body('Date').notEmpty().withMessage('Date is required'),
-  body('Account').notEmpty().withMessage('Account is required'),
-  body('Category').notEmpty().withMessage('Category is required'),
-  body('Subcategory').notEmpty().withMessage('Subcategory is required'),
   body('INR').isNumeric().withMessage('Amount must be a number'),
-  body('Income/Expense').isIn(['Income', 'Expense']).withMessage('Type must be Income or Expense'),
+  body('Income/Expense').isIn(['Income', 'Expense', 'Transfer-Out']).withMessage('Type must be Income, Expense, or Transfer-Out'),
   body('Amount').notEmpty().withMessage('Amount string is required')
 ], async (req, res) => {
   try {
