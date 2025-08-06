@@ -9,10 +9,18 @@ const router = express.Router();
 // Apply authentication middleware to all routes
 router.use(protect);
 
-// Helper function to parse dates from various formats
+// Helper function to parse dates from various formats and return DD/MM/YYYY format
 const parseDate = (dateValue) => {
+  // Helper function to format date as DD/MM/YYYY
+  const formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   if (dateValue instanceof Date) {
-    return dateValue.toLocaleDateString();
+    return formatDate(dateValue);
   }
   
   if (typeof dateValue === 'number') {
@@ -22,7 +30,7 @@ const parseDate = (dateValue) => {
     const unixTimestamp = (dateValue - 25569) * 24 * 60 * 60 * 1000;
     const excelDate = new Date(unixTimestamp);
     if (!isNaN(excelDate.getTime())) {
-      return excelDate.toLocaleDateString();
+      return formatDate(excelDate);
     }
   }
   
@@ -66,7 +74,7 @@ const parseDate = (dateValue) => {
           if (!isNaN(testDate.getTime()) && 
               testDate.getFullYear() >= 1900 && 
               testDate.getFullYear() <= 2100) {
-            return testDate.toLocaleDateString();
+            return formatDate(testDate);
           }
         } catch (e) {
           // Continue to next interpretation
@@ -78,7 +86,7 @@ const parseDate = (dateValue) => {
   // Try standard Date parsing as fallback
   const parsedDate = new Date(dateStr);
   if (!isNaN(parsedDate.getTime())) {
-    return parsedDate.toLocaleDateString();
+    return formatDate(parsedDate);
   }
   
   return null; // Could not parse

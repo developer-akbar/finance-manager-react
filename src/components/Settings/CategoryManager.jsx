@@ -1,23 +1,37 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
+import { settingsAPI } from '../../services/api';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 import './CategoryManager.css';
 
 const CategoryManager = () => {
-  const { state } = useApp();
+  const { state, loadData } = useApp();
   const [editingCategory, setEditingCategory] = useState(null);
   const [editingSubcategory, setEditingSubcategory] = useState(null);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryType, setNewCategoryType] = useState('Expense');
   const [newSubcategoryName, setNewSubcategoryName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const saveCategories = (categories) => {
-    localStorage.setItem('categories', JSON.stringify(categories));
-    window.location.reload(); // Simple refresh to update state
+  const saveCategories = async (categories) => {
+    try {
+      setLoading(true);
+      const response = await settingsAPI.update({ categories });
+      if (response.success) {
+        await loadData(); // Refresh data from backend
+      } else {
+        alert('Failed to save categories: ' + response.message);
+      }
+    } catch (error) {
+      console.error('Error saving categories:', error);
+      alert('Error saving categories: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const addCategory = () => {
+  const addCategory = async () => {
     if (!newCategoryName.trim()) return;
 
     const updatedCategories = {
@@ -28,11 +42,11 @@ const CategoryManager = () => {
       }
     };
 
-    saveCategories(updatedCategories);
+    await saveCategories(updatedCategories);
     setNewCategoryName('');
   };
 
-  const updateCategory = (oldName, newName) => {
+  const updateCategory = async (oldName, newName) => {
     if (!newName.trim() || oldName === newName.trim()) {
       setEditingCategory(null);
       return;
@@ -42,11 +56,11 @@ const CategoryManager = () => {
     updatedCategories[newName.trim()] = updatedCategories[oldName];
     delete updatedCategories[oldName];
 
-    saveCategories(updatedCategories);
+    await saveCategories(updatedCategories);
     setEditingCategory(null);
   };
 
-  const deleteCategory = (categoryName) => {
+  const deleteCategory = async (categoryName) => {
     if (!window.confirm(`Are you sure you want to delete "${categoryName}"?`)) return;
 
     // Check if category is used in transactions
@@ -59,10 +73,10 @@ const CategoryManager = () => {
     const updatedCategories = { ...state.categories };
     delete updatedCategories[categoryName];
 
-    saveCategories(updatedCategories);
+    await saveCategories(updatedCategories);
   };
 
-  const addSubcategory = () => {
+  const addSubcategory = async () => {
     if (!newSubcategoryName.trim() || !selectedCategory) return;
 
     const updatedCategories = { ...state.categories };
@@ -70,12 +84,12 @@ const CategoryManager = () => {
       updatedCategories[selectedCategory].subcategories.push(newSubcategoryName.trim());
     }
 
-    saveCategories(updatedCategories);
+    await saveCategories(updatedCategories);
     setNewSubcategoryName('');
     setSelectedCategory('');
   };
 
-  const updateSubcategory = (categoryName, oldSubcategory, newSubcategory) => {
+  const updateSubcategory = async (categoryName, oldSubcategory, newSubcategory) => {
     if (!newSubcategory.trim()) return;
 
     const updatedCategories = { ...state.categories };
@@ -86,11 +100,11 @@ const CategoryManager = () => {
       subcategories[index] = newSubcategory.trim();
     }
 
-    saveCategories(updatedCategories);
+    await saveCategories(updatedCategories);
     setEditingSubcategory(null);
   };
 
-  const deleteSubcategory = (categoryName, subcategory) => {
+  const deleteSubcategory = async (categoryName, subcategory) => {
     if (!window.confirm(`Are you sure you want to delete "${subcategory}"?`)) return;
 
     // Check if subcategory is used in transactions
@@ -107,7 +121,7 @@ const CategoryManager = () => {
     updatedCategories[categoryName].subcategories = updatedCategories[categoryName].subcategories
       .filter(sub => sub !== subcategory);
 
-    saveCategories(updatedCategories);
+    await saveCategories(updatedCategories);
   };
 
   const expenseCategories = Object.entries(state.categories).filter(([, data]) => data.type === 'Expense');
