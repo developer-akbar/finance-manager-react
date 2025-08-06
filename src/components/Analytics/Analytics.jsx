@@ -9,6 +9,10 @@ const Analytics = () => {
   const { state } = useApp();
   const { transactions } = state;
   
+  // Debug: Log transaction count
+  console.log('Analytics - Total transactions:', transactions.length);
+  console.log('Analytics - Sample transactions:', transactions.slice(0, 3));
+  
   const [timeframe, setTimeframe] = useState('all');
   const [chartType, setChartType] = useState('monthly');
 

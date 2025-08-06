@@ -138,6 +138,13 @@ export const transactionsAPI = {
       body: JSON.stringify({ transactions }),
     });
   },
+
+  // Delete all transactions
+  deleteAll: async () => {
+    return await apiRequest('/transactions/clear', {
+      method: 'DELETE',
+    });
+  },
 };
 
 // Settings API

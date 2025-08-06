@@ -174,24 +174,31 @@ const Settings = () => {
     }
   };
 
-  const clearAllData = () => {
-    // Clear all localStorage data
-    const keysToRemove = [
-      'masterExpenses',
-      'accounts',
-      'categories',
-      'accountGroups',
-      'accountMapping',
-      'csvConversionDetails'
-    ];
-    
-    keysToRemove.forEach(key => localStorage.removeItem(key));
-    
-    // Reload data (will initialize with defaults)
-    loadDataFromStorage();
-    
-    alert('All data has been cleared successfully!');
-    setShowClearModal(false);
+  const clearAllData = async () => {
+    try {
+      // Clear all data from backend
+      await Promise.all([
+        // Clear all transactions
+        transactionsAPI.deleteAll(),
+        // Reset settings to defaults
+        settingsAPI.update({
+          accounts: [],
+          categories: {},
+          accountGroups: [],
+          accountMapping: {},
+          csvConversionDetails: {}
+        })
+      ]);
+      
+      // Refresh data from backend
+      await refreshTransactions();
+      
+      alert('All data has been cleared successfully!');
+      setShowClearModal(false);
+    } catch (error) {
+      console.error('Error clearing data:', error);
+      alert('Error clearing data. Please try again.');
+    }
   };
 
   return (
