@@ -25,6 +25,7 @@ const Settings = () => {
   const [showClearModal, setShowClearModal] = useState(false);
   const [importLoading, setImportLoading] = useState(false);
   const [importError, setImportError] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const sections = [
     { id: 'accounts', label: 'Accounts' },
@@ -56,15 +57,35 @@ const Settings = () => {
     setShowExportModal(false);
   };
 
-  const importData = async (event) => {
+  const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    setSelectedFile(file);
+    setImportError(''); // Clear previous errors
+
+    // Validate file type
+    if (!(file.type === 'application/json' || file.name.endsWith('.json') ||
+          file.type === 'text/csv' || file.name.endsWith('.csv') ||
+          file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+          file.type === 'application/vnd.ms-excel' ||
+          file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
+      setImportError('Unsupported file format. Please use JSON, CSV, or Excel files.');
+      setSelectedFile(null);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setImportError('Please select a file first.');
+      return;
+    }
 
     setImportLoading(true);
     setImportError('');
 
     try {
-      if (file.type === 'application/json' || file.name.endsWith('.json')) {
+      if (selectedFile.type === 'application/json' || selectedFile.name.endsWith('.json')) {
         // Handle JSON file
         const reader = new FileReader();
         reader.onload = async (e) => {
@@ -80,6 +101,7 @@ const Settings = () => {
                   console.warn('Import warnings:', response.data.errors);
                 }
                 setShowImportModal(false);
+                setSelectedFile(null);
                 // Refresh transactions to show imported data
                 await refreshTransactions();
               } else {
@@ -94,14 +116,14 @@ const Settings = () => {
             setImportLoading(false);
           }
         };
-        reader.readAsText(file);
-      } else if (file.type === 'text/csv' || file.name.endsWith('.csv') || 
-                 file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
-                 file.type === 'application/vnd.ms-excel' ||
-                 file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+        reader.readAsText(selectedFile);
+      } else if (selectedFile.type === 'text/csv' || selectedFile.name.endsWith('.csv') || 
+                 selectedFile.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                 selectedFile.type === 'application/vnd.ms-excel' ||
+                 selectedFile.name.endsWith('.xlsx') || selectedFile.name.endsWith('.xls')) {
         // Handle Excel/CSV file
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('file', selectedFile);
         
         const response = await importAPI.importExcel(formData);
         
@@ -111,6 +133,7 @@ const Settings = () => {
             console.warn('Import warnings:', response.data.errors);
           }
           setShowImportModal(false);
+          setSelectedFile(null);
           // Refresh transactions to show imported data
           await refreshTransactions();
         } else {
@@ -334,16 +357,32 @@ const Settings = () => {
                 <p><strong>Warning:</strong> This will replace all your current data with the imported data. Make sure to export your current data first if you want to keep it.</p>
               </div>
               <div className="file-input">
-                <label htmlFor="import-file">Select backup file:</label>
+                <label htmlFor="import-file">Select file:</label>
                 <input
                   type="file"
                   id="import-file"
                   accept=".json,.csv,.xlsx,.xls"
-                  onChange={importData}
+                  onChange={handleFileSelect}
                   disabled={importLoading}
                 />
+                {selectedFile && (
+                  <div className="selected-file">
+                    <p><strong>Selected file:</strong> {selectedFile.name}</p>
+                    <p><strong>Size:</strong> {(selectedFile.size / 1024).toFixed(2)} KB</p>
+                  </div>
+                )}
                 {importLoading && <p>Importing data...</p>}
                 {importError && <p style={{ color: 'red' }}>{importError}</p>}
+              </div>
+              <div className="upload-actions">
+                <button
+                  type="button"
+                  className="upload-btn"
+                  onClick={handleUpload}
+                  disabled={!selectedFile || importLoading}
+                >
+                  {importLoading ? 'Uploading...' : 'Upload File'}
+                </button>
               </div>
             </div>
             <div className="modal-actions">

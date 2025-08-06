@@ -14,31 +14,31 @@ const transactionSchema = new mongoose.Schema({
   Account: {
     type: String,
     required: function() {
-      return this['Income/Expense'] !== 'Transfer';
+      return this['Income/Expense'] !== 'Transfer' && this['Income/Expense'] !== 'Transfer-Out';
     }
   },
   FromAccount: {
     type: String,
     required: function() {
-      return this['Income/Expense'] === 'Transfer';
+      return this['Income/Expense'] === 'Transfer' || this['Income/Expense'] === 'Transfer-Out';
     }
   },
   ToAccount: {
     type: String,
     required: function() {
-      return this['Income/Expense'] === 'Transfer';
+      return this['Income/Expense'] === 'Transfer' || this['Income/Expense'] === 'Transfer-Out';
     }
   },
   Category: {
     type: String,
     required: function() {
-      return this['Income/Expense'] !== 'Transfer';
+      return this['Income/Expense'] !== 'Transfer' && this['Income/Expense'] !== 'Transfer-Out';
     }
   },
   Subcategory: {
     type: String,
     required: function() {
-      return this['Income/Expense'] !== 'Transfer';
+      return this['Income/Expense'] !== 'Transfer' && this['Income/Expense'] !== 'Transfer-Out';
     }
   },
   Note: {
@@ -51,7 +51,7 @@ const transactionSchema = new mongoose.Schema({
   },
   'Income/Expense': {
     type: String,
-    enum: ['Income', 'Expense', 'Transfer'],
+    enum: ['Income', 'Expense', 'Transfer', 'Transfer-Out'],
     required: [true, 'Transaction type is required']
   },
   Description: {

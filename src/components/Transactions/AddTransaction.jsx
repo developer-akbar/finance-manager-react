@@ -31,7 +31,7 @@ const AddTransaction = () => {
       newErrors.Amount = 'Valid amount is required';
     }
 
-    if (formData['Income/Expense'] === 'Transfer') {
+    if (formData['Income/Expense'] === 'Transfer-Out') {
       if (!formData.FromAccount) newErrors.FromAccount = 'From Account is required';
       if (!formData.ToAccount) newErrors.ToAccount = 'To Account is required';
       if (formData.FromAccount === formData.ToAccount) {
@@ -54,8 +54,8 @@ const AddTransaction = () => {
     const transaction = {
       ...formData,
       INR: parseFloat(formData.Amount),
-      // For Transfer transactions, set Account to FromAccount for display purposes
-      Account: formData['Income/Expense'] === 'Transfer' ? formData.FromAccount : formData.Account
+      // For Transfer-Out transactions, set Account to FromAccount for display purposes
+      Account: formData['Income/Expense'] === 'Transfer-Out' ? formData.FromAccount : formData.Account
     };
 
     addTransaction(transaction);
@@ -125,7 +125,7 @@ const AddTransaction = () => {
             >
               <option value="Expense">Expense</option>
               <option value="Income">Income</option>
-              <option value="Transfer">Transfer</option>
+              <option value="Transfer-Out">Transfer</option>
             </select>
           </div>
 
@@ -143,7 +143,7 @@ const AddTransaction = () => {
         </div>
 
         <div className="form-row">
-          {formData['Income/Expense'] === 'Transfer' ? (
+          {formData['Income/Expense'] === 'Transfer-Out' ? (
             <>
               <div className="form-group">
                 <label htmlFor="fromAccount">From Account</label>
@@ -211,7 +211,7 @@ const AddTransaction = () => {
           </div>
         </div>
 
-        {formData['Income/Expense'] !== 'Transfer' && (
+        {formData['Income/Expense'] !== 'Transfer-Out' && (
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="category">Category</label>
