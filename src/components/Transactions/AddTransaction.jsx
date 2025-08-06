@@ -7,11 +7,30 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
   const { state, addTransaction, updateTransaction, dispatch } = useApp();
   const { accounts, categories } = state;
 
+  // Helper function to convert DD/MM/YYYY to YYYY-MM-DD
+  const convertDateForInput = (dateStr) => {
+    if (!dateStr) return new Date().toISOString().split('T')[0];
+    
+    // If already in YYYY-MM-DD format, return as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      return dateStr;
+    }
+    
+    // If in DD/MM/YYYY format, convert to YYYY-MM-DD
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    
+    // Fallback to current date
+    return new Date().toISOString().split('T')[0];
+  };
+
   const [formData, setFormData] = useState(() => {
     if (isEditMode && editTransaction) {
       return {
         ...editTransaction,
-        Date: editTransaction.Date.split('T')[0], // Convert to YYYY-MM-DD format
+        Date: convertDateForInput(editTransaction.Date),
         Amount: editTransaction.INR || editTransaction.Amount || ''
       };
     }
@@ -116,9 +135,14 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
   };
 
   // Get categories for the current transaction type
-  const availableCategories = categories[formData['Income/Expense']] || [];
+  const availableCategories = Object.entries(categories || {})
+    .filter(([categoryName, categoryData]) => categoryData.type === formData['Income/Expense'])
+    .map(([categoryName]) => categoryName);
 
-  const availableSubcategories = ['Default']; // For now, just show 'Default' subcategory
+  // Get subcategories for the selected category
+  const availableSubcategories = formData.Category && categories[formData.Category] 
+    ? categories[formData.Category].subcategories || ['Default']
+    : ['Default'];
 
   return (
     <div className="add-transaction">
