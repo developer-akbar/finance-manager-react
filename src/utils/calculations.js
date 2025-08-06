@@ -23,10 +23,13 @@ export const getMonthlyData = (transactions) => {
   const monthlyData = {};
   
   transactions.forEach(transaction => {
-    // Parse date from DD/MM/YYYY format
+    // Parse date from DD/MM/YYYY or DD-MM-YYYY format
     let date;
     if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(transaction.Date)) {
       const [day, month, year] = transaction.Date.split('/');
+      date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(transaction.Date)) {
+      const [day, month, year] = transaction.Date.split('-');
       date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     } else {
       date = new Date(transaction.Date);
@@ -88,9 +91,20 @@ export const formatDate = (dateString) => {
     return dateString;
   }
   
+  // If already in DD-MM-YYYY format, return as is
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateString)) {
+    return dateString;
+  }
+  
   // If in YYYY-MM-DD format, convert to DD/MM/YYYY
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  }
+  
+  // If in YYYY/MM/DD format, convert to DD/MM/YYYY
+  if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(dateString)) {
+    const [year, month, day] = dateString.split('/');
     return `${day}/${month}/${year}`;
   }
   

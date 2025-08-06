@@ -71,10 +71,13 @@ const TransactionsList = () => {
       }
       
       if (filterDate) {
-        // Helper function to parse date from DD/MM/YYYY format
+        // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
         const parseDate = (dateStr) => {
           if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
             const [day, month, year] = dateStr.split('/');
+            return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
+            const [day, month, year] = dateStr.split('-');
             return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
           }
           return new Date(dateStr);
@@ -86,10 +89,13 @@ const TransactionsList = () => {
 
     // Sort transactions
     filtered.sort((a, b) => {
-      // Helper function to parse date from DD/MM/YYYY format
+      // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
       const parseDate = (dateStr) => {
         if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
           const [day, month, year] = dateStr.split('/');
+          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
+          const [day, month, year] = dateStr.split('-');
           return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         }
         return new Date(dateStr);
@@ -176,10 +182,13 @@ const TransactionsList = () => {
     const monthlyData = {};
     const currentYear = currentDate.getFullYear();
     
-    // Helper function to parse date from DD/MM/YYYY format
+    // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
     const parseDate = (dateStr) => {
       if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
         const [day, month, year] = dateStr.split('/');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
+        const [day, month, year] = dateStr.split('-');
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       }
       return new Date(dateStr);
@@ -210,10 +219,13 @@ const TransactionsList = () => {
   const getYearlyData = () => {
     const yearlyData = {};
     
-    // Helper function to parse date from DD/MM/YYYY format
+    // Helper function to parse date from DD/MM/YYYY or DD-MM-YYYY format
     const parseDate = (dateStr) => {
       if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
         const [day, month, year] = dateStr.split('/');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      } else if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
+        const [day, month, year] = dateStr.split('-');
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       }
       return new Date(dateStr);

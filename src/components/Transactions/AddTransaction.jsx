@@ -7,7 +7,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
   const { state, addTransaction, updateTransaction, dispatch } = useApp();
   const { accounts, categories } = state;
 
-  // Helper function to convert DD/MM/YYYY to YYYY-MM-DD
+  // Helper function to convert DD/MM/YYYY or DD-MM-YYYY to YYYY-MM-DD
   const convertDateForInput = (dateStr) => {
     if (!dateStr) return new Date().toISOString().split('T')[0];
     
@@ -19,6 +19,12 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     // If in DD/MM/YYYY format, convert to YYYY-MM-DD
     if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
       const [day, month, year] = dateStr.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    
+    // If in DD-MM-YYYY format, convert to YYYY-MM-DD
+    if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('-');
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     }
     

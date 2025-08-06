@@ -8,7 +8,7 @@ const router = express.Router();
 // Apply authentication middleware to all routes
 router.use(protect);
 
-// Helper function to convert YYYY-MM-DD to DD/MM/YYYY for database storage
+// Helper function to convert various date formats to DD/MM/YYYY for database storage
 const convertDateForStorage = (dateStr) => {
   if (!dateStr) return null;
   
@@ -17,9 +17,21 @@ const convertDateForStorage = (dateStr) => {
     return dateStr;
   }
   
+  // If already in DD-MM-YYYY format, convert to DD/MM/YYYY
+  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateStr)) {
+    const [day, month, year] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  }
+  
   // If in YYYY-MM-DD format, convert to DD/MM/YYYY
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
     const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  }
+  
+  // If in YYYY/MM/DD format, convert to DD/MM/YYYY
+  if (/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(dateStr)) {
+    const [year, month, day] = dateStr.split('/');
     return `${day}/${month}/${year}`;
   }
   
