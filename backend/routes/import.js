@@ -281,8 +281,60 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       });
     }
 
+    // Extract unique accounts and categories from imported data
+    const uniqueAccounts = new Set();
+    const uniqueCategories = {};
+    
+    transactions.forEach(transaction => {
+      if (transaction.Account) {
+        uniqueAccounts.add(transaction.Account);
+      }
+      if (transaction.FromAccount) {
+        uniqueAccounts.add(transaction.FromAccount);
+      }
+      if (transaction.ToAccount) {
+        uniqueAccounts.add(transaction.ToAccount);
+      }
+      if (transaction.Category && transaction['Income/Expense'] !== 'Transfer-Out') {
+        if (!uniqueCategories[transaction['Income/Expense']]) {
+          uniqueCategories[transaction['Income/Expense']] = new Set();
+        }
+        uniqueCategories[transaction['Income/Expense']].add(transaction.Category);
+      }
+    });
+
     // Insert transactions into database
     const result = await Transaction.insertMany(transactions);
+
+    // Update user settings with extracted accounts and categories
+    const UserSettings = require('../models/UserSettings');
+    let userSettings = await UserSettings.findOne({ user: req.user.id });
+    
+    if (!userSettings) {
+      userSettings = new UserSettings({ user: req.user.id });
+    }
+
+    // Update accounts
+    const existingAccounts = userSettings.accounts || [];
+    const newAccounts = Array.from(uniqueAccounts).filter(account => 
+      !existingAccounts.includes(account)
+    );
+    userSettings.accounts = [...existingAccounts, ...newAccounts];
+
+    // Update categories
+    const existingCategories = userSettings.categories || {};
+    Object.keys(uniqueCategories).forEach(type => {
+      if (!existingCategories[type]) {
+        existingCategories[type] = [];
+      }
+      const newCategories = Array.from(uniqueCategories[type]).filter(category => 
+        !existingCategories[type].includes(category)
+      );
+      existingCategories[type] = [...existingCategories[type], ...newCategories];
+    });
+    userSettings.categories = existingCategories;
+
+    await userSettings.save();
 
     const totalRows = rawData.length - 1; // Exclude header row
     const importedCount = result.length;
@@ -292,7 +344,9 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       - Total rows processed: ${totalRows}
       - Successfully imported: ${importedCount}
       - Skipped rows: ${skippedCount}
-      - Errors: ${errors.length}`);
+      - Errors: ${errors.length}
+      - New accounts found: ${newAccounts.length}
+      - New categories found: ${Object.keys(uniqueCategories).reduce((sum, type) => sum + uniqueCategories[type].size, 0)}`);
     
     res.json({
       success: true,
@@ -301,7 +355,14 @@ router.post('/excel', upload.single('file'), async (req, res) => {
         imported: result.length,
         totalRows: totalRows,
         skippedRows: skippedCount,
-        errors: errors.length > 0 ? errors : null
+        errors: errors.length > 0 ? errors : null,
+        newAccounts: newAccounts,
+        newCategories: Object.fromEntries(
+          Object.entries(uniqueCategories).map(([type, categories]) => [
+            type, 
+            Array.from(categories)
+          ])
+        )
       }
     });
 

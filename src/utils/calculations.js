@@ -6,9 +6,10 @@ export const calculateTotals = (transactions) => {
     const amount = parseFloat(transaction.Amount) || 0;
     if (transaction['Income/Expense'] === 'Income') {
       totalIncome += amount;
-    } else {
+    } else if (transaction['Income/Expense'] === 'Expense') {
       totalExpense += amount;
     }
+    // Transfer-Out transactions don't affect income/expense totals
   });
 
   return {
@@ -32,9 +33,10 @@ export const getMonthlyData = (transactions) => {
     const amount = parseFloat(transaction.Amount) || 0;
     if (transaction['Income/Expense'] === 'Income') {
       monthlyData[monthKey].income += amount;
-    } else {
+    } else if (transaction['Income/Expense'] === 'Expense') {
       monthlyData[monthKey].expense += amount;
     }
+    // Transfer-Out transactions don't affect monthly totals
   });
 
   return monthlyData;

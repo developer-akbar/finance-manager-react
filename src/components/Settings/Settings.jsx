@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { importAPI } from '../../services/api';
+import { importAPI, transactionsAPI, settingsAPI } from '../../services/api';
 import { 
   Download, 
   Upload, 
@@ -114,8 +114,11 @@ const Settings = () => {
                 
                 setShowImportModal(false);
                 setSelectedFile(null);
-                // Refresh transactions to show imported data
-                await refreshTransactions();
+                // Refresh transactions and settings to show imported data
+                await Promise.all([
+                  refreshTransactions(),
+                  loadData()
+                ]);
               } else {
                 setImportError(response.message || 'Import failed');
               }
@@ -158,8 +161,11 @@ const Settings = () => {
           
           setShowImportModal(false);
           setSelectedFile(null);
-          // Refresh transactions to show imported data
-          await refreshTransactions();
+          // Refresh transactions and settings to show imported data
+          await Promise.all([
+            refreshTransactions(),
+            loadData()
+          ]);
         } else {
           setImportError(response.message || 'Import failed');
         }

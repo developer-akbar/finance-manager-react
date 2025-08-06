@@ -7,12 +7,14 @@ import EditTransactionModal from './EditTransactionModal';
 import './TransactionsList.css';
 
 const TransactionsList = () => {
-  const { state, deleteTransaction } = useApp();
+  const { state, deleteTransaction, dispatch } = useApp();
   const { transactions, searchTerm, filters } = state;
   
   const [showFilters, setShowFilters] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [sortBy, setSortBy] = useState('date-desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(50);
 
   // Filter and search transactions
   const filteredTransactions = useMemo(() => {
@@ -98,9 +100,20 @@ const TransactionsList = () => {
     }
   };
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
+
   const totalAmount = filteredTransactions.reduce((sum, t) => {
     return sum + (t['Income/Expense'] === 'Income' ? parseFloat(t.Amount) : -parseFloat(t.Amount));
   }, 0);
+
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters, sortBy]);
 
   return (
     <div className="transactions-list">
@@ -148,7 +161,7 @@ const TransactionsList = () => {
 
       <div className="transactions-summary">
         <p>
-          Showing {filteredTransactions.length} transactions
+          Showing {startIndex + 1}-{Math.min(endIndex, filteredTransactions.length)} of {filteredTransactions.length} transactions
           {filteredTransactions.length > 0 && (
             <span className={`total-amount ${totalAmount >= 0 ? 'positive' : 'negative'}`}>
               Total: {formatCurrency(Math.abs(totalAmount))} 
@@ -166,7 +179,7 @@ const TransactionsList = () => {
               : 'No transactions found'}</p>
           </div>
         ) : (
-          filteredTransactions.map((transaction) => (
+          paginatedTransactions.map((transaction) => (
             <div key={transaction.ID} className="transaction-card">
               <div className="transaction-header">
                 <div className="transaction-type">
@@ -236,6 +249,52 @@ const TransactionsList = () => {
           ))
         )}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="pagination-btn"
+          >
+            Previous
+          </button>
+          
+          <div className="page-numbers">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let pageNum;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+              
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`page-btn ${currentPage === pageNum ? 'active' : ''}`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+          </div>
+          
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="pagination-btn"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {editingTransaction && (
         <EditTransactionModal
