@@ -197,8 +197,8 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       const row = rawData[i];
       
       try {
-        // Skip empty rows
-        if (!row[dateIndex] || !row[inrIndex]) {
+        // Skip only truly empty rows (missing date or completely empty INR field)
+        if (!row[dateIndex] || row[inrIndex] === undefined || row[inrIndex] === null || row[inrIndex] === '') {
           console.log(`Row ${i + 1}: Skipping empty row - Date: ${row[dateIndex]}, INR: ${row[inrIndex]}`);
           continue;
         }
@@ -210,7 +210,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           continue;
         }
 
-        // Parse INR amount
+        // Parse INR amount - allow 0 values
         let amount;
         if (typeof row[inrIndex] === 'number') {
           amount = row[inrIndex];
@@ -222,6 +222,9 @@ router.post('/excel', upload.single('file'), async (req, res) => {
             continue;
           }
         }
+        
+        // Allow 0 values - don't skip them
+        console.log(`Row ${i + 1}: Processing amount ${amount} (original: ${row[inrIndex]})`);
 
         // Determine transaction type
         let transactionType = 'Expense'; // Default
@@ -253,6 +256,8 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           ID: row[idIndex] || `import_${Date.now()}_${i}`,
           user: req.user.id
         };
+        
+        console.log(`Row ${i + 1}: Created transaction with amount ${absAmount} (type: ${transactionType})`);
 
         // Handle different transaction types
         if (transactionType === 'Transfer-Out') {

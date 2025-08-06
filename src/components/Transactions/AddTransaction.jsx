@@ -36,8 +36,8 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     const newErrors = {};
 
     if (!formData.Date) newErrors.Date = 'Date is required';
-    if (!formData.Amount || parseFloat(formData.Amount) <= 0) {
-      newErrors.Amount = 'Valid amount is required';
+    if (!formData.Amount || parseFloat(formData.Amount) < 0) {
+      newErrors.Amount = 'Valid amount is required (0 is allowed)';
     }
 
     if (formData['Income/Expense'] === 'Transfer-Out') {
