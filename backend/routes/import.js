@@ -191,6 +191,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     console.log('Sample first row:', rawData[1]);
     console.log('Date column index:', dateIndex);
     console.log('Sample date value:', rawData[1] ? rawData[1][dateIndex] : 'No data');
+    console.log('Total rows to process:', rawData.length - 1);
     
     for (let i = 1; i < rawData.length; i++) {
       const row = rawData[i];
@@ -198,6 +199,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       try {
         // Skip empty rows
         if (!row[dateIndex] || !row[inrIndex]) {
+          console.log(`Row ${i + 1}: Skipping empty row - Date: ${row[dateIndex]}, INR: ${row[inrIndex]}`);
           continue;
         }
 
@@ -282,13 +284,23 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     // Insert transactions into database
     const result = await Transaction.insertMany(transactions);
 
+    const totalRows = rawData.length - 1; // Exclude header row
+    const importedCount = result.length;
+    const skippedCount = totalRows - importedCount;
+    
+    console.log(`Import Summary:
+      - Total rows processed: ${totalRows}
+      - Successfully imported: ${importedCount}
+      - Skipped rows: ${skippedCount}
+      - Errors: ${errors.length}`);
+    
     res.json({
       success: true,
       message: `Successfully imported ${result.length} transactions`,
       data: {
         imported: result.length,
-        totalRows: rawData.length - 1, // Exclude header row
-        skippedRows: rawData.length - 1 - result.length,
+        totalRows: totalRows,
+        skippedRows: skippedCount,
         errors: errors.length > 0 ? errors : null
       }
     });

@@ -10,6 +10,10 @@ const Dashboard = () => {
   const { state } = useApp();
   const { transactions } = state;
 
+  // Debug: Log transaction count
+  console.log('Dashboard - Total transactions:', transactions.length);
+  console.log('Dashboard - Sample transactions:', transactions.slice(0, 3));
+
   const totals = calculateTotals(transactions);
   const monthlyData = getMonthlyData(transactions);
   const expenseByCategory = getCategoryWiseData(transactions, 'Expense');
