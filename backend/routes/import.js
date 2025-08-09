@@ -527,20 +527,17 @@ router.post('/json', async (req, res) => {
       if (transaction.FromAccount) uniqueAccounts.add(transaction.FromAccount);
       if (transaction.ToAccount) uniqueAccounts.add(transaction.ToAccount);
 
-      // Extract categories with proper structure
+      // Extract categories with proper structure (flat structure)
       if (transaction.Category && transaction['Income/Expense']) {
-        const type = transaction['Income/Expense'];
-        if (!uniqueCategories.has(type)) {
-          uniqueCategories.set(type, new Map());
-        }
-        if (!uniqueCategories.get(type).has(transaction.Category)) {
-          uniqueCategories.get(type).set(transaction.Category, {
-            type: type,
+        const categoryName = transaction.Category;
+        if (!uniqueCategories.has(categoryName)) {
+          uniqueCategories.set(categoryName, {
+            type: transaction['Income/Expense'],
             subcategories: [transaction.Subcategory || 'Default']
           });
         } else {
           // Add subcategory if not already present
-          const existingCategory = uniqueCategories.get(type).get(transaction.Category);
+          const existingCategory = uniqueCategories.get(categoryName);
           if (transaction.Subcategory && !existingCategory.subcategories.includes(transaction.Subcategory)) {
             existingCategory.subcategories.push(transaction.Subcategory);
           }
@@ -560,26 +557,20 @@ router.post('/json', async (req, res) => {
     uniqueAccounts.forEach(account => existingAccounts.add(account));
     userSettings.accounts = Array.from(existingAccounts);
 
-    // Merge new categories with existing ones
+    // Merge new categories with existing ones (flat structure)
     const existingCategories = new Map(userSettings.categories || []);
-    uniqueCategories.forEach((categories, type) => {
-      if (!existingCategories.has(type)) {
-        existingCategories.set(type, new Map());
+    uniqueCategories.forEach((categoryData, categoryName) => {
+      if (!existingCategories.has(categoryName)) {
+        existingCategories.set(categoryName, categoryData);
+      } else {
+        // Merge subcategories
+        const existingCategory = existingCategories.get(categoryName);
+        categoryData.subcategories.forEach(subcategory => {
+          if (!existingCategory.subcategories.includes(subcategory)) {
+            existingCategory.subcategories.push(subcategory);
+          }
+        });
       }
-      const existingTypeCategories = existingCategories.get(type);
-      categories.forEach((categoryData, categoryName) => {
-        if (!existingTypeCategories.has(categoryName)) {
-          existingTypeCategories.set(categoryName, categoryData);
-        } else {
-          // Merge subcategories
-          const existingCategory = existingTypeCategories.get(categoryName);
-          categoryData.subcategories.forEach(subcategory => {
-            if (!existingCategory.subcategories.includes(subcategory)) {
-              existingCategory.subcategories.push(subcategory);
-            }
-          });
-        }
-      });
     });
     userSettings.categories = existingCategories;
 
@@ -595,12 +586,7 @@ router.post('/json', async (req, res) => {
         mode: mode,
         errors: errors.length > 0 ? errors : null,
         newAccounts: Array.from(uniqueAccounts),
-        newCategories: Object.fromEntries(
-          Array.from(uniqueCategories.entries()).map(([type, categories]) => [
-            type, 
-            Object.fromEntries(categories)
-          ])
-        )
+        newCategories: Object.fromEntries(uniqueCategories)
       }
     });
 
