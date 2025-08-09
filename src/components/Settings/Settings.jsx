@@ -26,6 +26,7 @@ const Settings = () => {
   const [importLoading, setImportLoading] = useState(false);
   const [importError, setImportError] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [importMode, setImportMode] = useState('override'); // 'override' or 'merge'
 
   const sections = [
     { id: 'accounts', label: 'Accounts' },
@@ -106,7 +107,7 @@ const Settings = () => {
               return;
             }
             
-            const response = await importAPI.fromJSON(transactionsArray);
+            const response = await importAPI.fromJSON(transactionsArray, importMode);
               
               if (response.success) {
                 const stats = response.data;
@@ -151,7 +152,7 @@ const Settings = () => {
         const formData = new FormData();
         formData.append('file', selectedFile);
         
-        const response = await importAPI.importExcel(formData);
+        const response = await importAPI.importExcel(formData, importMode);
         
         if (response.success) {
           const stats = response.data;
@@ -402,8 +403,34 @@ const Settings = () => {
             <div className="modal-body">
               <div className="import-warning">
                 <AlertTriangle size={20} />
-                <p><strong>Warning:</strong> This will replace all your current data with the imported data. Make sure to export your current data first if you want to keep it.</p>
+                <p><strong>Warning:</strong> Choose how you want to import the data:</p>
               </div>
+              
+              <div className="import-mode-selection">
+                <label>
+                  <input
+                    type="radio"
+                    name="importMode"
+                    value="override"
+                    checked={importMode === 'override'}
+                    onChange={(e) => setImportMode(e.target.value)}
+                    disabled={importLoading}
+                  />
+                  <strong>Override Mode:</strong> Replace all existing data with imported data
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="importMode"
+                    value="merge"
+                    checked={importMode === 'merge'}
+                    onChange={(e) => setImportMode(e.target.value)}
+                    disabled={importLoading}
+                  />
+                  <strong>Merge Mode:</strong> Add imported data to existing data (skip duplicates)
+                </label>
+              </div>
+              
               <div className="file-input">
                 <label htmlFor="import-file">Select file:</label>
                 <input

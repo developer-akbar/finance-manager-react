@@ -198,8 +198,10 @@ export const settingsAPI = {
 // Import API
 export const importAPI = {
   // Import from Excel/CSV file (expects FormData)
-  importExcel: async (formData) => {
+  importExcel: async (formData, mode = 'override') => {
     const token = getAuthToken();
+    // Add mode to FormData
+    formData.append('mode', mode);
     const response = await fetch(`${API_BASE_URL}/import/excel`, {
       method: 'POST',
       headers: {
@@ -234,10 +236,10 @@ export const importAPI = {
     return data;
   },
   // Import from JSON data
-  fromJSON: async (transactions) => {
+  fromJSON: async (transactions, mode = 'override') => {
     return await apiRequest('/import/json', {
       method: 'POST',
-      body: JSON.stringify({ transactions }),
+      body: JSON.stringify({ transactions, mode }),
     });
   },
 };

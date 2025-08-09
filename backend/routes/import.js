@@ -434,7 +434,7 @@ router.post('/excel', upload.single('file'), async (req, res) => {
 // @access  Private
 router.post('/json', async (req, res) => {
   try {
-    const { transactions } = req.body;
+    const { transactions, mode = 'override' } = req.body;
 
     if (!Array.isArray(transactions) || transactions.length === 0) {
       return res.status(400).json({
@@ -488,8 +488,34 @@ router.post('/json', async (req, res) => {
       });
     }
 
-    // Insert transactions into database
-    const result = await Transaction.insertMany(processedTransactions);
+    // Handle import mode
+    let result;
+    if (mode === 'override') {
+      // Clear existing transactions for this user
+      await Transaction.deleteMany({ user: req.user.id });
+      // Insert new transactions
+      result = await Transaction.insertMany(processedTransactions);
+    } else if (mode === 'merge') {
+      // Check for duplicates based on ID or Date+Amount+Account combination
+      const existingTransactions = await Transaction.find({ user: req.user.id });
+      const existingIds = new Set(existingTransactions.map(t => t.ID));
+      const existingKeys = new Set(existingTransactions.map(t => `${t.Date}_${t.Amount}_${t.Account}`));
+      
+      const newTransactions = processedTransactions.filter(transaction => {
+        const key = `${transaction.Date}_${transaction.Amount}_${transaction.Account}`;
+        return !existingIds.has(transaction.ID) && !existingKeys.has(key);
+      });
+      
+      if (newTransactions.length > 0) {
+        result = await Transaction.insertMany(newTransactions);
+      } else {
+        result = { length: 0 };
+      }
+    } else {
+      // Default to override
+      await Transaction.deleteMany({ user: req.user.id });
+      result = await Transaction.insertMany(processedTransactions);
+    }
 
     // Extract unique accounts and categories from imported data
     const uniqueAccounts = new Set();
@@ -561,9 +587,12 @@ router.post('/json', async (req, res) => {
 
     res.json({
       success: true,
-      message: `Successfully imported ${result.length} transactions`,
+      message: `Successfully imported ${result.length} transactions using ${mode} mode`,
       data: {
         imported: result.length,
+        totalProcessed: processedTransactions.length,
+        skipped: mode === 'merge' ? processedTransactions.length - result.length : 0,
+        mode: mode,
         errors: errors.length > 0 ? errors : null,
         newAccounts: Array.from(uniqueAccounts),
         newCategories: Object.fromEntries(
