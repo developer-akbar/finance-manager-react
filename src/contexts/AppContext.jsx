@@ -94,7 +94,7 @@ export const AppProvider = ({ children }) => {
       // Load settings and transactions in parallel
       const [settingsResponse, transactionsResponse] = await Promise.all([
         settingsAPI.get(),
-        transactionsAPI.getAll({ limit: 10000 }) // Get all transactions for analytics
+        transactionsAPI.getAll() // Get all transactions for analytics
       ]);
 
       if (settingsResponse.success) {
@@ -227,7 +227,7 @@ export const AppProvider = ({ children }) => {
 
   const refreshTransactions = async () => {
     try {
-      const response = await transactionsAPI.getAll({ limit: 10000 }); // Get all transactions
+      const response = await transactionsAPI.getAll(); // Get all transactions without limit
       if (response.success) {
         dispatch({ type: 'SET_TRANSACTIONS', payload: response.data });
       }

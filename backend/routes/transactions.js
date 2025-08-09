@@ -52,7 +52,7 @@ const convertDateForStorage = (dateStr) => {
 // @access  Private
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 10000, sort = '-Date', filter } = req.query;
+    const { page = 1, limit, sort = '-Date', filter } = req.query;
     
     let query = { user: req.user.id };
     
@@ -73,11 +73,14 @@ router.get('/', async (req, res) => {
       }
     }
 
-    const transactions = await Transaction.find(query)
-      .sort(sort)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .exec();
+    let queryBuilder = Transaction.find(query).sort(sort);
+    
+    // Apply pagination only if limit is specified
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit * 1).skip((page - 1) * limit);
+    }
+    
+    const transactions = await queryBuilder.exec();
 
     const count = await Transaction.countDocuments(query);
 
