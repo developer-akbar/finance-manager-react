@@ -427,7 +427,6 @@ const TransactionsList = () => {
                   <div className="header-cell category">Category/Account</div>
                   <div className="header-cell details">Details</div>
                   <div className="header-cell amount">Amount</div>
-                  <div className="header-cell actions">Actions</div>
                 </div>
                 
                 <div className="table-body">
@@ -468,8 +467,6 @@ const TransactionsList = () => {
                         <span className={`amount-value ${transaction['Income/Expense'].toLowerCase()}`}>
                           {formatCurrency(transaction.INR || transaction.Amount)}
                         </span>
-                      </div>
-                      <div className="cell actions">
                         <div className="action-buttons">
                           <button
                             className="action-btn edit-btn"
@@ -479,7 +476,7 @@ const TransactionsList = () => {
                             }}
                             title="Edit transaction"
                           >
-                            <Edit2 size={16} />
+                            <Edit2 size={14} />
                           </button>
                           <button
                             className="action-btn delete-btn"
@@ -489,7 +486,7 @@ const TransactionsList = () => {
                             }}
                             title="Delete transaction"
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </div>
