@@ -476,7 +476,7 @@ const TransactionsList = () => {
                             }}
                             title="Edit transaction"
                           >
-                            <Edit2 size={14} />
+                            <Edit2 size={12} />
                           </button>
                           <button
                             className="action-btn delete-btn"
@@ -486,7 +486,7 @@ const TransactionsList = () => {
                             }}
                             title="Delete transaction"
                           >
-                            <Trash2 size={14} />
+                            <Trash2 size={12} />
                           </button>
                         </div>
                       </div>
