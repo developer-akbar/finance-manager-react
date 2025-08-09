@@ -331,11 +331,15 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       }
     });
 
-    // Check for existing transactions if mode is merge
+    // Handle import mode
     let finalTransactions = transactions;
     let duplicates = [];
     
-    if (mode === 'merge') {
+    if (mode === 'override') {
+      // Clear existing transactions for this user
+      await Transaction.deleteMany({ user: req.user.id });
+      finalTransactions = transactions;
+    } else if (mode === 'merge') {
       // Get existing transactions for this user
       const existingTransactions = await Transaction.find({ user: req.user.id });
       
