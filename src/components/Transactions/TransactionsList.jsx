@@ -427,6 +427,7 @@ const TransactionsList = () => {
                   <div className="header-cell category">Category/Account</div>
                   <div className="header-cell details">Details</div>
                   <div className="header-cell amount">Amount</div>
+                  <div className="header-cell actions">Actions</div>
                 </div>
                 
                 <div className="table-body">
@@ -434,7 +435,6 @@ const TransactionsList = () => {
                     <div 
                       key={transaction.ID} 
                       className="table-row"
-                      onClick={() => setEditingTransaction(transaction)}
                     >
                       <div className="cell date">
                         {formatDate(transaction.Date)}
@@ -468,6 +468,30 @@ const TransactionsList = () => {
                         <span className={`amount-value ${transaction['Income/Expense'].toLowerCase()}`}>
                           {formatCurrency(transaction.INR || transaction.Amount)}
                         </span>
+                      </div>
+                      <div className="cell actions">
+                        <div className="action-buttons">
+                          <button
+                            className="action-btn edit-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingTransaction(transaction);
+                            }}
+                            title="Edit transaction"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            className="action-btn delete-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(transaction);
+                            }}
+                            title="Delete transaction"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
