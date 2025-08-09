@@ -99,6 +99,7 @@ export const AppProvider = ({ children }) => {
 
       if (settingsResponse.success) {
         const { accounts, categories, accountGroups, accountMapping, csvConversionDetails } = settingsResponse.data;
+        console.log('Settings loaded:', { accounts, categories, accountGroups, accountMapping });
         dispatch({
           type: 'INITIALIZE_DATA',
           payload: {

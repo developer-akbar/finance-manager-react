@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
+import { settingsAPI } from '../../services/api';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 import './AccountManager.css';
 
 const AccountManager = () => {
-  const { state } = useApp();
+  const { state, loadData } = useApp();
   const [editingAccount, setEditingAccount] = useState(null);
   const [editingGroup, setEditingGroup] = useState(null);
   const [newAccountName, setNewAccountName] = useState('');
   const [newGroupName, setNewGroupName] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const saveAccounts = (accounts) => {
-    localStorage.setItem('accounts', JSON.stringify(accounts));
-    window.location.reload(); // Simple refresh to update state
+  const saveSettings = async (settingsData) => {
+    try {
+      setLoading(true);
+      const response = await settingsAPI.update(settingsData);
+      if (response.success) {
+        await loadData(); // Refresh data from backend
+      } else {
+        alert('Failed to save settings: ' + response.message);
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      alert('Error saving settings: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const saveAccountGroups = (groups) => {
-    localStorage.setItem('accountGroups', JSON.stringify(groups));
-    window.location.reload();
-  };
-
-  const saveAccountMapping = (mapping) => {
-    localStorage.setItem('accountMapping', JSON.stringify(mapping));
-    window.location.reload();
-  };
-
-  const addAccount = () => {
+  const addAccount = async () => {
     if (!newAccountName.trim() || !selectedGroup) return;
 
     const updatedAccounts = [...state.accounts, newAccountName.trim()];
@@ -37,13 +41,15 @@ const AccountManager = () => {
     }
     updatedMapping[selectedGroup].push(newAccountName.trim());
 
-    saveAccounts(updatedAccounts);
-    saveAccountMapping(updatedMapping);
+    await saveSettings({
+      accounts: updatedAccounts,
+      accountMapping: updatedMapping
+    });
     setNewAccountName('');
     setSelectedGroup('');
   };
 
-  const updateAccount = (oldName, newName) => {
+  const updateAccount = async (oldName, newName) => {
     if (!newName.trim()) return;
 
     const updatedAccounts = state.accounts.map(acc => acc === oldName ? newName.trim() : acc);
@@ -54,12 +60,14 @@ const AccountManager = () => {
       updatedMapping[group] = updatedMapping[group].map(acc => acc === oldName ? newName.trim() : acc);
     });
 
-    saveAccounts(updatedAccounts);
-    saveAccountMapping(updatedMapping);
+    await saveSettings({
+      accounts: updatedAccounts,
+      accountMapping: updatedMapping
+    });
     setEditingAccount(null);
   };
 
-  const deleteAccount = (accountName) => {
+  const deleteAccount = async (accountName) => {
     if (!window.confirm(`Are you sure you want to delete "${accountName}"?`)) return;
 
     // Check if account is used in transactions
@@ -77,11 +85,13 @@ const AccountManager = () => {
       updatedMapping[group] = updatedMapping[group].filter(acc => acc !== accountName);
     });
 
-    saveAccounts(updatedAccounts);
-    saveAccountMapping(updatedMapping);
+    await saveSettings({
+      accounts: updatedAccounts,
+      accountMapping: updatedMapping
+    });
   };
 
-  const addGroup = () => {
+  const addGroup = async () => {
     if (!newGroupName.trim()) return;
 
     const newGroup = {
@@ -92,35 +102,42 @@ const AccountManager = () => {
     const updatedGroups = [...state.accountGroups, newGroup];
     const updatedMapping = { ...state.accountMapping, [newGroupName.trim()]: [] };
 
-    saveAccountGroups(updatedGroups);
-    saveAccountMapping(updatedMapping);
+    await saveSettings({
+      accountGroups: updatedGroups,
+      accountMapping: updatedMapping
+    });
     setNewGroupName('');
   };
 
-  const updateGroup = (oldName, newName) => {
-    if (!newName.trim()) return;
+  const updateGroup = async (oldName, newName) => {
+    if (!newName.trim() || oldName === newName.trim()) {
+      setEditingGroup(null);
+      return;
+    }
 
     const updatedGroups = state.accountGroups.map(group => 
       group.name === oldName ? { ...group, name: newName.trim() } : group
     );
-    
     const updatedMapping = { ...state.accountMapping };
+    
     if (updatedMapping[oldName]) {
       updatedMapping[newName.trim()] = updatedMapping[oldName];
       delete updatedMapping[oldName];
     }
 
-    saveAccountGroups(updatedGroups);
-    saveAccountMapping(updatedMapping);
+    await saveSettings({
+      accountGroups: updatedGroups,
+      accountMapping: updatedMapping
+    });
     setEditingGroup(null);
   };
 
-  const deleteGroup = (groupName) => {
-    if (!window.confirm(`Are you sure you want to delete group "${groupName}"?`)) return;
+  const deleteGroup = async (groupName) => {
+    if (!window.confirm(`Are you sure you want to delete "${groupName}"?`)) return;
 
-    const groupAccounts = state.accountMapping[groupName] || [];
-    if (groupAccounts.length > 0) {
-      alert('Cannot delete group that contains accounts. Please move or delete the accounts first.');
+    // Check if group has accounts
+    if (state.accountMapping[groupName] && state.accountMapping[groupName].length > 0) {
+      alert('Cannot delete group that has accounts. Please move or delete the accounts first.');
       return;
     }
 
@@ -128,8 +145,10 @@ const AccountManager = () => {
     const updatedMapping = { ...state.accountMapping };
     delete updatedMapping[groupName];
 
-    saveAccountGroups(updatedGroups);
-    saveAccountMapping(updatedMapping);
+    await saveSettings({
+      accountGroups: updatedGroups,
+      accountMapping: updatedMapping
+    });
   };
 
   return (
