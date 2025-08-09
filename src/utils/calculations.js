@@ -23,14 +23,17 @@ export const getMonthlyData = (transactions) => {
   const monthlyData = {};
   
   transactions.forEach(transaction => {
-    // Parse date using user's proven approach
+    // Parse date - handle DD/MM/YYYY format directly
     let date;
-    const convertedDate = convertDateFormat(transaction.Date);
-    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(convertedDate)) {
-      const [day, month, year] = convertedDate.split('/');
+    const dateStr = transaction.Date;
+    
+    // If in DD/MM/YYYY format, parse directly
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateStr)) {
+      const [day, month, year] = dateStr.split('/');
       date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     } else {
-      date = new Date(transaction.Date);
+      // Try other formats
+      date = new Date(dateStr);
     }
     
     if (isNaN(date.getTime())) return; // Skip invalid dates

@@ -64,6 +64,16 @@ const categories = {
 // Helper functions
 const getRandomElement = (array) => array[Math.floor(Math.random() * array.length)];
 
+// Generate valid MongoDB ObjectId (24 hex characters)
+const generateObjectId = () => {
+  const hexChars = '0123456789abcdef';
+  let result = '';
+  for (let i = 0; i < 24; i++) {
+    result += hexChars[Math.floor(Math.random() * hexChars.length)];
+  }
+  return result;
+};
+
 const getRandomAmount = (category, type) => {
   let min, max;
   
@@ -202,7 +212,7 @@ const formatDate = (date) => {
 
 const generateTransactions = () => {
   const transactions = [];
-  const user = "507f1f77bcf86cd799439011"; // Sample user ID
+  const user = generateObjectId(); // Generate valid ObjectId for user
   let transactionId = 1;
   
   // Generate transactions from 2015 to 2026
@@ -263,23 +273,31 @@ const generateTransactions = () => {
         const description = generateDescription(category, subcategory, amount, type);
         
         const transaction = {
-          _id: `test_${transactionId.toString().padStart(6, '0')}`,
-          user: user,
+          _id: {
+            "$oid": generateObjectId()
+          },
+          user: {
+            "$oid": user
+          },
           Date: dateStr,
           Account: type === 'Transfer-Out' ? fromAccount : account,
           FromAccount: type === 'Transfer-Out' ? fromAccount : '',
           ToAccount: type === 'Transfer-Out' ? toAccount : '',
           Category: category,
-          Subcategory: subcategory,
+          Subcategory: subcategory || 'Default',
           Note: note,
           INR: amount,
           'Income/Expense': type,
           Description: description,
           Amount: amount.toString(),
           Currency: 'INR',
-          ID: `test_${Date.now()}_${transactionId}`,
-          createdAt: date.toISOString(),
-          updatedAt: date.toISOString(),
+          ID: `${Date.now()}_${transactionId}`,
+          createdAt: {
+            "$date": date.toISOString()
+          },
+          updatedAt: {
+            "$date": date.toISOString()
+          },
           __v: 0
         };
         
@@ -298,22 +316,22 @@ const transactions = generateTransactions();
 console.log(`Generated ${transactions.length} transactions`);
 
 // Save as JSON
-fs.writeFileSync('test_transactions.json', JSON.stringify(transactions, null, 2));
-console.log('Saved to test_transactions.json');
+fs.writeFileSync('test_transactions_corrected.json', JSON.stringify(transactions, null, 2));
+console.log('Saved to test_transactions_corrected.json');
 
 // Save as CSV
 const csvHeader = '_id,user,Date,Account,FromAccount,ToAccount,Category,Subcategory,Note,INR,Income/Expense,Description,Amount,Currency,ID,createdAt,updatedAt,__v\n';
 const csvRows = transactions.map(t => 
-  `"${t._id}","${t.user}","${t.Date}","${t.Account}","${t.FromAccount}","${t.ToAccount}","${t.Category}","${t.Subcategory}","${t.Note}","${t.INR}","${t['Income/Expense']}","${t.Description}","${t.Amount}","${t.Currency}","${t.ID}","${t.createdAt}","${t.updatedAt}","${t.__v}"`
+  `"${t._id['$oid']}","${t.user['$oid']}","${t.Date}","${t.Account}","${t.FromAccount}","${t.ToAccount}","${t.Category}","${t.Subcategory}","${t.Note}","${t.INR}","${t['Income/Expense']}","${t.Description}","${t.Amount}","${t.Currency}","${t.ID}","${t.createdAt['$date']}","${t.updatedAt['$date']}","${t.__v}"`
 ).join('\n');
 
-fs.writeFileSync('test_transactions.csv', csvHeader + csvRows);
-console.log('Saved to test_transactions.csv');
+fs.writeFileSync('test_transactions_corrected.csv', csvHeader + csvRows);
+console.log('Saved to test_transactions_corrected.csv');
 
 // Print summary
 const summary = {
   totalTransactions: transactions.length,
-  years: [...new Set(transactions.map(t => new Date(t.createdAt).getFullYear()))].sort(),
+  years: [...new Set(transactions.map(t => new Date(t.createdAt['$date']).getFullYear()))].sort(),
   types: [...new Set(transactions.map(t => t['Income/Expense']))],
   categories: [...new Set(transactions.map(t => t.Category).filter(Boolean))],
   accounts: [...new Set(transactions.map(t => t.Account))],
