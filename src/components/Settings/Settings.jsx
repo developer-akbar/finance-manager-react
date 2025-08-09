@@ -92,8 +92,21 @@ const Settings = () => {
           try {
             const data = JSON.parse(e.target.result);
             
+            // Handle both formats: { transactions: [...] } and direct array [...]
+            let transactionsArray;
             if (data.transactions && Array.isArray(data.transactions)) {
-              const response = await importAPI.importJSON({ transactions: data.transactions });
+              // Format: { transactions: [...] }
+              transactionsArray = data.transactions;
+            } else if (Array.isArray(data)) {
+              // Format: direct array [...]
+              transactionsArray = data;
+            } else {
+              setImportError('Invalid JSON format. Expected transactions array or object with transactions property.');
+              setImportLoading(false);
+              return;
+            }
+            
+            const response = await importAPI.importJSON({ transactions: transactionsArray });
               
               if (response.success) {
                 const stats = response.data;
@@ -122,9 +135,6 @@ const Settings = () => {
               } else {
                 setImportError(response.message || 'Import failed');
               }
-            } else {
-              setImportError('Invalid JSON format. Expected transactions array.');
-            }
           } catch (error) {
             setImportError('Error reading JSON file. Please check the file format.');
           } finally {
