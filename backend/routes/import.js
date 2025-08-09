@@ -300,23 +300,34 @@ router.post('/excel', upload.single('file'), async (req, res) => {
 
     // Extract unique accounts and categories from imported data
     const uniqueAccounts = new Set();
-    const uniqueCategories = {};
+    const uniqueCategories = new Map();
+    const accountGroups = [
+      { id: 1, name: 'Cash & Bank' },
+      { id: 2, name: 'Credit Cards' },
+      { id: 3, name: 'Investments' }
+    ];
     
     transactions.forEach(transaction => {
-      if (transaction.Account) {
-        uniqueAccounts.add(transaction.Account);
-      }
-      if (transaction.FromAccount) {
-        uniqueAccounts.add(transaction.FromAccount);
-      }
-      if (transaction.ToAccount) {
-        uniqueAccounts.add(transaction.ToAccount);
-      }
-      if (transaction.Category && transaction['Income/Expense'] !== 'Transfer-Out') {
-        if (!uniqueCategories[transaction['Income/Expense']]) {
-          uniqueCategories[transaction['Income/Expense']] = new Set();
+      // Extract accounts
+      if (transaction.Account) uniqueAccounts.add(transaction.Account);
+      if (transaction.FromAccount) uniqueAccounts.add(transaction.FromAccount);
+      if (transaction.ToAccount) uniqueAccounts.add(transaction.ToAccount);
+
+      // Extract categories with proper structure (flat structure)
+      if (transaction.Category && transaction['Income/Expense']) {
+        const categoryName = transaction.Category;
+        if (!uniqueCategories.has(categoryName)) {
+          uniqueCategories.set(categoryName, {
+            type: transaction['Income/Expense'],
+            subcategories: [transaction.Subcategory || 'Default']
+          });
+        } else {
+          // Add subcategory if not already present
+          const existingCategory = uniqueCategories.get(categoryName);
+          if (transaction.Subcategory && !existingCategory.subcategories.includes(transaction.Subcategory)) {
+            existingCategory.subcategories.push(transaction.Subcategory);
+          }
         }
-        uniqueCategories[transaction['Income/Expense']].add(transaction.Category);
       }
     });
 
@@ -366,23 +377,49 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       userSettings = new UserSettings({ user: req.user.id });
     }
 
-    // Update accounts
-    const existingAccounts = userSettings.accounts || [];
-    const newAccounts = Array.from(uniqueAccounts).filter(account => 
-      !existingAccounts.includes(account)
-    );
-    userSettings.accounts = [...existingAccounts, ...newAccounts];
+    // Merge new accounts with existing ones
+    const existingAccounts = new Set(userSettings.accounts || []);
+    uniqueAccounts.forEach(account => existingAccounts.add(account));
+    userSettings.accounts = Array.from(existingAccounts);
 
-    // Update categories
-    const existingCategories = userSettings.categories || {};
-    Object.keys(uniqueCategories).forEach(type => {
-      if (!existingCategories[type]) {
-        existingCategories[type] = [];
+    // Create account mapping based on account types
+    const accountMapping = new Map();
+    accountMapping.set('Cash & Bank', []);
+    accountMapping.set('Credit Cards', []);
+    accountMapping.set('Investments', []);
+
+    // Map accounts to groups
+    Array.from(existingAccounts).forEach(account => {
+      if (account.toLowerCase().includes('cash') || account.toLowerCase().includes('bank')) {
+        accountMapping.get('Cash & Bank').push(account);
+      } else if (account.toLowerCase().includes('credit')) {
+        accountMapping.get('Credit Cards').push(account);
+      } else if (account.toLowerCase().includes('investment') || account.toLowerCase().includes('savings')) {
+        accountMapping.get('Investments').push(account);
+      } else {
+        // Default to Cash & Bank
+        accountMapping.get('Cash & Bank').push(account);
       }
-      const newCategories = Array.from(uniqueCategories[type]).filter(category => 
-        !existingCategories[type].includes(category)
-      );
-      existingCategories[type] = [...existingCategories[type], ...newCategories];
+    });
+
+    // Update account groups and mapping
+    userSettings.accountGroups = accountGroups;
+    userSettings.accountMapping = accountMapping;
+
+    // Merge new categories with existing ones (flat structure)
+    const existingCategories = new Map(userSettings.categories || []);
+    uniqueCategories.forEach((categoryData, categoryName) => {
+      if (!existingCategories.has(categoryName)) {
+        existingCategories.set(categoryName, categoryData);
+      } else {
+        // Merge subcategories
+        const existingCategory = existingCategories.get(categoryName);
+        categoryData.subcategories.forEach(subcategory => {
+          if (!existingCategory.subcategories.includes(subcategory)) {
+            existingCategory.subcategories.push(subcategory);
+          }
+        });
+      }
     });
     userSettings.categories = existingCategories;
 
@@ -398,25 +435,22 @@ router.post('/excel', upload.single('file'), async (req, res) => {
       - Skipped rows: ${skippedCount}
       - Duplicates found: ${duplicates.length}
       - Errors: ${errors.length}
-      - New accounts found: ${newAccounts.length}
-      - New categories found: ${Object.keys(uniqueCategories).reduce((sum, type) => sum + uniqueCategories[type].size, 0)}`);
+      - New accounts found: ${Array.from(uniqueAccounts).length}
+      - New categories found: ${uniqueCategories.size}`);
     
     res.json({
       success: true,
-      message: `Successfully imported ${result.length} transactions`,
+      message: `Successfully imported ${result.length} transactions using ${mode} mode`,
       data: {
         imported: result.length,
-        totalRows: totalRows,
-        skippedRows: skippedCount,
-        duplicates: duplicates.length > 0 ? duplicates.length : null,
+        totalProcessed: totalRows,
+        skipped: mode === 'merge' ? totalRows - importedCount : 0,
+        mode: mode,
         errors: errors.length > 0 ? errors : null,
-        newAccounts: newAccounts,
-        newCategories: Object.fromEntries(
-          Object.entries(uniqueCategories).map(([type, categories]) => [
-            type, 
-            Array.from(categories)
-          ])
-        )
+        newAccounts: Array.from(uniqueAccounts),
+        newAccountGroups: accountGroups,
+        newAccountMapping: Object.fromEntries(accountMapping),
+        newCategories: Object.fromEntries(uniqueCategories)
       }
     });
 
