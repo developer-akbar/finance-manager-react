@@ -520,6 +520,11 @@ router.post('/json', async (req, res) => {
     // Extract unique accounts and categories from imported data
     const uniqueAccounts = new Set();
     const uniqueCategories = new Map();
+    const accountGroups = [
+      { id: 1, name: 'Cash & Bank' },
+      { id: 2, name: 'Credit Cards' },
+      { id: 3, name: 'Investments' }
+    ];
 
     processedTransactions.forEach(transaction => {
       // Extract accounts
@@ -557,6 +562,30 @@ router.post('/json', async (req, res) => {
     uniqueAccounts.forEach(account => existingAccounts.add(account));
     userSettings.accounts = Array.from(existingAccounts);
 
+    // Create account mapping based on account types
+    const accountMapping = new Map();
+    accountMapping.set('Cash & Bank', []);
+    accountMapping.set('Credit Cards', []);
+    accountMapping.set('Investments', []);
+
+    // Map accounts to groups
+    Array.from(existingAccounts).forEach(account => {
+      if (account.toLowerCase().includes('cash') || account.toLowerCase().includes('bank')) {
+        accountMapping.get('Cash & Bank').push(account);
+      } else if (account.toLowerCase().includes('credit')) {
+        accountMapping.get('Credit Cards').push(account);
+      } else if (account.toLowerCase().includes('investment') || account.toLowerCase().includes('savings')) {
+        accountMapping.get('Investments').push(account);
+      } else {
+        // Default to Cash & Bank
+        accountMapping.get('Cash & Bank').push(account);
+      }
+    });
+
+    // Update account groups and mapping
+    userSettings.accountGroups = accountGroups;
+    userSettings.accountMapping = accountMapping;
+
     // Merge new categories with existing ones (flat structure)
     const existingCategories = new Map(userSettings.categories || []);
     uniqueCategories.forEach((categoryData, categoryName) => {
@@ -586,6 +615,8 @@ router.post('/json', async (req, res) => {
         mode: mode,
         errors: errors.length > 0 ? errors : null,
         newAccounts: Array.from(uniqueAccounts),
+        newAccountGroups: accountGroups,
+        newAccountMapping: Object.fromEntries(accountMapping),
         newCategories: Object.fromEntries(uniqueCategories)
       }
     });
