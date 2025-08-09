@@ -501,13 +501,24 @@ router.post('/json', async (req, res) => {
       if (transaction.FromAccount) uniqueAccounts.add(transaction.FromAccount);
       if (transaction.ToAccount) uniqueAccounts.add(transaction.ToAccount);
 
-      // Extract categories
+      // Extract categories with proper structure
       if (transaction.Category && transaction['Income/Expense']) {
         const type = transaction['Income/Expense'];
         if (!uniqueCategories.has(type)) {
-          uniqueCategories.set(type, new Set());
+          uniqueCategories.set(type, new Map());
         }
-        uniqueCategories.get(type).add(transaction.Category);
+        if (!uniqueCategories.get(type).has(transaction.Category)) {
+          uniqueCategories.get(type).set(transaction.Category, {
+            type: type,
+            subcategories: [transaction.Subcategory || 'Default']
+          });
+        } else {
+          // Add subcategory if not already present
+          const existingCategory = uniqueCategories.get(type).get(transaction.Category);
+          if (transaction.Subcategory && !existingCategory.subcategories.includes(transaction.Subcategory)) {
+            existingCategory.subcategories.push(transaction.Subcategory);
+          }
+        }
       }
     });
 
@@ -527,9 +538,22 @@ router.post('/json', async (req, res) => {
     const existingCategories = new Map(userSettings.categories || []);
     uniqueCategories.forEach((categories, type) => {
       if (!existingCategories.has(type)) {
-        existingCategories.set(type, new Set());
+        existingCategories.set(type, new Map());
       }
-      categories.forEach(category => existingCategories.get(type).add(category));
+      const existingTypeCategories = existingCategories.get(type);
+      categories.forEach((categoryData, categoryName) => {
+        if (!existingTypeCategories.has(categoryName)) {
+          existingTypeCategories.set(categoryName, categoryData);
+        } else {
+          // Merge subcategories
+          const existingCategory = existingTypeCategories.get(categoryName);
+          categoryData.subcategories.forEach(subcategory => {
+            if (!existingCategory.subcategories.includes(subcategory)) {
+              existingCategory.subcategories.push(subcategory);
+            }
+          });
+        }
+      });
     });
     userSettings.categories = existingCategories;
 
@@ -545,7 +569,7 @@ router.post('/json', async (req, res) => {
         newCategories: Object.fromEntries(
           Array.from(uniqueCategories.entries()).map(([type, categories]) => [
             type, 
-            Array.from(categories)
+            Object.fromEntries(categories)
           ])
         )
       }
