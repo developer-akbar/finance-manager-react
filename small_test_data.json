@@ -1,0 +1,2802 @@
+[
+  {
+    "_id": {
+      "$oid": "test000001957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "02/10/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 1",
+    "INR": 5041,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "5041",
+    "Currency": "INR",
+    "ID": "test_1754731957659_1",
+    "createdAt": {
+      "$date": "2024-10-01T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-01T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000002957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "07/03/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 2",
+    "INR": 746,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "746",
+    "Currency": "INR",
+    "ID": "test_1754731957659_2",
+    "createdAt": {
+      "$date": "2024-03-06T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-06T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000003957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "10/08/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 3",
+    "INR": 4577,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4577",
+    "Currency": "INR",
+    "ID": "test_1754731957659_3",
+    "createdAt": {
+      "$date": "2024-08-09T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-09T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000004957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "15/05/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 4",
+    "INR": 4863,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4863",
+    "Currency": "INR",
+    "ID": "test_1754731957659_4",
+    "createdAt": {
+      "$date": "2024-05-14T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-14T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000005957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "25/07/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 5",
+    "INR": 3031,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3031",
+    "Currency": "INR",
+    "ID": "test_1754731957659_5",
+    "createdAt": {
+      "$date": "2024-07-24T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-24T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000006957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "08/01/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 6",
+    "INR": 3705,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3705",
+    "Currency": "INR",
+    "ID": "test_1754731957659_6",
+    "createdAt": {
+      "$date": "2024-01-07T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-07T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000007957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "04/09/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 7",
+    "INR": 1378,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1378",
+    "Currency": "INR",
+    "ID": "test_1754731957659_7",
+    "createdAt": {
+      "$date": "2024-09-03T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-03T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000008957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "01/02/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 8",
+    "INR": 1579,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1579",
+    "Currency": "INR",
+    "ID": "test_1754731957659_8",
+    "createdAt": {
+      "$date": "2024-01-31T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-31T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000009957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "06/01/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 9",
+    "INR": 1187,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1187",
+    "Currency": "INR",
+    "ID": "test_1754731957659_9",
+    "createdAt": {
+      "$date": "2024-01-05T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-05T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000010957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "07/07/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 10",
+    "INR": 4310,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4310",
+    "Currency": "INR",
+    "ID": "test_1754731957659_10",
+    "createdAt": {
+      "$date": "2024-07-06T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-06T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000011957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "16/07/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 11",
+    "INR": 1760,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1760",
+    "Currency": "INR",
+    "ID": "test_1754731957659_11",
+    "createdAt": {
+      "$date": "2024-07-15T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-15T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000012957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "08/01/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 12",
+    "INR": 4817,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4817",
+    "Currency": "INR",
+    "ID": "test_1754731957659_12",
+    "createdAt": {
+      "$date": "2024-01-07T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-07T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000013957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "13/02/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 13",
+    "INR": 3647,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3647",
+    "Currency": "INR",
+    "ID": "test_1754731957659_13",
+    "createdAt": {
+      "$date": "2024-02-12T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-12T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000014957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "12/09/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 14",
+    "INR": 3904,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3904",
+    "Currency": "INR",
+    "ID": "test_1754731957659_14",
+    "createdAt": {
+      "$date": "2024-09-11T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-11T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000015957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "07/04/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 15",
+    "INR": 1059,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1059",
+    "Currency": "INR",
+    "ID": "test_1754731957659_15",
+    "createdAt": {
+      "$date": "2024-04-06T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-06T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000016957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "02/02/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 16",
+    "INR": 3432,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3432",
+    "Currency": "INR",
+    "ID": "test_1754731957659_16",
+    "createdAt": {
+      "$date": "2024-02-01T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-01T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000017957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "02/08/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 17",
+    "INR": 4870,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4870",
+    "Currency": "INR",
+    "ID": "test_1754731957659_17",
+    "createdAt": {
+      "$date": "2024-08-01T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-01T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000018957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "26/06/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 18",
+    "INR": 2614,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2614",
+    "Currency": "INR",
+    "ID": "test_1754731957659_18",
+    "createdAt": {
+      "$date": "2024-06-25T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-25T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000019957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "23/04/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 19",
+    "INR": 4494,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4494",
+    "Currency": "INR",
+    "ID": "test_1754731957659_19",
+    "createdAt": {
+      "$date": "2024-04-22T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-22T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000020957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "10/03/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 20",
+    "INR": 2381,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2381",
+    "Currency": "INR",
+    "ID": "test_1754731957659_20",
+    "createdAt": {
+      "$date": "2024-03-09T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-09T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000021957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "10/06/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 21",
+    "INR": 459,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "459",
+    "Currency": "INR",
+    "ID": "test_1754731957659_21",
+    "createdAt": {
+      "$date": "2024-06-09T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-09T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000022957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "26/10/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 22",
+    "INR": 1011,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1011",
+    "Currency": "INR",
+    "ID": "test_1754731957659_22",
+    "createdAt": {
+      "$date": "2024-10-25T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-25T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000023957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "24/11/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 23",
+    "INR": 2841,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2841",
+    "Currency": "INR",
+    "ID": "test_1754731957659_23",
+    "createdAt": {
+      "$date": "2024-11-23T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-23T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000024957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "10/12/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 24",
+    "INR": 2602,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2602",
+    "Currency": "INR",
+    "ID": "test_1754731957659_24",
+    "createdAt": {
+      "$date": "2024-12-09T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-09T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000025957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "19/09/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 25",
+    "INR": 2464,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2464",
+    "Currency": "INR",
+    "ID": "test_1754731957659_25",
+    "createdAt": {
+      "$date": "2024-09-18T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-18T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000026957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "23/09/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 26",
+    "INR": 1201,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1201",
+    "Currency": "INR",
+    "ID": "test_1754731957659_26",
+    "createdAt": {
+      "$date": "2024-09-22T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-22T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000027957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "10/11/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 27",
+    "INR": 3274,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3274",
+    "Currency": "INR",
+    "ID": "test_1754731957659_27",
+    "createdAt": {
+      "$date": "2024-11-09T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-09T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000028957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "18/10/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 28",
+    "INR": 1039,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1039",
+    "Currency": "INR",
+    "ID": "test_1754731957659_28",
+    "createdAt": {
+      "$date": "2024-10-17T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-17T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000029957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "15/06/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 29",
+    "INR": 2235,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2235",
+    "Currency": "INR",
+    "ID": "test_1754731957659_29",
+    "createdAt": {
+      "$date": "2024-06-14T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-14T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000030957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "12/01/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 30",
+    "INR": 2553,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2553",
+    "Currency": "INR",
+    "ID": "test_1754731957659_30",
+    "createdAt": {
+      "$date": "2024-01-11T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-11T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000031957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/05/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 31",
+    "INR": 2781,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2781",
+    "Currency": "INR",
+    "ID": "test_1754731957659_31",
+    "createdAt": {
+      "$date": "2024-05-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000032957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "27/10/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 32",
+    "INR": 4690,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4690",
+    "Currency": "INR",
+    "ID": "test_1754731957659_32",
+    "createdAt": {
+      "$date": "2024-10-26T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-26T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000033957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "01/08/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 33",
+    "INR": 2694,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2694",
+    "Currency": "INR",
+    "ID": "test_1754731957659_33",
+    "createdAt": {
+      "$date": "2024-07-31T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-31T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000034957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "02/04/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 34",
+    "INR": 3005,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3005",
+    "Currency": "INR",
+    "ID": "test_1754731957659_34",
+    "createdAt": {
+      "$date": "2024-04-01T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-01T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000035957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "22/04/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 35",
+    "INR": 2986,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2986",
+    "Currency": "INR",
+    "ID": "test_1754731957659_35",
+    "createdAt": {
+      "$date": "2024-04-21T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-21T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000036957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "22/01/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 36",
+    "INR": 1939,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1939",
+    "Currency": "INR",
+    "ID": "test_1754731957659_36",
+    "createdAt": {
+      "$date": "2024-01-21T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-21T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000037957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "26/02/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 37",
+    "INR": 2170,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2170",
+    "Currency": "INR",
+    "ID": "test_1754731957659_37",
+    "createdAt": {
+      "$date": "2024-02-25T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-25T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000038957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "26/05/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 38",
+    "INR": 966,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "966",
+    "Currency": "INR",
+    "ID": "test_1754731957659_38",
+    "createdAt": {
+      "$date": "2024-05-25T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-25T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000039957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "19/07/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 39",
+    "INR": 3909,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3909",
+    "Currency": "INR",
+    "ID": "test_1754731957659_39",
+    "createdAt": {
+      "$date": "2024-07-18T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-18T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000040957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/04/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 40",
+    "INR": 2253,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2253",
+    "Currency": "INR",
+    "ID": "test_1754731957659_40",
+    "createdAt": {
+      "$date": "2024-04-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000041957659"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "08/08/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 41",
+    "INR": 1011,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1011",
+    "Currency": "INR",
+    "ID": "test_1754731957659_41",
+    "createdAt": {
+      "$date": "2024-08-07T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-07T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000042957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "07/11/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 42",
+    "INR": 1716,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1716",
+    "Currency": "INR",
+    "ID": "test_1754731957660_42",
+    "createdAt": {
+      "$date": "2024-11-06T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-06T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000043957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "08/01/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 43",
+    "INR": 2881,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2881",
+    "Currency": "INR",
+    "ID": "test_1754731957660_43",
+    "createdAt": {
+      "$date": "2024-01-07T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-07T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000044957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "01/06/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 44",
+    "INR": 3886,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3886",
+    "Currency": "INR",
+    "ID": "test_1754731957660_44",
+    "createdAt": {
+      "$date": "2024-05-31T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-31T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000045957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "21/03/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 45",
+    "INR": 797,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "797",
+    "Currency": "INR",
+    "ID": "test_1754731957660_45",
+    "createdAt": {
+      "$date": "2024-03-20T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-20T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000046957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "02/02/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 46",
+    "INR": 2606,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2606",
+    "Currency": "INR",
+    "ID": "test_1754731957660_46",
+    "createdAt": {
+      "$date": "2024-02-01T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-01T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000047957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "21/03/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 47",
+    "INR": 3482,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3482",
+    "Currency": "INR",
+    "ID": "test_1754731957660_47",
+    "createdAt": {
+      "$date": "2024-03-20T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-20T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000048957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "01/05/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 48",
+    "INR": 4923,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4923",
+    "Currency": "INR",
+    "ID": "test_1754731957660_48",
+    "createdAt": {
+      "$date": "2024-04-30T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-30T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000049957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "10/02/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 49",
+    "INR": 1227,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1227",
+    "Currency": "INR",
+    "ID": "test_1754731957660_49",
+    "createdAt": {
+      "$date": "2024-02-09T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-09T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000050957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "22/11/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 50",
+    "INR": 2558,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2558",
+    "Currency": "INR",
+    "ID": "test_1754731957660_50",
+    "createdAt": {
+      "$date": "2024-11-21T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-21T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000051957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "16/08/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 51",
+    "INR": 1200,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1200",
+    "Currency": "INR",
+    "ID": "test_1754731957660_51",
+    "createdAt": {
+      "$date": "2024-08-15T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-15T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000052957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/03/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 52",
+    "INR": 3557,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3557",
+    "Currency": "INR",
+    "ID": "test_1754731957660_52",
+    "createdAt": {
+      "$date": "2024-03-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000053957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/11/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 53",
+    "INR": 3238,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3238",
+    "Currency": "INR",
+    "ID": "test_1754731957660_53",
+    "createdAt": {
+      "$date": "2024-11-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000054957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "12/08/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 54",
+    "INR": 891,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "891",
+    "Currency": "INR",
+    "ID": "test_1754731957660_54",
+    "createdAt": {
+      "$date": "2024-08-11T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-11T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000055957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "14/09/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 55",
+    "INR": 4817,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4817",
+    "Currency": "INR",
+    "ID": "test_1754731957660_55",
+    "createdAt": {
+      "$date": "2024-09-13T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-13T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000056957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "16/11/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 56",
+    "INR": 2314,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2314",
+    "Currency": "INR",
+    "ID": "test_1754731957660_56",
+    "createdAt": {
+      "$date": "2024-11-15T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-15T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000057957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "13/07/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 57",
+    "INR": 2115,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2115",
+    "Currency": "INR",
+    "ID": "test_1754731957660_57",
+    "createdAt": {
+      "$date": "2024-07-12T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-12T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000058957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "27/01/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 58",
+    "INR": 2032,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2032",
+    "Currency": "INR",
+    "ID": "test_1754731957660_58",
+    "createdAt": {
+      "$date": "2024-01-26T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-26T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000059957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "08/09/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 59",
+    "INR": 989,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "989",
+    "Currency": "INR",
+    "ID": "test_1754731957660_59",
+    "createdAt": {
+      "$date": "2024-09-07T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-07T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000060957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "01/10/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 60",
+    "INR": 4527,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4527",
+    "Currency": "INR",
+    "ID": "test_1754731957660_60",
+    "createdAt": {
+      "$date": "2024-09-30T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-30T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000061957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "24/09/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 61",
+    "INR": 1823,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1823",
+    "Currency": "INR",
+    "ID": "test_1754731957660_61",
+    "createdAt": {
+      "$date": "2024-09-23T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-23T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000062957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "15/06/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 62",
+    "INR": 2871,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2871",
+    "Currency": "INR",
+    "ID": "test_1754731957660_62",
+    "createdAt": {
+      "$date": "2024-06-14T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-14T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000063957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "24/10/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 63",
+    "INR": 2516,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2516",
+    "Currency": "INR",
+    "ID": "test_1754731957660_63",
+    "createdAt": {
+      "$date": "2024-10-23T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-23T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000064957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "20/12/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 64",
+    "INR": 3381,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3381",
+    "Currency": "INR",
+    "ID": "test_1754731957660_64",
+    "createdAt": {
+      "$date": "2024-12-19T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000065957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "28/06/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 65",
+    "INR": 2647,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2647",
+    "Currency": "INR",
+    "ID": "test_1754731957660_65",
+    "createdAt": {
+      "$date": "2024-06-27T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-27T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000066957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "15/08/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 66",
+    "INR": 329,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "329",
+    "Currency": "INR",
+    "ID": "test_1754731957660_66",
+    "createdAt": {
+      "$date": "2024-08-14T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-14T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000067957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/02/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 67",
+    "INR": 1877,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1877",
+    "Currency": "INR",
+    "ID": "test_1754731957660_67",
+    "createdAt": {
+      "$date": "2024-02-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000068957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "16/09/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 68",
+    "INR": 696,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "696",
+    "Currency": "INR",
+    "ID": "test_1754731957660_68",
+    "createdAt": {
+      "$date": "2024-09-15T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-15T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000069957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "12/04/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 69",
+    "INR": 4984,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "4984",
+    "Currency": "INR",
+    "ID": "test_1754731957660_69",
+    "createdAt": {
+      "$date": "2024-04-11T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-11T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000070957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "08/07/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 70",
+    "INR": 2518,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2518",
+    "Currency": "INR",
+    "ID": "test_1754731957660_70",
+    "createdAt": {
+      "$date": "2024-07-07T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-07T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000071957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "18/10/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 71",
+    "INR": 661,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "661",
+    "Currency": "INR",
+    "ID": "test_1754731957660_71",
+    "createdAt": {
+      "$date": "2024-10-17T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-17T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000072957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "26/01/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 72",
+    "INR": 3854,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3854",
+    "Currency": "INR",
+    "ID": "test_1754731957660_72",
+    "createdAt": {
+      "$date": "2024-01-25T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-25T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000073957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "03/06/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 73",
+    "INR": 1107,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1107",
+    "Currency": "INR",
+    "ID": "test_1754731957660_73",
+    "createdAt": {
+      "$date": "2024-06-02T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-02T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000074957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "11/01/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 74",
+    "INR": 4837,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4837",
+    "Currency": "INR",
+    "ID": "test_1754731957660_74",
+    "createdAt": {
+      "$date": "2024-01-10T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-10T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000075957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "16/11/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 75",
+    "INR": 1204,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1204",
+    "Currency": "INR",
+    "ID": "test_1754731957660_75",
+    "createdAt": {
+      "$date": "2024-11-15T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-15T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000076957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "07/08/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 76",
+    "INR": 434,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "434",
+    "Currency": "INR",
+    "ID": "test_1754731957660_76",
+    "createdAt": {
+      "$date": "2024-08-06T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-06T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000077957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "21/09/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 77",
+    "INR": 3226,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3226",
+    "Currency": "INR",
+    "ID": "test_1754731957660_77",
+    "createdAt": {
+      "$date": "2024-09-20T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-20T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000078957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "11/02/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 78",
+    "INR": 4629,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4629",
+    "Currency": "INR",
+    "ID": "test_1754731957660_78",
+    "createdAt": {
+      "$date": "2024-02-10T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-02-10T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000079957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "19/04/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 79",
+    "INR": 3303,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3303",
+    "Currency": "INR",
+    "ID": "test_1754731957660_79",
+    "createdAt": {
+      "$date": "2024-04-18T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-04-18T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000080957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "13/12/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 80",
+    "INR": 3955,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "3955",
+    "Currency": "INR",
+    "ID": "test_1754731957660_80",
+    "createdAt": {
+      "$date": "2024-12-12T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-12T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000081957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "21/12/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 81",
+    "INR": 4818,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4818",
+    "Currency": "INR",
+    "ID": "test_1754731957660_81",
+    "createdAt": {
+      "$date": "2024-12-20T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-20T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000082957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "04/10/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 82",
+    "INR": 1182,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "1182",
+    "Currency": "INR",
+    "ID": "test_1754731957660_82",
+    "createdAt": {
+      "$date": "2024-10-03T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-10-03T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000083957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/07/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 83",
+    "INR": 4135,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "4135",
+    "Currency": "INR",
+    "ID": "test_1754731957660_83",
+    "createdAt": {
+      "$date": "2024-07-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000084957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "07/03/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 84",
+    "INR": 920,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "920",
+    "Currency": "INR",
+    "ID": "test_1754731957660_84",
+    "createdAt": {
+      "$date": "2024-03-06T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-06T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000085957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "21/11/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 85",
+    "INR": 2446,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2446",
+    "Currency": "INR",
+    "ID": "test_1754731957660_85",
+    "createdAt": {
+      "$date": "2024-11-20T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-20T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000086957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "24/12/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 86",
+    "INR": 1994,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1994",
+    "Currency": "INR",
+    "ID": "test_1754731957660_86",
+    "createdAt": {
+      "$date": "2024-12-23T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-23T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000087957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "11/12/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 87",
+    "INR": 631,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "631",
+    "Currency": "INR",
+    "ID": "test_1754731957660_87",
+    "createdAt": {
+      "$date": "2024-12-10T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-10T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000088957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "19/09/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 88",
+    "INR": 2032,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2032",
+    "Currency": "INR",
+    "ID": "test_1754731957660_88",
+    "createdAt": {
+      "$date": "2024-09-18T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-18T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000089957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "17/03/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Test transaction 89",
+    "INR": 477,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "477",
+    "Currency": "INR",
+    "ID": "test_1754731957660_89",
+    "createdAt": {
+      "$date": "2024-03-16T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-16T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000090957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "18/03/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 90",
+    "INR": 571,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "571",
+    "Currency": "INR",
+    "ID": "test_1754731957660_90",
+    "createdAt": {
+      "$date": "2024-03-17T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-17T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000091957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "17/09/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 91",
+    "INR": 2927,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2927",
+    "Currency": "INR",
+    "ID": "test_1754731957660_91",
+    "createdAt": {
+      "$date": "2024-09-16T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-16T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000092957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "09/01/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 92",
+    "INR": 2383,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2383",
+    "Currency": "INR",
+    "ID": "test_1754731957660_92",
+    "createdAt": {
+      "$date": "2024-01-08T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-01-08T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000093957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "24/11/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 93",
+    "INR": 1061,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "1061",
+    "Currency": "INR",
+    "ID": "test_1754731957660_93",
+    "createdAt": {
+      "$date": "2024-11-23T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-11-23T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000094957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "21/07/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 94",
+    "INR": 2343,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2343",
+    "Currency": "INR",
+    "ID": "test_1754731957660_94",
+    "createdAt": {
+      "$date": "2024-07-20T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-07-20T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000095957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "25/05/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 95",
+    "INR": 3466,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3466",
+    "Currency": "INR",
+    "ID": "test_1754731957660_95",
+    "createdAt": {
+      "$date": "2024-05-24T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-24T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000096957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "12/06/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Rent",
+    "Note": "Test transaction 96",
+    "INR": 447,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "447",
+    "Currency": "INR",
+    "ID": "test_1754731957660_96",
+    "createdAt": {
+      "$date": "2024-06-11T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-06-11T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000097957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "14/09/2024",
+    "Account": "Credit Card",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Housing",
+    "Subcategory": "Electricity",
+    "Note": "Test transaction 97",
+    "INR": 2697,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2697",
+    "Currency": "INR",
+    "ID": "test_1754731957660_97",
+    "createdAt": {
+      "$date": "2024-09-13T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-09-13T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000098957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "12/03/2024",
+    "Account": "Cash",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Food",
+    "Subcategory": "Dining",
+    "Note": "Test transaction 98",
+    "INR": 2158,
+    "Income/Expense": "Expense",
+    "Description": "Test expense transaction",
+    "Amount": "2158",
+    "Currency": "INR",
+    "ID": "test_1754731957660_98",
+    "createdAt": {
+      "$date": "2024-03-11T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-03-11T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000099957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "03/08/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Bonus",
+    "Subcategory": "Default",
+    "Note": "Test transaction 99",
+    "INR": 3755,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "3755",
+    "Currency": "INR",
+    "ID": "test_1754731957660_99",
+    "createdAt": {
+      "$date": "2024-08-02T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-02T18:30:00.000Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "test000100957660"
+    },
+    "user": {
+      "$oid": "6896e4a524cff7cc619fcf30"
+    },
+    "Date": "19/08/2024",
+    "Account": "Bank Account",
+    "FromAccount": "",
+    "ToAccount": "",
+    "Category": "Salary",
+    "Subcategory": "Default",
+    "Note": "Test transaction 100",
+    "INR": 2628,
+    "Income/Expense": "Income",
+    "Description": "Test income transaction",
+    "Amount": "2628",
+    "Currency": "INR",
+    "ID": "test_1754731957660_100",
+    "createdAt": {
+      "$date": "2024-08-18T18:30:00.000Z"
+    },
+    "updatedAt": {
+      "$date": "2024-08-18T18:30:00.000Z"
+    },
+    "__v": 0
+  }
+]
