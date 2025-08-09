@@ -345,11 +345,20 @@ const TransactionsList = () => {
         <div className="view-title">
           <h2>{getViewTitle()}</h2>
           <div className="view-totals">
-            <span className="total-item income">Income: {formatCurrency(totals.income)}</span>
-            <span className="total-item expense">Expense: {formatCurrency(totals.expense)}</span>
-            <span className={`total-item balance ${totals.balance >= 0 ? 'positive' : 'negative'}`}>
-              Net: {formatCurrency(Math.abs(totals.balance))}
-            </span>
+            <div className="total-item income">
+              <span className="total-label">Income</span>
+              <span className="total-value">{formatCurrency(totals.income)}</span>
+            </div>
+            <div className="total-item expense">
+              <span className="total-label">Expense</span>
+              <span className="total-value">{formatCurrency(totals.expense)}</span>
+            </div>
+            <div className={`total-item balance ${totals.balance >= 0 ? 'positive' : 'negative'}`}>
+              <span className="total-label">Net Balance</span>
+              <span className="total-value">
+                {totals.balance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(totals.balance))}
+              </span>
+            </div>
           </div>
         </div>
         
@@ -534,7 +543,7 @@ const TransactionsList = () => {
                     <div className="stat income">+{formatCurrency(monthData.income)}</div>
                     <div className="stat expense">-{formatCurrency(monthData.expense)}</div>
                     <div className={`stat net ${netAmount >= 0 ? 'positive' : 'negative'}`}>
-                      {netAmount >= 0 ? '+' : ''}{formatCurrency(netAmount)}
+                      {netAmount >= 0 ? '+' : '-'}{formatCurrency(Math.abs(netAmount))}
                     </div>
                   </div>
                   <div className="transaction-count">{monthData.count} transactions</div>
@@ -564,7 +573,7 @@ const TransactionsList = () => {
                       <div className="stat income">+{formatCurrency(data.income)}</div>
                       <div className="stat expense">-{formatCurrency(data.expense)}</div>
                       <div className={`stat net ${netAmount >= 0 ? 'positive' : 'negative'}`}>
-                        {netAmount >= 0 ? '+' : ''}{formatCurrency(netAmount)}
+                        {netAmount >= 0 ? '+' : '-'}{formatCurrency(Math.abs(netAmount))}
                       </div>
                     </div>
                     <div className="transaction-count">{data.count} transactions</div>
