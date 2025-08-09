@@ -1,33 +1,68 @@
+/* Modern Sidebar Navigation */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 260px;
+  width: 280px;
   height: 100vh;
-  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
-  color: white;
-  z-index: 1000;
+  background-color: var(--background-elevated);
+  border-right: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: var(--z-fixed);
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .sidebar-header {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
+  color: var(--text-primary);
+}
+
+.logo-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  flex-shrink: 0;
+}
+
+.logo-icon svg {
+  color: var(--text-inverse);
+}
+
+.logo-trend {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--accent-success);
+  color: var(--text-inverse);
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: var(--shadow-sm);
 }
 
 .logo h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--text-primary), var(--text-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -36,64 +71,178 @@
 .nav-menu {
   flex: 1;
   list-style: none;
-  padding: 1rem 0;
   margin: 0;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.875rem 1.5rem;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.95rem;
-  font-weight: 500;
-  width: 100%;
-  text-align: left;
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  text-decoration: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
   position: relative;
+  overflow: hidden;
+}
+
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--accent-primary);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: -1;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: var(--text-primary);
+  background-color: var(--background-secondary);
+  transform: translateX(4px);
+}
+
+.nav-item:hover::before {
+  opacity: 0.05;
 }
 
 .nav-item.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  font-weight: 600;
+  color: var(--accent-primary);
+  background-color: var(--background-secondary);
+  box-shadow: var(--shadow-sm);
+  font-weight: var(--font-semibold);
 }
 
 .nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: #65a30d;
+  opacity: 0.1;
+}
+
+.nav-item svg {
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.nav-item:hover svg {
+  transform: scale(1.1);
+}
+
+.nav-item.active svg {
+  color: var(--accent-primary);
 }
 
 .sidebar-footer {
-  padding: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--space-4);
+  border-top: 1px solid var(--border-primary);
 }
 
 .logout-btn {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--accent-error) !important;
+  background-color: rgba(220, 38, 38, 0.05) !important;
+  border: 1px solid rgba(220, 38, 38, 0.1) !important;
 }
 
 .logout-btn:hover {
-  background: rgba(220, 38, 38, 0.2);
-  color: #fca5a5;
+  color: var(--accent-error) !important;
+  background-color: rgba(220, 38, 38, 0.1) !important;
+  border-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+.logout-btn svg {
+  color: var(--accent-error) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
 }
 
 @media (max-width: 768px) {
   .sidebar {
-    display: none;
+    width: 100%;
+    height: 100vh;
+  }
+  
+  .sidebar-header {
+    padding: var(--space-4);
+  }
+  
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .logo h2 {
+    font-size: var(--text-lg);
+  }
+  
+  .nav-menu {
+    padding: var(--space-3);
+  }
+  
+  .nav-item {
+    padding: var(--space-3);
   }
 }
+
+/* Dark mode adjustments */
+[data-theme="dark"] .sidebar {
+  background-color: var(--background-elevated);
+  border-right-color: var(--border-primary);
+}
+
+[data-theme="dark"] .logo h2 {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Focus styles */
+.nav-item:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Animation for menu items */
+.nav-item {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Stagger animation for menu items */
+.nav-menu li:nth-child(1) .nav-item { animation-delay: 0.1s; }
+.nav-menu li:nth-child(2) .nav-item { animation-delay: 0.2s; }
+.nav-menu li:nth-child(3) .nav-item { animation-delay: 0.3s; }
+.nav-menu li:nth-child(4) .nav-item { animation-delay: 0.4s; }
+.nav-menu li:nth-child(5) .nav-item { animation-delay: 0.5s; }
