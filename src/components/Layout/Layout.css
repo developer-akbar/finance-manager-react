@@ -1,35 +1,116 @@
+/* Modern Layout Styles */
 .layout {
   display: flex;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: var(--background-primary);
+  transition: background-color var(--transition-normal);
 }
 
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  background-color: var(--background-secondary);
+  transition: all var(--transition-normal);
 }
 
 .main-content.with-sidebar {
-  margin-left: 260px;
+  margin-left: 280px;
 }
 
 .content-wrapper {
   flex: 1;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
   width: 100%;
+  max-width: none;
 }
 
-@media (max-width: 768px) {
-  .main-content {
+.content-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-content.with-sidebar {
     margin-left: 0;
-    padding-bottom: 80px;
   }
   
   .content-wrapper {
-    padding: 1rem;
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    min-height: calc(100vh - 80px); /* Account for mobile nav */
+  }
+  
+  .content-wrapper {
+    padding: var(--space-3);
+    padding-bottom: calc(var(--space-3) + 80px); /* Space for mobile nav */
+  }
+  
+  .content-header {
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+  }
+}
+
+@media (max-width: 640px) {
+  .content-wrapper {
+    padding: var(--space-2);
+    padding-bottom: calc(var(--space-2) + 80px);
+  }
+  
+  .content-header {
+    margin-bottom: var(--space-2);
+    padding-bottom: var(--space-1);
+  }
+}
+
+/* Smooth transitions for theme changes */
+.layout * {
+  transition: background-color var(--transition-normal), 
+              color var(--transition-normal), 
+              border-color var(--transition-normal);
+}
+
+/* Loading states */
+.layout.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Focus management */
+.layout:focus-within {
+  outline: none;
+}
+
+/* Print styles */
+@media print {
+  .layout {
+    background: white;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    background: white;
+  }
+  
+  .content-header {
+    display: none;
   }
 }

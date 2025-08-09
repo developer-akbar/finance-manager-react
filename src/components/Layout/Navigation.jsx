@@ -8,8 +8,10 @@ import {
   BarChart3, 
   Settings, 
   LogOut,
-  DollarSign
+  TrendingUp,
+  Wallet
 } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 import './Navigation.css';
 
 const Navigation = () => {
@@ -28,9 +30,13 @@ const Navigation = () => {
     <nav className="sidebar">
       <div className="sidebar-header">
         <div className="logo">
-          <DollarSign size={32} />
-          <h2>FinanceManager</h2>
+          <div className="logo-icon">
+            <Wallet size={24} />
+            <TrendingUp size={16} className="logo-trend" />
+          </div>
+          <h2>FinancePro</h2>
         </div>
+        <ThemeToggle />
       </div>
       
       <ul className="nav-menu">
