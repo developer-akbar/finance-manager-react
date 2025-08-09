@@ -136,7 +136,8 @@ const Settings = () => {
                 setImportError(response.message || 'Import failed');
               }
           } catch (error) {
-            setImportError('Error reading JSON file. Please check the file format.');
+            console.error('JSON parsing error:', error);
+            setImportError(`Error reading JSON file: ${error.message}. Please check the file format.`);
           } finally {
             setImportLoading(false);
           }

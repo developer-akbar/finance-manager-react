@@ -139,24 +139,15 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     }
   };
 
-  // Debug: Log categories data
-  console.log('Categories data:', categories);
-  console.log('Accounts data:', accounts);
-  console.log('Current transaction type:', formData['Income/Expense']);
-
   // Get categories for the current transaction type
   const availableCategories = Object.entries(categories || {})
     .filter(([categoryName, categoryData]) => categoryData.type === formData['Income/Expense'])
     .map(([categoryName]) => categoryName);
 
-  console.log('Available categories for', formData['Income/Expense'], ':', availableCategories);
-
   // Get subcategories for the selected category
   const availableSubcategories = formData.Category && categories[formData.Category] 
     ? categories[formData.Category].subcategories || ['Default']
     : ['Default'];
-
-  console.log('Available subcategories for', formData.Category, ':', availableSubcategories);
 
   return (
     <div className="add-transaction">
