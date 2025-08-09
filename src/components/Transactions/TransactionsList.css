@@ -402,8 +402,8 @@
   }
 
   .action-btn {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -686,6 +686,7 @@
   justify-content: center;
   align-items: flex-end;
   position: relative;
+  padding-bottom: 2rem;
 }
 
 .amount-value {
@@ -712,8 +713,8 @@
   opacity: 0;
   transition: opacity 0.2s ease;
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 0.5rem;
+  right: 0.5rem;
 }
 
 .table-row:hover .action-buttons {
@@ -724,19 +725,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px);
 }
 
 .action-btn.edit-btn {
-  color: #3b82f6;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .action-btn.edit-btn:hover {
@@ -744,10 +745,13 @@
   color: white;
   transform: scale(1.1);
   box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  border-color: #3b82f6;
 }
 
 .action-btn.delete-btn {
-  color: #dc2626;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
 .action-btn.delete-btn:hover {
@@ -755,6 +759,7 @@
   color: white;
   transform: scale(1.1);
   box-shadow: 0 2px 6px rgba(220, 38, 38, 0.3);
+  border-color: #dc2626;
 }
 
 /* Monthly View */
