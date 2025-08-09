@@ -37,9 +37,7 @@ const transactionSchema = new mongoose.Schema({
   },
   Subcategory: {
     type: String,
-    required: function() {
-      return this['Income/Expense'] !== 'Transfer' && this['Income/Expense'] !== 'Transfer-Out';
-    }
+    default: ''
   },
   Note: {
     type: String,
@@ -68,8 +66,7 @@ const transactionSchema = new mongoose.Schema({
   },
   ID: {
     type: String,
-    required: [true, 'Transaction ID is required'],
-    unique: true
+    required: [true, 'Transaction ID is required']
   }
 }, {
   timestamps: true
@@ -80,5 +77,6 @@ transactionSchema.index({ user: 1, Date: -1 });
 transactionSchema.index({ user: 1, Category: 1 });
 transactionSchema.index({ user: 1, Account: 1 });
 transactionSchema.index({ user: 1, 'Income/Expense': 1 });
+transactionSchema.index({ user: 1, ID: 1 }, { unique: true }); // Ensure ID uniqueness per user
 
 module.exports = mongoose.model('Transaction', transactionSchema); 
