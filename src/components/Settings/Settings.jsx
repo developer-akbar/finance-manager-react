@@ -209,7 +209,10 @@ const Settings = () => {
       ]);
       
       // Refresh data from backend
-      await refreshTransactions();
+      await Promise.all([
+        refreshTransactions(),
+        loadData()
+      ]);
       
       alert('All data has been cleared successfully!');
       setShowClearModal(false);
@@ -249,7 +252,7 @@ const Settings = () => {
             <div className="data-actions">
               <div className="action-card">
                 <div className="action-header">
-                  <Download size={24} />
+                  <Upload size={24} />
                   <h3>Export Data</h3>
                 </div>
                 <p>Download all your financial data as a backup file</p>
@@ -263,7 +266,7 @@ const Settings = () => {
 
               <div className="action-card">
                 <div className="action-header">
-                  <Upload size={24} />
+                  <Download size={24} />
                   <h3>Import Data</h3>
                 </div>
                 <p>Restore your data from a previously exported backup file</p>
