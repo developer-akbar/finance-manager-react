@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const UserSettings = require('../models/UserSettings');
 const { generateToken, protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -53,6 +54,84 @@ router.post('/register', [
       email,
       password
     });
+
+    // Create default user settings with accounts, categories, and subcategories
+    const defaultSettings = {
+      user: user._id,
+      accounts: [
+        'Cash',
+        'Bank Account',
+        'Credit Card',
+        'Savings Account',
+        'Investment Account',
+        'Digital Wallet'
+      ],
+             categories: new Map([
+         ['Housing', {
+           type: 'Expense',
+           subcategories: ['Rent', 'Groceries', 'Electricity', 'Gas']
+         }],
+         ['Travel', {
+           type: 'Expense',
+           subcategories: []
+         }],
+         ['Utilities', {
+           type: 'Expense',
+           subcategories: ['Recharge', 'DTH', 'Water']
+         }],
+         ['Shopping', {
+           type: 'Expense',
+           subcategories: []
+         }],
+         ['Health', {
+           type: 'Expense',
+           subcategories: ['Medicines', 'Hospital']
+         }],
+         ['Subscriptions', {
+           type: 'Expense',
+           subcategories: ['Netflix', 'Prime']
+         }],
+         ['Entertainment', {
+           type: 'Expense',
+           subcategories: ['Cinema', 'Outing']
+         }],
+         ['Groceries', {
+           type: 'Expense',
+           subcategories: []
+         }],
+         ['Dining', {
+           type: 'Expense',
+           subcategories: []
+         }],
+         ['Salary', {
+           type: 'Income',
+           subcategories: []
+         }],
+         ['Bonus', {
+           type: 'Income',
+           subcategories: []
+         }],
+         ['Petty Cash', {
+           type: 'Income',
+           subcategories: []
+         }]
+       ]),
+      accountGroups: [
+        { id: 1, name: 'Cash & Bank' },
+        { id: 2, name: 'Credit Cards' },
+        { id: 3, name: 'Investments' }
+      ],
+      accountMapping: new Map([
+        ['Cash', ['Cash']],
+        ['Bank Account', ['Bank Account']],
+        ['Savings Account', ['Savings Account']],
+        ['Credit Card', ['Credit Card']],
+        ['Investment Account', ['Investment Account']],
+        ['Digital Wallet', ['Digital Wallet']]
+      ])
+    };
+
+    await UserSettings.create(defaultSettings);
 
     // Generate token
     const token = generateToken(user._id);

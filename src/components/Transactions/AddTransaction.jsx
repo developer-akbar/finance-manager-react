@@ -89,7 +89,9 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
         ...formData,
         INR: parseFloat(formData.Amount),
         // For Transfer-Out transactions, set Account to FromAccount for display purposes
-        Account: formData['Income/Expense'] === 'Transfer-Out' ? formData.FromAccount : formData.Account
+        Account: formData['Income/Expense'] === 'Transfer-Out' ? formData.FromAccount : formData.Account,
+        // Set default subcategory if empty
+        Subcategory: formData.Subcategory || 'Default'
       };
 
       if (isEditMode) {

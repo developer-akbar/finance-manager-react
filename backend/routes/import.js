@@ -9,86 +9,40 @@ const router = express.Router();
 // Apply authentication middleware to all routes
 router.use(protect);
 
-// Helper function to parse dates from various formats and return DD/MM/YYYY format
-// Based on the user's proven date handling approach
+// Date parsing for CSV approach (like legacy)
 const parseDate = (dateValue) => {
-  // Helper function to format date as DD/MM/YYYY (same as user's formatDateField with 'add-date')
-  const formatDate = (date) => {
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
-
-  if (dateValue instanceof Date) {
-    return formatDate(dateValue);
-  }
+  if (!dateValue) return null;
   
-  if (typeof dateValue === 'number') {
-    // Excel serial number - convert to Date
-    // Excel dates are number of days since 1900-01-01
-    // Subtract 25569 to convert to Unix timestamp (days since 1970-01-01)
-    const unixTimestamp = (dateValue - 25569) * 24 * 60 * 60 * 1000;
-    const excelDate = new Date(unixTimestamp);
-    if (!isNaN(excelDate.getTime())) {
-      return formatDate(excelDate);
-    }
-  }
-  
-  // Try to parse date string
   const dateStr = dateValue.toString().trim();
   
   // Remove time portion if present
   const dateOnly = dateStr.split(' ')[0];
   
-  // Based on user's Excel file format, assume input is DD-MM-YYYY or DD/MM/YYYY
-  // and convert to DD/MM/YYYY format for storage
-  if (/^\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}$/.test(dateOnly)) {
-    const parts = dateOnly.includes('/') ? dateOnly.split("/") : dateOnly.split("-");
-    if (parts.length === 3) {
-      const [day, month, year] = parts; // Changed: [day, month, year] instead of [month, day, year]
-      const dayNum = parseInt(day);
-      const monthNum = parseInt(month);
-      const yearNum = parseInt(year);
-      
-      // Validate the date components
-      if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
-        const testDate = new Date(yearNum, monthNum - 1, dayNum);
-        if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-          return `${day}/${month}/${year}`; // Return in DD/MM/YYYY format
-        }
-      }
-    }
-  }
-  
-  // Also handle DD/MM/YYYY format (if already in correct format)
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateOnly)) {
-    const [day, month, year] = dateOnly.split('/');
-    const dayNum = parseInt(day);
-    const monthNum = parseInt(month);
-    const yearNum = parseInt(year);
-    
-    // Validate the date components
-    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
-      const testDate = new Date(yearNum, monthNum - 1, dayNum);
-      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-        return dateOnly; // Already in DD/MM/YYYY format
-      }
-    }
-  }
-  
-  // Handle DD-MM-YYYY format
+  // If it's DD-MM-YYYY format, just replace hyphens with slashes (like legacy)
   if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateOnly)) {
-    const [day, month, year] = dateOnly.split('-');
-    const dayNum = parseInt(day);
-    const monthNum = parseInt(month);
-    const yearNum = parseInt(year);
-    
-    // Validate the date components
-    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12 && yearNum >= 1900 && yearNum <= 2100) {
-      const testDate = new Date(yearNum, monthNum - 1, dayNum);
-      if (!isNaN(testDate.getTime()) && testDate.getDate() === dayNum) {
-        return `${day}/${month}/${year}`; // Convert to DD/MM/YYYY format
+    return dateOnly.replace(/-/g, '/');
+  }
+  
+  // If already in DD/MM/YYYY format, return as is
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateOnly)) {
+    return dateOnly;
+  }
+  
+  // Handle Excel serial numbers if they come through as strings
+  if (/^\d+\.\d+$/.test(dateOnly)) {
+    const serialNumber = parseFloat(dateOnly);
+    if (!isNaN(serialNumber)) {
+      // Excel serial number conversion
+      const excelEpoch = new Date(1900, 0, 1);
+      const daysSinceEpoch = serialNumber - 1;
+      const resultDate = new Date(excelEpoch);
+      resultDate.setDate(resultDate.getDate() + daysSinceEpoch);
+      
+      if (!isNaN(resultDate.getTime())) {
+        const day = String(resultDate.getDate()).padStart(2, '0');
+        const month = String(resultDate.getMonth() + 1).padStart(2, '0');
+        const year = resultDate.getFullYear();
+        return `${day}/${month}/${year}`;
       }
     }
   }
@@ -96,7 +50,10 @@ const parseDate = (dateValue) => {
   // Try standard Date parsing as fallback
   const parsedDate = new Date(dateStr);
   if (!isNaN(parsedDate.getTime())) {
-    return formatDate(parsedDate);
+    const day = String(parsedDate.getDate()).padStart(2, '0');
+    const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+    const year = parsedDate.getFullYear();
+    return `${day}/${month}/${year}`;
   }
   
   return null; // Could not parse
@@ -139,17 +96,50 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     // Get import mode from request body (merge or override)
     const { mode = 'override' } = req.body;
 
-    // Parse Excel file
+    // Parse Excel file and convert to CSV first (like legacy approach)
     const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     
-    // Convert to JSON with better date handling
-    const rawData = XLSX.utils.sheet_to_json(worksheet, { 
-      header: 1,
-      cellDates: true, // Convert Excel dates to JavaScript Date objects
-      cellNF: false,
-      cellText: false
+    // Convert worksheet to CSV data first (like legacy approach)
+    let csvData = XLSX.utils.sheet_to_csv(worksheet, { FS: ',', RS: '\n', strip: false });
+    
+    // Handle line breaks within cells (like legacy approach)
+    csvData = csvData.replace(/"([^"]*)"/g, function (match, p1) {
+      return p1.replace(/\n/g, '|new-line|').replace(/,/g, '|comma|');
+    });
+    
+    // Split CSV into rows
+    const csvRows = csvData.split('\n').filter(row => row.trim().length > 0);
+    
+    if (csvRows.length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: 'Excel file must contain at least a header row and one data row'
+      });
+    }
+    
+    // Parse CSV rows manually
+    const rawData = csvRows.map(row => {
+      // Split by comma, but handle quoted fields
+      const fields = [];
+      let currentField = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < row.length; i++) {
+        const char = row[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          fields.push(currentField.trim());
+          currentField = '';
+        } else {
+          currentField += char;
+        }
+      }
+      fields.push(currentField.trim()); // Add the last field
+      
+      return fields;
     });
     
     if (rawData.length < 2) {
@@ -207,12 +197,12 @@ router.post('/excel', upload.single('file'), async (req, res) => {
     const transactions = [];
     const errors = [];
     
-    // Log some sample data for debugging
-    console.log('Sample headers:', headers);
-    console.log('Sample first row:', rawData[1]);
-    console.log('Date column index:', dateIndex);
-    console.log('Sample date value:', rawData[1] ? rawData[1][dateIndex] : 'No data');
-    console.log('Total rows to process:', rawData.length - 1);
+         // Log sample data for debugging
+     console.log('Sample headers:', headers);
+     console.log('Sample first row:', rawData[1]);
+     console.log('Date column index:', dateIndex);
+     console.log('Sample date value:', rawData[1] ? rawData[1][dateIndex] : 'No data');
+     console.log('Total rows to process:', rawData.length - 1);
     
     for (let i = 1; i < rawData.length; i++) {
       const row = rawData[i];
@@ -224,12 +214,12 @@ router.post('/excel', upload.single('file'), async (req, res) => {
           continue;
         }
 
-        // Parse date using helper function
-        const date = parseDate(row[dateIndex]);
-        if (!date) {
-          errors.push(`Row ${i + 1}: Invalid date format - ${row[dateIndex]}`);
-          continue;
-        }
+                 // Parse date using helper function
+         const date = parseDate(row[dateIndex]);
+         if (!date) {
+           errors.push(`Row ${i + 1}: Invalid date format - ${row[dateIndex]}`);
+           continue;
+         }
 
         // Parse INR amount - allow 0 values
         let amount;

@@ -19,32 +19,76 @@ router.get('/', async (req, res) => {
       // Create default settings if none exist
       userSettings = await UserSettings.create({
         user: req.user.id,
-        accounts: ["Cash", "SBI", "HDFC", "ICICI", "SBI Card", "HDFC Card", "Home Loan", "Car Loan", "Mutual Funds", "Stocks", "EMIs"],
-        categories: new Map([
-          ["Housing", { type: "Expense", subcategories: ["Rent", "Groceries", "Electricity", "Gas", "Water", "Internet"] }],
-          ["Transportation", { type: "Expense", subcategories: ["Fuel", "Public Transport", "Maintenance", "Insurance"] }],
-          ["Food & Dining", { type: "Expense", subcategories: ["Restaurants", "Coffee", "Groceries"] }],
-          ["Entertainment", { type: "Expense", subcategories: ["Movies", "Games", "Subscriptions"] }],
-          ["Shopping", { type: "Expense", subcategories: ["Clothing", "Electronics", "For Myself", "online shopping"] }],
-          ["Healthcare", { type: "Expense", subcategories: ["Doctor", "Pharmacy", "Insurance"] }],
-          ["Salary", { type: "Income", subcategories: ["Primary Job", "Freelance"] }],
-          ["Investment Returns", { type: "Income", subcategories: ["Dividends", "Interest", "Capital Gains"] }],
-          ["Bonus", { type: "Income", subcategories: ["Performance Bonus", "Festival Bonus"] }],
-          ["Other Income", { type: "Income", subcategories: ["Gift", "Refund"] }]
-        ]),
+        accounts: [
+          'Cash',
+          'Bank Account',
+          'Credit Card',
+          'Savings Account',
+          'Investment Account',
+          'Digital Wallet'
+        ],
+                 categories: new Map([
+           ['Housing', {
+             type: 'Expense',
+             subcategories: ['Rent', 'Groceries', 'Electricity', 'Gas']
+           }],
+           ['Travel', {
+             type: 'Expense',
+             subcategories: []
+           }],
+           ['Utilities', {
+             type: 'Expense',
+             subcategories: ['Recharge', 'DTH', 'Water']
+           }],
+           ['Shopping', {
+             type: 'Expense',
+             subcategories: []
+           }],
+           ['Health', {
+             type: 'Expense',
+             subcategories: ['Medicines', 'Hospital']
+           }],
+           ['Subscriptions', {
+             type: 'Expense',
+             subcategories: ['Netflix', 'Prime']
+           }],
+           ['Entertainment', {
+             type: 'Expense',
+             subcategories: ['Cinema', 'Outing']
+           }],
+           ['Groceries', {
+             type: 'Expense',
+             subcategories: []
+           }],
+           ['Dining', {
+             type: 'Expense',
+             subcategories: []
+           }],
+           ['Salary', {
+             type: 'Income',
+             subcategories: []
+           }],
+           ['Bonus', {
+             type: 'Income',
+             subcategories: []
+           }],
+           ['Petty Cash', {
+             type: 'Income',
+             subcategories: []
+           }]
+         ]),
         accountGroups: [
-          { id: 1, name: "Cash" },
-          { id: 2, name: "Bank Accounts" },
-          { id: 3, name: "Credit Cards" },
-          { id: 4, name: "EMIs" },
-          { id: 5, name: "Investments" }
+          { id: 1, name: 'Cash & Bank' },
+          { id: 2, name: 'Credit Cards' },
+          { id: 3, name: 'Investments' }
         ],
         accountMapping: new Map([
-          ["Cash", ["Cash"]],
-          ["Bank Accounts", ["SBI", "HDFC", "ICICI"]],
-          ["Credit Cards", ["SBI Card", "HDFC Card"]],
-          ["EMIs", ["Home Loan", "Car Loan"]],
-          ["Investments", ["Mutual Funds", "Stocks"]]
+          ['Cash', ['Cash']],
+          ['Bank Account', ['Bank Account']],
+          ['Savings Account', ['Savings Account']],
+          ['Credit Card', ['Credit Card']],
+          ['Investment Account', ['Investment Account']],
+          ['Digital Wallet', ['Digital Wallet']]
         ]),
         csvConversionDetails: {
           dateFormat: "DD/MM/YYYY",

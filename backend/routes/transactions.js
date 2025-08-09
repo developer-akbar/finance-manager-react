@@ -136,22 +136,30 @@ router.post('/', [
   body('Date').notEmpty().withMessage('Date is required'),
   body('INR').isNumeric().withMessage('Amount must be a number'),
   body('Income/Expense').isIn(['Income', 'Expense', 'Transfer-Out']).withMessage('Type must be Income, Expense, or Transfer-Out'),
-  body('Amount').notEmpty().withMessage('Amount string is required'),
-  body('ID').notEmpty().withMessage('Transaction ID is required')
+  body('Amount').notEmpty().withMessage('Amount string is required')
 ], async (req, res) => {
   try {
+    // Debug: Log the incoming request data
+    console.log('Creating transaction with data:', req.body);
+    console.log('Subcategory value:', req.body.Subcategory);
+    console.log('Category value:', req.body.Category);
+    
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         errors: errors.array()
       });
     }
 
+    // Generate ID if not provided
+    const transactionId = req.body.ID || `manual_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     // Check if transaction ID already exists for this user
     const existingTransaction = await Transaction.findOne({
-      ID: req.body.ID,
+      ID: transactionId,
       user: req.user.id
     });
 
@@ -162,11 +170,17 @@ router.post('/', [
       });
     }
 
-    const transaction = await Transaction.create({
+    // Prepare transaction data with proper handling of empty values
+    const transactionData = {
       ...req.body,
+      ID: transactionId,
       Date: convertDateForStorage(req.body.Date),
-      user: req.user.id
-    });
+      user: req.user.id,
+      // Handle empty subcategory
+      Subcategory: req.body.Subcategory || ''
+    };
+
+    const transaction = await Transaction.create(transactionData);
 
     res.status(201).json({
       success: true,
