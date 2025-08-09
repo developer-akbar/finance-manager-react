@@ -106,7 +106,7 @@ const Settings = () => {
               return;
             }
             
-            const response = await importAPI.importJSON({ transactions: transactionsArray });
+            const response = await importAPI.fromJSON(transactionsArray);
               
               if (response.success) {
                 const stats = response.data;
