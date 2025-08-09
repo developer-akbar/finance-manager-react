@@ -331,6 +331,63 @@
   .page-header h1 {
     font-size: 1.5rem;
   }
+
+  .view-navigation {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .view-totals {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .total-item {
+    min-width: 100px;
+    padding: 0.75rem 1rem;
+  }
+
+  .total-label {
+    font-size: 0.7rem;
+  }
+
+  .total-value {
+    font-size: 1rem;
+  }
+
+  .months-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .years-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  .month-card,
+  .year-card {
+    padding: 1rem;
+  }
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 1fr 1.5fr 100px;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .cell.details {
+    font-size: 0.875rem;
+  }
+
+  .note,
+  .description {
+    font-size: 0.8rem;
+  }
+
+  .account {
+    font-size: 0.7rem;
+  }
 }
 
 /* View Ribbons */
@@ -371,11 +428,13 @@
 .view-navigation {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 2rem;
-  padding: 1rem;
-  background: #f9fafb;
-  border-radius: 0.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .view-title h2 {
@@ -386,35 +445,78 @@
 
 .view-totals {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  align-items: center;
   flex-wrap: wrap;
 }
 
 .total-item {
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  min-width: 120px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.total-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .total-item.income {
-  color: #059669;
-  background: #d1fae5;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-color: #10b981;
 }
 
 .total-item.expense {
-  color: #dc2626;
-  background: #fee2e2;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-color: #ef4444;
 }
 
 .total-item.balance.positive {
-  color: #059669;
-  background: #d1fae5;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-color: #3b82f6;
 }
 
 .total-item.balance.negative {
-  color: #dc2626;
-  background: #fee2e2;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #f59e0b;
+}
+
+.total-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  opacity: 0.8;
+}
+
+.total-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.total-item.income .total-value {
+  color: #065f46;
+}
+
+.total-item.expense .total-value {
+  color: #991b1b;
+}
+
+.total-item.balance.positive .total-value {
+  color: #1e40af;
+}
+
+.total-item.balance.negative .total-value {
+  color: #92400e;
 }
 
 .date-navigation {
@@ -599,16 +701,37 @@
 
 .month-card {
   background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.month-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #3b82f6, #ef4444);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .month-card:hover {
   border-color: #3b82f6;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.month-card:hover::before {
+  opacity: 1;
 }
 
 .month-name {
@@ -628,22 +751,37 @@
 .stat {
   font-size: 0.875rem;
   font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  margin: 0.125rem 0;
+  display: inline-block;
+  min-width: 80px;
 }
 
 .stat.income {
-  color: #059669;
+  color: #065f46;
+  background: #d1fae5;
+  border: 1px solid #a7f3d0;
 }
 
 .stat.expense {
-  color: #dc2626;
+  color: #991b1b;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
 }
 
 .stat.net.positive {
-  color: #059669;
+  color: #1e40af;
+  background: #dbeafe;
+  border: 1px solid #bfdbfe;
+  font-weight: 700;
 }
 
 .stat.net.negative {
-  color: #dc2626;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  font-weight: 700;
 }
 
 .transaction-count {
@@ -664,16 +802,37 @@
 
 .year-card {
   background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 2rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.year-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #10b981, #3b82f6, #ef4444);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .year-card:hover {
   border-color: #3b82f6;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.year-card:hover::before {
+  opacity: 1;
 }
 
 .year-name {
