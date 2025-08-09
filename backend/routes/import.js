@@ -65,7 +65,7 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
+    fileSize: 100 * 1024 * 1024 // 100MB limit
   },
   fileFilter: (req, file, cb) => {
     // Accept Excel and CSV files
@@ -434,6 +434,15 @@ router.post('/excel', upload.single('file'), async (req, res) => {
 // @access  Private
 router.post('/json', async (req, res) => {
   try {
+    // Check request size (100MB limit for JSON)
+    const contentLength = parseInt(req.headers['content-length'] || '0');
+    if (contentLength > 100 * 1024 * 1024) {
+      return res.status(413).json({
+        success: false,
+        message: 'Request too large. Maximum file size is 100MB.'
+      });
+    }
+
     const { transactions, mode = 'override' } = req.body;
 
     if (!Array.isArray(transactions) || transactions.length === 0) {
