@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const XLSX = require('xlsx');
 const Transaction = require('../models/Transaction');
+const UserSettings = require('../models/UserSettings');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -490,12 +491,63 @@ router.post('/json', async (req, res) => {
     // Insert transactions into database
     const result = await Transaction.insertMany(processedTransactions);
 
+    // Extract unique accounts and categories from imported data
+    const uniqueAccounts = new Set();
+    const uniqueCategories = new Map();
+
+    processedTransactions.forEach(transaction => {
+      // Extract accounts
+      if (transaction.Account) uniqueAccounts.add(transaction.Account);
+      if (transaction.FromAccount) uniqueAccounts.add(transaction.FromAccount);
+      if (transaction.ToAccount) uniqueAccounts.add(transaction.ToAccount);
+
+      // Extract categories
+      if (transaction.Category && transaction['Income/Expense']) {
+        const type = transaction['Income/Expense'];
+        if (!uniqueCategories.has(type)) {
+          uniqueCategories.set(type, new Set());
+        }
+        uniqueCategories.get(type).add(transaction.Category);
+      }
+    });
+
+    // Update user settings with extracted data
+    let userSettings = await UserSettings.findOne({ user: req.user.id });
+    
+    if (!userSettings) {
+      userSettings = new UserSettings({ user: req.user.id });
+    }
+
+    // Merge new accounts with existing ones
+    const existingAccounts = new Set(userSettings.accounts || []);
+    uniqueAccounts.forEach(account => existingAccounts.add(account));
+    userSettings.accounts = Array.from(existingAccounts);
+
+    // Merge new categories with existing ones
+    const existingCategories = new Map(userSettings.categories || []);
+    uniqueCategories.forEach((categories, type) => {
+      if (!existingCategories.has(type)) {
+        existingCategories.set(type, new Set());
+      }
+      categories.forEach(category => existingCategories.get(type).add(category));
+    });
+    userSettings.categories = existingCategories;
+
+    await userSettings.save();
+
     res.json({
       success: true,
       message: `Successfully imported ${result.length} transactions`,
       data: {
         imported: result.length,
-        errors: errors.length > 0 ? errors : null
+        errors: errors.length > 0 ? errors : null,
+        newAccounts: Array.from(uniqueAccounts),
+        newCategories: Object.fromEntries(
+          Array.from(uniqueCategories.entries()).map(([type, categories]) => [
+            type, 
+            Array.from(categories)
+          ])
+        )
       }
     });
 
