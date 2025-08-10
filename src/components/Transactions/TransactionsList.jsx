@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { formatCurrency, formatDate, convertDateFormat } from '../../utils/calculations';
-import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, ArrowLeft, ArrowRight, Calendar, BarChart3, TrendingUp } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, BarChart3, TrendingUp } from 'lucide-react';
 import TransactionFilters from './TransactionFilters';
 import EditTransactionModal from './EditTransactionModal';
+import DateNavigation from '../Common/DateNavigation';
 import './TransactionsList.css';
 
 const TransactionsList = () => {
@@ -363,15 +364,11 @@ const TransactionsList = () => {
         </div>
         
         {(currentView === 'daily' || currentView === 'monthly') && (
-          <div className="date-navigation">
-            <button onClick={() => handleDateNavigation(-1)}>
-              <ArrowLeft size={16} />
-            </button>
-            <span className="current-period">{getViewTitle()}</span>
-            <button onClick={() => handleDateNavigation(1)}>
-              <ArrowRight size={16} />
-            </button>
-          </div>
+          <DateNavigation 
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            showQuickSelector={true}
+          />
         )}
       </div>
 
@@ -467,7 +464,7 @@ const TransactionsList = () => {
                         <span className={`amount-value ${transaction['Income/Expense'].toLowerCase()}`}>
                           {formatCurrency(transaction.INR || transaction.Amount)}
                         </span>
-                        <div className="action-buttons">
+                        <div className="transaction-actions action-buttons">
                           <button
                             className="action-btn edit-btn"
                             onClick={(e) => {

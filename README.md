@@ -1,6 +1,6 @@
 # 💰 Finance Manager - React + MongoDB
 
-A modern, full-stack personal finance management application built with React.js frontend and Express.js + MongoDB backend. Track your income, expenses, and financial goals with a beautiful, responsive interface.
+A modern, full-stack personal finance management application built with React.js frontend and Express.js + MongoDB backend. Track your income, expenses, and financial goals with a beautiful, responsive interface featuring elegant design, dark mode support, and comprehensive financial analytics.
 
 ## 🚀 Features
 
@@ -11,46 +11,93 @@ A modern, full-stack personal finance management application built with React.js
 - **Session Management** - Automatic token refresh and logout
 
 ### 💳 Transaction Management
-- **Add/Edit/Delete Transactions** - Full CRUD operations
-- **Categorization** - Custom categories and subcategories
+- **Add/Edit/Delete Transactions** - Full CRUD operations with in-place editing
+- **Categorization** - Custom categories and subcategories with smart defaults
 - **Account Management** - Multiple accounts and account groups
 - **Search & Filter** - Advanced filtering by date, category, account
 - **Bulk Operations** - Import multiple transactions at once
+- **Transaction Actions** - Edit and delete actions with hover effects
+- **Description Support** - Detailed transaction descriptions with proper text wrapping
+
+### 🏦 Accounts & Financial Overview
+- **Accounts Dashboard** - Comprehensive view of all accounts
+- **Account-wise Transactions** - Filter transactions by specific accounts
+- **Daily Transaction Groups** - Organized daily transaction summaries
+- **Account Balances** - Real-time balance tracking for each account
+- **Income/Expense Totals** - Daily accumulated totals with color coding
+- **Smart Border Radius** - Elegant UI with proper border radius for transaction groups
 
 ### 📊 Analytics & Insights
-- **Dashboard Overview** - Real-time financial summary
+- **Dashboard Overview** - Real-time financial summary with beautiful cards
 - **Interactive Charts** - Visual representation of spending patterns
 - **Monthly Reports** - Income vs expense analysis
 - **Category Breakdown** - Spending by category visualization
+- **Account Analytics** - Account-specific financial insights
+- **Trend Analysis** - Historical data visualization
 
 ### 📁 Data Import/Export
-- **Excel Import** - Upload financial data from Excel files
-- **CSV Support** - Import from CSV files
+- **Excel Import** - Upload financial data from Excel files with smart parsing
+- **CSV Support** - Import from CSV files with automatic format detection
+- **JSON Import** - Import structured JSON data
 - **Data Validation** - Automatic data cleaning and validation
 - **Error Handling** - Detailed import error reporting
+- **Date Format Detection** - Smart parsing of various date formats (DD/MM/YYYY, MM/DD/YYYY)
+- **Override/Merge Options** - Choose to override existing data or merge with new data
 
-### 🎨 User Experience
-- **Responsive Design** - Works on desktop, tablet, and mobile
-- **Modern UI** - Clean, intuitive interface
-- **Real-time Updates** - Instant data synchronization
+### 🎨 User Experience & Design
+- **Responsive Design** - Works perfectly on desktop, tablet, and mobile
+- **Modern UI** - Clean, intuitive interface inspired by Apple and modern design systems
+- **Dark/Light Mode** - Toggle between dark and light themes with persistent preference
+- **Real-time Updates** - Instant data synchronization across all components
 - **Loading States** - Smooth user experience with loading indicators
+- **Hover Effects** - Elegant hover states and transitions
+- **Glass Morphism** - Modern backdrop blur effects and transparency
+- **Typography Hierarchy** - Consistent font sizes and weights throughout
+
+### 📅 Date Navigation & Filtering
+- **Smart Date Navigation** - Month/Year navigation with quick selection
+- **Quick Date Selector** - Dropdown for jumping to specific months/years
+- **Period Filtering** - Filter transactions by custom date ranges
+- **Global Navigation** - Reusable date navigation component across pages
+
+### ⚙️ Settings & Configuration
+- **Account Management** - Add, edit, and organize accounts
+- **Category Management** - Customize transaction categories and subcategories
+- **Account Groups** - Group accounts for better organization
+- **Data Management** - Import, export, and clear data options
+- **Theme Settings** - Toggle between light and dark modes
+- **User Preferences** - Persistent user settings and configurations
+
+### 🔧 Advanced Features
+- **Transaction Modal Editing** - In-place transaction editing without page navigation
+- **Smart Data Parsing** - Intelligent handling of various data formats
+- **Duplicate Detection** - Automatic detection and handling of duplicate transactions
+- **Currency Support** - Multi-currency support (currently INR, extensible)
+- **Data Export** - Export transactions in various formats
+- **Bulk Operations** - Mass edit and delete operations
+- **Search Functionality** - Global search across all transaction fields
 
 ## 🏗️ Architecture
 
 ```
 finance-manager/
-├── frontend/                 # React.js application
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── contexts/        # React contexts (Auth, App)
-│   │   ├── services/        # API service layer
-│   │   └── utils/           # Utility functions
-│   └── package.json
-├── backend/                  # Express.js API server
-│   ├── models/              # MongoDB schemas
-│   ├── routes/              # API endpoints
-│   ├── middleware/          # Authentication & validation
-│   └── server.js            # Main server file
+├── src/                     # React.js application
+│   ├── components/          # React components
+│   │   ├── Common/         # Reusable components (DateNavigation, TransactionEditModal)
+│   │   ├── Dashboard/      # Dashboard components
+│   │   ├── Transactions/   # Transaction management
+│   │   ├── Accounts/       # Account management
+│   │   ├── Analytics/      # Analytics and charts
+│   │   └── Settings/       # Settings and configuration
+│   ├── contexts/           # React contexts (Auth, App)
+│   ├── services/           # API service layer
+│   ├── styles/             # Global styles and common CSS
+│   └── utils/              # Utility functions
+├── backend/                 # Express.js API server
+│   ├── models/             # MongoDB schemas
+│   ├── routes/             # API endpoints
+│   ├── middleware/         # Authentication & validation
+│   └── server.js           # Main server file
 └── README.md
 ```
 
@@ -101,7 +148,7 @@ npm run dev
 ```
 
 ### 4. Access the Application
-- **Frontend**: http://localhost:5173
+- **Frontend**: http://localhost:5173 (or next available port)
 - **Backend API**: http://localhost:5000
 - **API Health Check**: http://localhost:5000/api/health
 
@@ -180,7 +227,13 @@ POST /api/import/json - Import from JSON data (protected)
 2. Fill in transaction details
 3. Save the transaction
 
-### 4. Import Excel Data
+### 4. Explore Accounts
+1. Navigate to "Accounts" from the sidebar
+2. View account summaries and balances
+3. Click on any account to see detailed transactions
+4. Use the date navigation to filter by period
+
+### 5. Import Excel Data
 1. Prepare an Excel file with columns: Date, Amount, Description, Category, Account
 2. Go to Settings → Import
 3. Upload your Excel file
@@ -192,7 +245,7 @@ The application accepts Excel files (.xlsx, .xls) with the following columns:
 
 | Column | Required | Description |
 |--------|----------|-------------|
-| Date | ✅ | Transaction date (DD/MM/YYYY) |
+| Date | ✅ | Transaction date (DD/MM/YYYY or MM/DD/YYYY) |
 | Amount/INR | ✅ | Transaction amount (positive for income, negative for expense) |
 | Description | ❌ | Transaction description |
 | Category | ❌ | Transaction category |
@@ -202,9 +255,25 @@ The application accepts Excel files (.xlsx, .xls) with the following columns:
 ```
 | Date       | Amount | Description        | Category    | Account |
 |------------|--------|-------------------|-------------|---------|
-| 2024-01-15 | 1000   | Grocery shopping   | Food        | Cash    |
-| 2024-01-16 | -500   | Restaurant dinner  | Food        | Card    |
+| 15/01/2024 | 1000   | Grocery shopping   | Food        | Cash    |
+| 16/01/2024 | -500   | Restaurant dinner  | Food        | Card    |
 ```
+
+## 🎨 Design System
+
+### Color Scheme
+- **Light Mode**: Clean whites, subtle grays, and accent colors
+- **Dark Mode**: Deep backgrounds, muted colors, and high contrast text
+- **Accent Colors**: Blue for primary actions, green for success, red for danger
+
+### Typography
+- **Font Hierarchy**: Consistent sizing from text-xs to text-3xl
+- **Font Weights**: Regular, medium, semibold, and bold variants
+- **Line Heights**: Optimized for readability
+
+### Spacing
+- **Consistent Spacing**: Using CSS custom properties for uniform spacing
+- **Responsive Breakpoints**: Mobile-first approach with tablet and desktop optimizations
 
 ## 🔐 Security Features
 

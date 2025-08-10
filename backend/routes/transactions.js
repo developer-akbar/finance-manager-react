@@ -219,7 +219,7 @@ router.put('/:id', [
     }
 
     let transaction = await Transaction.findOne({
-      ID: req.params.id,
+      _id: req.params.id,
       user: req.user.id
     });
 
@@ -231,7 +231,7 @@ router.put('/:id', [
     }
 
     transaction = await Transaction.findOneAndUpdate(
-      { ID: req.params.id, user: req.user.id },
+      { _id: req.params.id, user: req.user.id },
       { ...req.body, Date: convertDateForStorage(req.body.Date) },
       { new: true, runValidators: true }
     );
@@ -239,7 +239,7 @@ router.put('/:id', [
     res.json({
       success: true,
       message: 'Transaction updated successfully',
-      data: transaction
+      transaction: transaction
     });
   } catch (error) {
     console.error('Update transaction error:', error);
@@ -276,7 +276,7 @@ router.delete('/clear', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const transaction = await Transaction.findOne({
-      ID: req.params.id,
+      _id: req.params.id,
       user: req.user.id
     });
 
@@ -288,7 +288,7 @@ router.delete('/:id', async (req, res) => {
     }
 
     await Transaction.findOneAndDelete({
-      ID: req.params.id,
+      _id: req.params.id,
       user: req.user.id
     });
 

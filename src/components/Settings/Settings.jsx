@@ -322,41 +322,79 @@ const Settings = () => {
             <h2>About Finance Manager</h2>
             <div className="about-content">
               <p>
-                Finance Manager is a modern, React-based personal finance tracking application
-                that helps you manage your income, expenses, and financial goals.
+                Finance Manager is a modern, full-stack personal finance management application 
+                built with React.js frontend and Express.js + MongoDB backend. Track your income, 
+                expenses, and financial goals with a beautiful, responsive interface featuring 
+                elegant design, dark mode support, and comprehensive financial analytics.
               </p>
               
               <div className="features-list">
-                <h3>Features</h3>
+                <h3>✨ Key Features</h3>
                 <ul>
-                  <li>✅ Track income and expenses</li>
-                  <li>✅ Categorize transactions</li>
-                  <li>✅ Multiple account support</li>
-                  <li>✅ Visual analytics and charts</li>
-                  <li>✅ Data export and import</li>
-                  <li>✅ Mobile-responsive design</li>
-                  <li>✅ Local data storage</li>
+                  <li>✅ <strong>Transaction Management</strong> - Add, edit, delete transactions with in-place editing</li>
+                  <li>✅ <strong>Account Management</strong> - Multiple accounts with real-time balance tracking</li>
+                  <li>✅ <strong>Smart Categorization</strong> - Custom categories and subcategories</li>
+                  <li>✅ <strong>Advanced Analytics</strong> - Interactive charts and financial insights</li>
+                  <li>✅ <strong>Data Import/Export</strong> - Excel, CSV, and JSON support with smart parsing</li>
+                  <li>✅ <strong>Dark/Light Mode</strong> - Toggle between themes with persistent preference</li>
+                  <li>✅ <strong>Responsive Design</strong> - Works perfectly on desktop, tablet, and mobile</li>
+                  <li>✅ <strong>Date Navigation</strong> - Smart month/year navigation with quick selection</li>
+                  <li>✅ <strong>Search & Filter</strong> - Advanced filtering by date, category, account</li>
+                  <li>✅ <strong>Bulk Operations</strong> - Import multiple transactions at once</li>
                 </ul>
               </div>
 
               <div className="tech-info">
-                <h3>Technology Stack</h3>
+                <h3>🛠️ Technology Stack</h3>
                 <ul>
-                  <li>React.js with Hooks</li>
-                  <li>Context API for state management</li>
-                  <li>Local Storage for data persistence</li>
-                  <li>CSS Modules for styling</li>
-                  <li>Lucide React for icons</li>
+                  <li><strong>Frontend:</strong> React.js with Hooks and Context API</li>
+                  <li><strong>Backend:</strong> Node.js with Express.js</li>
+                  <li><strong>Database:</strong> MongoDB with Mongoose ODM</li>
+                  <li><strong>Authentication:</strong> JWT-based secure authentication</li>
+                  <li><strong>Styling:</strong> CSS Custom Properties with responsive design</li>
+                  <li><strong>Icons:</strong> Lucide React for modern iconography</li>
+                  <li><strong>Data Import:</strong> Excel.js for Excel file processing</li>
+                  <li><strong>Charts:</strong> Interactive data visualization</li>
+                </ul>
+              </div>
+
+              <div className="architecture-info">
+                <h3>🏗️ Architecture</h3>
+                <ul>
+                  <li><strong>Component-Based:</strong> Modular React components with reusable design</li>
+                  <li><strong>State Management:</strong> React Context API for global state</li>
+                  <li><strong>API Layer:</strong> RESTful API with proper error handling</li>
+                  <li><strong>Data Validation:</strong> Comprehensive input validation and sanitization</li>
+                  <li><strong>Security:</strong> JWT authentication with bcrypt password hashing</li>
+                  <li><strong>Performance:</strong> Optimized queries and efficient data loading</li>
                 </ul>
               </div>
 
               <div className="privacy-info">
-                <h3>Privacy & Security</h3>
+                <h3>🔐 Privacy & Security</h3>
                 <p>
-                  All your financial data is stored locally in your browser. No data is
-                  sent to external servers, ensuring complete privacy and security of
-                  your financial information.
+                  Your financial data is protected with industry-standard security measures:
                 </p>
+                <ul>
+                  <li><strong>JWT Authentication:</strong> Secure token-based authentication</li>
+                  <li><strong>Password Hashing:</strong> bcryptjs for secure password storage</li>
+                  <li><strong>Data Isolation:</strong> Each user's data is completely private</li>
+                  <li><strong>Input Validation:</strong> All inputs validated and sanitized</li>
+                  <li><strong>Error Handling:</strong> Secure error responses without data leakage</li>
+                </ul>
+              </div>
+
+              <div className="version-info">
+                <h3>📋 Version Information</h3>
+                <p><strong>Current Version:</strong> 2.0.0</p>
+                <p><strong>Last Updated:</strong> {new Date().toLocaleDateString()}</p>
+                <p><strong>License:</strong> MIT License</p>
+              </div>
+
+              <div className="developer-info">
+                <h3>👨‍💻 Developer</h3>
+                <p><strong>Built with ❤️ by:</strong> developer-akbar</p>
+                <p><strong>GitHub:</strong> <a href="https://github.com/developer-akbar" target="_blank" rel="noopener noreferrer">github.com/developer-akbar</a></p>
               </div>
             </div>
           </div>

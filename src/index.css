@@ -1,5 +1,8 @@
 /* Modern Finance Manager - Apple-Inspired Design System */
 
+/* Import Common Styles */
+@import url('./styles/common.css');
+
 /* CSS Custom Properties for Light/Dark Mode */
 :root {
   /* Light Mode Colors */
@@ -7,11 +10,13 @@
   --background-secondary: #f8fafc;
   --background-tertiary: #f1f5f9;
   --background-elevated: #ffffff;
+  --background-hover: #f8fafc;
   --background-overlay: rgba(0, 0, 0, 0.4);
   
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-tertiary: #64748b;
+  --text-muted: #64748b;
   --text-inverse: #ffffff;
   
   --border-primary: #e2e8f0;
@@ -23,6 +28,7 @@
   --accent-success: #059669;
   --accent-warning: #d97706;
   --accent-error: #dc2626;
+  --accent-danger: #dc2626;
   --accent-info: #0891b2;
   
   /* Semantic Colors */
@@ -94,6 +100,8 @@
   
   /* Z-Index */
   --z-dropdown: 1000;
+  --z-modal: 2000;
+  --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
   --z-modal-backdrop: 1040;
@@ -108,11 +116,13 @@
   --background-secondary: rgba(30, 41, 59, 0.8);
   --background-tertiary: rgba(51, 65, 85, 0.6);
   --background-elevated: rgba(30, 41, 59, 0.9);
+  --background-hover: rgba(51, 65, 85, 0.8);
   --background-overlay: rgba(0, 0, 0, 0.6);
   
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-tertiary: #94a3b8;
+  --text-muted: #94a3b8;
   --text-inverse: #0f172a;
   
   --border-primary: rgba(51, 65, 85, 0.8);
@@ -124,6 +134,7 @@
   --accent-success: #34d399;
   --accent-warning: #fbbf24;
   --accent-error: #f87171;
+  --accent-danger: #f87171;
   --accent-info: #22d3ee;
   
   /* Semantic Colors - Dark Mode */

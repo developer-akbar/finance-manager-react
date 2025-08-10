@@ -124,12 +124,20 @@ export const transactionsAPI = {
     });
   },
 
-  // Delete transaction
-  delete: async (id) => {
-    return await apiRequest(`/transactions/${id}`, {
-      method: 'DELETE',
-    });
-  },
+      // Delete transaction
+    delete: async (id) => {
+      return await apiRequest(`/transactions/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    
+    // Update transaction
+    update: async (id, data) => {
+      return await apiRequest(`/transactions/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      });
+    },
 
   // Bulk import transactions
   bulkImport: async (transactions) => {

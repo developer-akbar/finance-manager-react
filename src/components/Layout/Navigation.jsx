@@ -9,7 +9,8 @@ import {
   Settings, 
   LogOut,
   TrendingUp,
-  Wallet
+  Wallet,
+  CreditCard
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import './Navigation.css';
@@ -22,6 +23,7 @@ const Navigation = () => {
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'add-transaction', label: 'Add Transaction', icon: PlusCircle },
     { id: 'transactions', label: 'Transactions', icon: Search },
+    { id: 'accounts', label: 'Accounts', icon: CreditCard },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
