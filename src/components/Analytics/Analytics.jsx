@@ -126,7 +126,7 @@ const Analytics = () => {
             <BarChart3 size={24} />
           </div>
           <div className="card-content">
-            <h3>Net Balance</h3>
+            <h3>Balance</h3>
             <p className="amount">{formatCurrency(totals.balance)}</p>
             <span className="average">
               {totals.balance >= 0 ? 'Surplus' : 'Deficit'}

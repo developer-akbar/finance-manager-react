@@ -186,7 +186,7 @@ const CategoryManager = () => {
         <h3>Expense Categories ({expenseCategories.length})</h3>
         <div className="categories-list">
           {expenseCategories.map(([categoryName, categoryData]) => (
-            <div key={categoryName} className="category-item">
+            <div key={categoryName} className="category-item expense">
               <div className="category-header">
                 {editingCategory === categoryName ? (
                   <div className="edit-item">

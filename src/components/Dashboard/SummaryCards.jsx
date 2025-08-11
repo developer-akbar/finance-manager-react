@@ -9,21 +9,21 @@ const SummaryCards = ({ totals }) => {
       title: 'Total Income',
       amount: totals.income,
       icon: TrendingUp,
-      className: 'income-card',
+      className: 'income',
       color: '#65a30d'
     },
     {
       title: 'Total Expenses',
       amount: totals.expense,
       icon: TrendingDown,
-      className: 'expense-card',
+      className: 'expense',
       color: '#dc2626'
     },
     {
-      title: 'Net Balance',
+      title: 'Balance',
       amount: totals.balance,
       icon: Wallet,
-      className: `balance-card ${totals.balance >= 0 ? 'positive' : 'negative'}`,
+      className: `balance ${totals.balance >= 0 ? 'positive' : 'negative'}`,
       color: totals.balance >= 0 ? '#65a30d' : '#dc2626'
     }
   ];

@@ -11,7 +11,6 @@
 .page-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: var(--space-6);
   border-bottom: 1px solid var(--border-primary);
   background-color: var(--background-elevated);
@@ -194,6 +193,7 @@
   transition: all var(--transition-fast);
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .total-item::before {
@@ -222,7 +222,7 @@
 }
 
 .total-item.income::before {
-  background: linear-gradient(90deg, var(--income-color), #34d399);
+  background: linear-gradient(90deg, var(--income-color), var(--accent-success));
 }
 
 .total-item.expense {
@@ -230,7 +230,7 @@
 }
 
 .total-item.expense::before {
-  background: linear-gradient(90deg, var(--expense-color), #f87171);
+  background: linear-gradient(90deg, var(--expense-color), var(--accent-error));
 }
 
 .total-item.balance.positive {
@@ -246,7 +246,7 @@
 }
 
 .total-item.balance.negative::before {
-  background: linear-gradient(90deg, var(--accent-warning), #fbbf24);
+  background: linear-gradient(90deg, var(--accent-warning), var(--accent-warning));
 }
 
 .total-label {
@@ -262,6 +262,10 @@
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .total-item.income .total-value {
@@ -347,13 +351,14 @@
 
 .sort-controls select {
   padding: var(--space-2) var(--space-3);
-  background-color: var(--background-secondary);
+  background-color: var(--input-bg);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--text-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-family: var(--font-sans);
 }
 
 .sort-controls select:focus {
@@ -520,7 +525,7 @@
 .cell.amount {
   justify-content: center;
   align-items: flex-end;
-  position: relative;
+  /* position: relative; */
   padding-bottom: 2rem;
 }
 
@@ -549,7 +554,7 @@
   transition: opacity var(--transition-fast);
   position: absolute;
   bottom: var(--space-2);
-  right: var(--space-2);
+  /* right: var(--space-2); */
 }
 
 .table-row:hover .action-buttons {
@@ -570,9 +575,10 @@
 }
 
 .action-btn.edit-btn {
-  background: #dbeafe;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border: 1px solid var(--accent-primary);
+  /* opacity: 0.1; */
 }
 
 .action-btn.edit-btn:hover {
@@ -581,12 +587,14 @@
   transform: scale(1.1);
   box-shadow: var(--shadow-md);
   border-color: var(--accent-primary);
+  opacity: 1;
 }
 
 .action-btn.delete-btn {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: var(--accent-error);
+  color: var(--text-inverse);
+  border: 1px solid var(--accent-error);
+  /* opacity: 0.1; */
 }
 
 .action-btn.delete-btn:hover {
@@ -595,6 +603,7 @@
   transform: scale(1.1);
   box-shadow: var(--shadow-md);
   border-color: var(--accent-error);
+  opacity: 1;
 }
 
 /* Monthly and Yearly Views */
@@ -962,6 +971,10 @@
   
   .total-value {
     font-size: var(--text-lg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
   }
   
   .transactions-controls {

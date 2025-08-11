@@ -11,7 +11,8 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-for-development-only';
+      const decoded = jwt.verify(token, jwtSecret);
 
       // Get user from token
       req.user = await User.findById(decoded.id).select('-password');
@@ -43,8 +44,15 @@ const protect = async (req, res, next) => {
 
 // Generate JWT Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+  const jwtSecret = process.env.JWT_SECRET || 'fallback-secret-key-for-development-only';
+  const jwtExpire = process.env.JWT_EXPIRE || '7d';
+  
+  if (!process.env.JWT_SECRET) {
+    console.warn('⚠️ JWT_SECRET not found in environment variables, using fallback');
+  }
+  
+  return jwt.sign({ id }, jwtSecret, {
+    expiresIn: jwtExpire
   });
 };
 

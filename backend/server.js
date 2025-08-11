@@ -5,6 +5,12 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config({ path: './config.env' });
 
+// Debug environment variables
+console.log('🔧 Environment Check:');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Set' : '❌ Missing');
+console.log('MONGODB_URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Missing');
+console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+
 // Import routes
 const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transactions');

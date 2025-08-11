@@ -355,7 +355,7 @@ const TransactionsList = () => {
               <span className="total-value">{formatCurrency(totals.expense)}</span>
             </div>
             <div className={`total-item balance ${totals.balance >= 0 ? 'positive' : 'negative'}`}>
-              <span className="total-label">Net Balance</span>
+              <span className="total-label">Balance</span>
               <span className="total-value">
                 {totals.balance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(totals.balance))}
               </span>

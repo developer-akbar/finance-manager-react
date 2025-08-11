@@ -278,7 +278,7 @@ const Settings = () => {
                 </button>
               </div>
 
-              <div className="action-card danger">
+              <div className="action-card">
                 <div className="action-header">
                   <Trash2 size={24} />
                   <h3>Clear All Data</h3>
