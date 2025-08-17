@@ -4,6 +4,7 @@ import { Calendar, ChevronDown } from 'lucide-react';
 const DateNavigation = ({ 
   currentDate, 
   onDateChange, 
+  viewType = 'monthly',
   showQuickSelector = true,
   className = '' 
 }) => {
@@ -24,23 +25,65 @@ const DateNavigation = ({
     };
   }, []);
 
-  const changeMonth = (direction) => {
+  const changePeriod = (direction) => {
     const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + direction);
+    
+    switch (viewType) {
+      case 'monthly':
+        newDate.setMonth(newDate.getMonth() + direction);
+        break;
+      case 'yearly':
+        newDate.setFullYear(newDate.getFullYear() + direction);
+        break;
+      case 'financial-yearly':
+        newDate.setFullYear(newDate.getFullYear() + direction);
+        break;
+      default:
+        newDate.setMonth(newDate.getMonth() + direction);
+    }
+    
     onDateChange(newDate);
   };
 
   const handleQuickDateSelect = (year, month) => {
-    const newDate = new Date(year, month, 1);
+    let newDate;
+    
+    switch (viewType) {
+      case 'monthly':
+        newDate = new Date(year, month, 1);
+        break;
+      case 'yearly':
+        newDate = new Date(year, 0, 1);
+        break;
+      case 'financial-yearly':
+        newDate = new Date(year, 3, 1); // April 1st for FY start
+        break;
+      default:
+        newDate = new Date(year, month, 1);
+    }
+    
     onDateChange(newDate);
     setShowDateSelector(false);
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long' 
-    });
+    switch (viewType) {
+      case 'monthly':
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long' 
+        });
+      case 'yearly':
+        return date.getFullYear().toString();
+      case 'financial-yearly':
+        const fyStart = date.getMonth() >= 3 ? date.getFullYear() : date.getFullYear() - 1;
+        return `FY ${fyStart}-${fyStart + 1}`;
+      default:
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long' 
+        });
+    }
   };
 
   // Generate years and months for quick selector
@@ -65,7 +108,7 @@ const DateNavigation = ({
 
   return (
     <div className={`date-navigation ${className}`}>
-      <button onClick={() => changeMonth(-1)}>&lt;</button>
+      <button onClick={() => changePeriod(-1)}>&lt;</button>
       
       {showQuickSelector ? (
         <div className="quick-date-selector" ref={dateSelectorRef}>
@@ -114,7 +157,7 @@ const DateNavigation = ({
         </span>
       )}
       
-      <button onClick={() => changeMonth(1)}>&gt;</button>
+      <button onClick={() => changePeriod(1)}>&gt;</button>
     </div>
   );
 };

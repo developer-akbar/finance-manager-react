@@ -84,6 +84,24 @@ export const formatCurrency = (amount, currency = 'INR') => {
   return formatter.format(amount);
 };
 
+export const formatIndianCurrency = (amount) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return '₹0';
+  }
+  
+  const numAmount = parseFloat(amount);
+  if (numAmount === 0) return '₹0';
+  
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+  
+  return formatter.format(numAmount);
+};
+
 // Based on user's proven date handling approach
 export const formatDate = (dateString) => {
   if (!dateString) return '';

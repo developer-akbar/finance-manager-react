@@ -1,4 +1,17 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+// Dynamic API base URL based on environment
+const getAPIBaseURL = () => {
+  const hostname = window.location.hostname;
+  const port = '5000'; // Backend port
+  
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return `http://localhost:${port}/api`;
+  } else {
+    // For network access (like 10.213.181.81), use the same hostname
+    return `http://${hostname}:${port}/api`;
+  }
+};
+
+const API_BASE_URL = getAPIBaseURL();
 
 // Helper function to get auth token
 const getAuthToken = () => {
@@ -124,20 +137,12 @@ export const transactionsAPI = {
     });
   },
 
-      // Delete transaction
-    delete: async (id) => {
-      return await apiRequest(`/transactions/${id}`, {
-        method: 'DELETE',
-      });
-    },
-    
-    // Update transaction
-    update: async (id, data) => {
-      return await apiRequest(`/transactions/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
-    },
+  // Delete transaction
+  delete: async (id) => {
+    return await apiRequest(`/transactions/${id}`, {
+      method: 'DELETE',
+    });
+  },
 
   // Bulk import transactions
   bulkImport: async (transactions) => {

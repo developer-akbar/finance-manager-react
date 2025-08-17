@@ -53,13 +53,6 @@ const appReducer = (state, action) => {
         ...state,
         transactions: state.transactions.filter(t => t._id !== action.payload)
       };
-    case 'UPDATE_TRANSACTION':
-      return {
-        ...state,
-        transactions: state.transactions.map(t => 
-          t._id === action.payload._id ? action.payload : t
-        )
-      };
     case 'SET_ACCOUNTS':
       return { ...state, accounts: action.payload };
     case 'SET_CATEGORIES':

@@ -55,12 +55,14 @@
   
   .main-content {
     margin-left: 0;
-    min-height: calc(100vh - 80px); /* Account for mobile nav */
+    min-height: calc(100vh - 90px); /* Account for mobile nav */
   }
   
   .content-wrapper {
     padding: var(--space-3);
-    padding-bottom: calc(var(--space-3) + 80px); /* Space for mobile nav */
+    padding-bottom: calc(var(--space-3) + 90px); /* Space for mobile nav */
+    /* Ensure content doesn't get hidden behind nav */
+    margin-bottom: 0;
   }
   
   .content-header {
@@ -72,7 +74,7 @@
 @media (max-width: 640px) {
   .content-wrapper {
     padding: var(--space-2);
-    padding-bottom: calc(var(--space-2) + 80px);
+    padding-bottom: calc(var(--space-2) + 90px);
   }
   
   .content-header {

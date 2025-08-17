@@ -10,7 +10,8 @@ import {
   LogOut,
   TrendingUp,
   Wallet,
-  CreditCard
+  CreditCard,
+  PieChart
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import './Navigation.css';
@@ -24,6 +25,7 @@ const Navigation = () => {
     { id: 'add-transaction', label: 'Add Transaction', icon: PlusCircle },
     { id: 'transactions', label: 'Transactions', icon: Search },
     { id: 'accounts', label: 'Accounts', icon: CreditCard },
+    { id: 'categories', label: 'Categories', icon: PieChart },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
