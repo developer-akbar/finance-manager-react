@@ -6,7 +6,6 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
   padding: var(--space-4);
   background: var(--background-elevated);
   border-radius: var(--radius-lg);
@@ -136,6 +135,28 @@
 }
 
 .month-item.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.year-item {
+  padding: var(--space-3);
+  text-align: center;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  margin-bottom: var(--space-1);
+}
+
+.year-item:hover {
+  background: var(--background-hover);
+  color: var(--text-primary);
+}
+
+.year-item.active {
   background: var(--accent-primary);
   color: white;
 }

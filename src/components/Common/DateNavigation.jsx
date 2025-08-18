@@ -29,6 +29,9 @@ const DateNavigation = ({
     const newDate = new Date(currentDate);
     
     switch (viewType) {
+      case 'daily':
+        newDate.setMonth(newDate.getMonth() + direction);
+        break;
       case 'monthly':
         newDate.setMonth(newDate.getMonth() + direction);
         break;
@@ -49,6 +52,9 @@ const DateNavigation = ({
     let newDate;
     
     switch (viewType) {
+      case 'daily':
+        newDate = new Date(year, month, 1);
+        break;
       case 'monthly':
         newDate = new Date(year, month, 1);
         break;
@@ -68,10 +74,15 @@ const DateNavigation = ({
 
   const formatDate = (date) => {
     switch (viewType) {
+      case 'daily':
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short' 
+        });
       case 'monthly':
         return date.toLocaleDateString('en-US', { 
           year: 'numeric', 
-          month: 'long' 
+          month: 'short' 
         });
       case 'yearly':
         return date.getFullYear().toString();
@@ -81,8 +92,23 @@ const DateNavigation = ({
       default:
         return date.toLocaleDateString('en-US', { 
           year: 'numeric', 
-          month: 'long' 
+          month: 'short' 
         });
+    }
+  };
+
+  const getDropdownHeader = () => {
+    switch (viewType) {
+      case 'daily':
+        return 'Select Month & Year';
+      case 'monthly':
+        return 'Select Month & Year';
+      case 'yearly':
+        return 'Select Year';
+      case 'financial-yearly':
+        return 'Select Financial Year';
+      default:
+        return 'Select Month & Year';
     }
   };
 
@@ -124,28 +150,44 @@ const DateNavigation = ({
           {showDateSelector && (
             <div className="date-dropdown">
               <div className="date-dropdown-header">
-                Select Month & Year
+                {getDropdownHeader()}
               </div>
               <div className="date-dropdown-content">
-                {availableYears.map(year => (
-                  <div key={year} className="year-section">
-                    <div className="year-header">{year}</div>
-                    <div className="month-list">
-                      {months.map((month, index) => (
-                        <div
-                          key={index}
-                          className={`month-item ${
-                            currentDate.getFullYear() === year && 
-                            currentDate.getMonth() === index ? 'active' : ''
-                          }`}
-                          onClick={() => handleQuickDateSelect(year, index)}
-                        >
-                          {month}
-                        </div>
-                      ))}
+                {viewType === 'yearly' || viewType === 'financial-yearly' ? (
+                  // Show only years for yearly views
+                  availableYears.map(year => (
+                    <div
+                      key={year}
+                      className={`year-item ${
+                        currentDate.getFullYear() === year ? 'active' : ''
+                      }`}
+                      onClick={() => handleQuickDateSelect(year, 0)}
+                    >
+                      {viewType === 'financial-yearly' ? `FY ${year}-${year + 1}` : year}
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  // Show months and years for daily/monthly views
+                  availableYears.map(year => (
+                    <div key={year} className="year-section">
+                      <div className="year-header">{year}</div>
+                      <div className="month-list">
+                        {months.map((month, index) => (
+                          <div
+                            key={index}
+                            className={`month-item ${
+                              currentDate.getFullYear() === year && 
+                              currentDate.getMonth() === index ? 'active' : ''
+                            }`}
+                            onClick={() => handleQuickDateSelect(year, index)}
+                          >
+                            {month}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

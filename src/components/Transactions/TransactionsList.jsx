@@ -287,18 +287,7 @@ const TransactionsList = () => {
     setCurrentPage(1);
   };
 
-  const getViewTitle = () => {
-    switch (currentView) {
-      case 'daily':
-        return currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-      case 'monthly':
-        return currentDate.getFullYear().toString();
-      case 'total':
-        return 'All Time';
-      default:
-        return 'Transactions';
-    }
-  };
+
 
   // Reset to first page when filters change
   React.useEffect(() => {
@@ -348,7 +337,6 @@ const TransactionsList = () => {
       {/* View Navigation */}
       <div className="view-navigation">
         <div className="view-title">
-          <h2>{getViewTitle()}</h2>
           <div className="view-totals">
             <div className="total-item income">
               <span className="total-label">Income</span>
@@ -371,6 +359,7 @@ const TransactionsList = () => {
           <DateNavigation 
             currentDate={currentDate}
             onDateChange={setCurrentDate}
+            viewType={currentView === 'monthly' ? 'monthly' : 'daily'}
             showQuickSelector={true}
           />
         )}
