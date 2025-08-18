@@ -1,48 +1,104 @@
 .dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
 }
 
 .dashboard-header h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2.25rem;
-  font-weight: 700;
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
   color: var(--text-primary);
+  margin-bottom: var(--space-2);
 }
 
 .dashboard-header p {
-  margin: 0;
+  font-size: var(--text-lg);
   color: var(--text-secondary);
-  font-size: 1.1rem;
+  margin: 0;
 }
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2rem;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
 }
 
 .dashboard-section {
-  background: var(--card-bg);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  background: var(--background-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
 }
 
-@media (min-width: 1024px) {
+.dashboard-section:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-primary);
+}
+
+.dashboard-section.full-width {
+  grid-column: 1 / -1;
+}
+
+.dashboard-section.charts-section {
+  background: transparent;
+  border: none;
+  padding: 0;
+  backdrop-filter: none;
+}
+
+.dashboard-section.charts-section:hover {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
   .dashboard-grid {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 }
 
 @media (max-width: 768px) {
-  .dashboard-header h1 {
-    font-size: 1.875rem;
+  .dashboard {
+    padding: var(--space-4);
   }
-  
+
+  .dashboard-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--text-3xl);
+  }
+
+  .dashboard-header p {
+    font-size: var(--text-base);
+  }
+
   .dashboard-section {
-    padding: 1rem;
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: var(--space-3);
+  }
+
+  .dashboard-header h1 {
+    font-size: var(--text-2xl);
+  }
+
+  .dashboard-section {
+    padding: var(--space-3);
   }
 }

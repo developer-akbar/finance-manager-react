@@ -1,8 +1,9 @@
 import React from 'react';
-import SimpleChart from '../Charts/SimpleChart';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { formatIndianCurrency } from '../../utils/calculations';
 import './ChartsSection.css';
 
-const ChartsSection = ({ monthlyData, expenseByCategory, incomeByCategory }) => {
+const ChartsSection = ({ monthlyData, expenseByCategory, incomeByCategory, monthLabel, categoryTotals }) => {
   // Prepare monthly chart data
   const monthlyChartData = Object.entries(monthlyData)
     .sort()
@@ -13,53 +14,120 @@ const ChartsSection = ({ monthlyData, expenseByCategory, incomeByCategory }) => 
       expense: data.expense
     }));
 
-  // Prepare category chart data (top 5 categories)
-  const expenseCategoryData = Object.entries(expenseByCategory)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 5)
-    .map(([category, amount]) => ({ category, amount }));
+  // Prepare monthly category spending data
+  const monthlyCategoryData = Object.entries(categoryTotals || {}).map(([category, amount]) => ({
+    name: category,
+    value: amount
+  }));
 
-  const incomeCategoryData = Object.entries(incomeByCategory)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 5)
-    .map(([category, amount]) => ({ category, amount }));
+  // Prepare total category spending data
+  const totalCategoryData = Object.entries(expenseByCategory).map(([category, amount]) => ({
+    name: category,
+    value: amount
+  }));
+
+  // Generate colors for pie charts
+  const generateColors = (count) => {
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+      colors.push(`hsl(${i * 30}, 100%, 75%)`);
+    }
+    return colors;
+  };
+
+  const monthlyColors = generateColors(monthlyCategoryData.length);
+  const totalColors = generateColors(totalCategoryData.length);
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      const total = monthlyCategoryData.reduce((sum, item) => sum + item.value, 0);
+      const percentage = ((data.value / total) * 100).toFixed(2);
+      
+      return (
+        <div className="chart-tooltip">
+          <p className="tooltip-label">{data.name}</p>
+          <p className="tooltip-value">{formatIndianCurrency(data.value)}</p>
+          <p className="tooltip-percentage">({percentage}%)</p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const TotalTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      const total = totalCategoryData.reduce((sum, item) => sum + item.value, 0);
+      const percentage = ((data.value / total) * 100).toFixed(2);
+      
+      return (
+        <div className="chart-tooltip">
+          <p className="tooltip-label">{data.name}</p>
+          <p className="tooltip-value">{formatIndianCurrency(data.value)}</p>
+          <p className="tooltip-percentage">({percentage}%)</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="charts-section">
-      <h2>Financial Overview</h2>
+      <div className="charts-header">
+        <h2>Financial Charts</h2>
+        <p>Visual insights into your spending patterns</p>
+      </div>
       
       <div className="charts-grid">
         <div className="chart-container">
-          <h3>Monthly Trends</h3>
-          <SimpleChart 
-            data={monthlyChartData}
-            type="line"
-            xKey="month"
-            yKeys={['income', 'expense']}
-            colors={['#65a30d', '#dc2626']}
-          />
+          <h3>{monthLabel} Category Spendings</h3>
+          <div className="chart-wrapper">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={monthlyCategoryData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {monthlyCategoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={monthlyColors[index % monthlyColors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="chart-container">
-          <h3>Expense Categories</h3>
-          <SimpleChart 
-            data={expenseCategoryData}
-            type="bar"
-            xKey="category"
-            yKeys={['amount']}
-            colors={['#1e3a8a']}
-          />
-        </div>
-
-        <div className="chart-container">
-          <h3>Income Sources</h3>
-          <SimpleChart 
-            data={incomeCategoryData}
-            type="bar"
-            xKey="category"
-            yKeys={['amount']}
-            colors={['#65a30d']}
-          />
+          <h3>Total Category Spendings</h3>
+          <div className="chart-wrapper">
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={totalCategoryData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {totalCategoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={totalColors[index % totalColors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<TotalTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>

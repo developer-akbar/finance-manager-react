@@ -1,0 +1,192 @@
+.expense-insights {
+  margin-bottom: var(--space-8);
+}
+
+.insights-header {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.insights-header h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.insights-header p {
+  color: var(--text-secondary);
+  font-size: var(--text-base);
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.insight-card {
+  background: var(--background-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.insight-card:hover::before {
+  opacity: 1;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--accent-primary);
+}
+
+.insight-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--background-primary);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+  color: var(--accent-primary);
+  border: 2px solid var(--border-primary);
+}
+
+.insight-content h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.insight-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.insight-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Spending Comparison */
+.spending-comparison {
+  background: var(--background-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  backdrop-filter: blur(10px);
+}
+
+.comparison-header {
+  margin-bottom: var(--space-6);
+  text-align: center;
+}
+
+.comparison-header h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.comparison-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+.comparison-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--background-primary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-secondary);
+}
+
+.comparison-label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+  font-weight: var(--font-medium);
+}
+
+.comparison-value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--background-elevated);
+}
+
+.comparison-value.positive {
+  color: var(--accent-success);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.comparison-value.negative {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .insights-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .comparison-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .insight-card {
+    padding: var(--space-4);
+  }
+
+  .spending-comparison {
+    padding: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .insight-value {
+    font-size: var(--text-xl);
+  }
+
+  .comparison-value {
+    font-size: var(--text-base);
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
