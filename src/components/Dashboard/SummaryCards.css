@@ -3,6 +3,8 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-6);
   margin-bottom: var(--space-8);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .summary-card {
@@ -14,6 +16,8 @@
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .summary-card::before {
@@ -62,6 +66,8 @@
   font-weight: var(--font-bold);
   color: var(--text-primary);
   margin-bottom: var(--space-2);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Change Indicator */
@@ -74,6 +80,7 @@
   background: var(--background-primary);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-secondary);
+  flex-wrap: wrap;
 }
 
 .change-value {
@@ -116,6 +123,7 @@
   border-radius: var(--radius-lg);
   background: var(--background-primary);
   border: 1px solid var(--border-secondary);
+  flex-wrap: wrap;
 }
 
 .trend-indicator.positive {
@@ -179,6 +187,7 @@
   .summary-cards {
     grid-template-columns: 1fr;
     gap: var(--space-4);
+    margin-bottom: var(--space-6);
   }
 
   .summary-card {
@@ -198,9 +207,23 @@
     font-size: var(--text-base);
     padding: var(--space-2);
   }
+
+  .change-indicator {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-1);
+  }
+
+  .change-label {
+    margin-left: 0;
+  }
 }
 
 @media (max-width: 480px) {
+  .summary-cards {
+    gap: var(--space-3);
+  }
+
   .summary-card {
     padding: var(--space-3);
   }
@@ -213,19 +236,14 @@
     font-size: var(--text-lg);
   }
 
-  .change-indicator {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-1);
-  }
-
-  .change-label {
-    margin-left: 0;
-  }
-
   .trend-indicator {
     flex-direction: column;
     text-align: center;
     gap: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .change-indicator {
+    padding: var(--space-1);
   }
 }

@@ -13,8 +13,10 @@ const ExpenseInsights = ({
   const insights = [
     {
       title: 'Most Spending Category',
-      value: mostSpendingCategory,
-      subtitle: `${mostSpendingPercentage.toFixed(1)}% of total expenses`,
+      value: mostSpendingCategory === 'No expenses' ? 'No expenses this month' : mostSpendingCategory,
+      subtitle: mostSpendingCategory === 'No expenses' 
+        ? 'No expense transactions found' 
+        : `${mostSpendingPercentage.toFixed(1)}% of total expenses`,
       icon: BarChart3,
       className: 'category-insight'
     },

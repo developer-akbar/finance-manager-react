@@ -64,11 +64,22 @@ const Dashboard = () => {
     }, {});
   }, [monthData]);
 
-  const mostSpendingCategory = Object.keys(categoryTotals).reduce((a, b) => 
-    categoryTotals[a] > categoryTotals[b] ? a : b, 'No expenses'
-  );
+  // Debug logging
+  console.log('Dashboard Debug:', {
+    monthData: monthData.length,
+    categoryTotals,
+    currentMonthTotals,
+    monthToShow,
+    yearToShow
+  });
 
-  const mostSpendingPercentage = currentMonthTotals.expense > 0 
+  const mostSpendingCategory = Object.keys(categoryTotals).length > 0 
+    ? Object.keys(categoryTotals).reduce((a, b) => 
+        categoryTotals[a] > categoryTotals[b] ? a : b
+      )
+    : 'No expenses';
+
+  const mostSpendingPercentage = currentMonthTotals.expense > 0 && Object.keys(categoryTotals).length > 0
     ? (categoryTotals[mostSpendingCategory] / currentMonthTotals.expense) * 100 
     : 0;
 
@@ -111,7 +122,7 @@ const Dashboard = () => {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>Dashboard</h1>
-        <p>Welcome back! Here's your financial overview</p>
+        <p>Welcome back! Here's your financial overview for {monthLabel}</p>
       </div>
 
       {/* Summary Cards */}

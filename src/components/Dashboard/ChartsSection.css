@@ -1,5 +1,7 @@
 .charts-section {
   margin-bottom: var(--space-8);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .charts-header {
@@ -23,6 +25,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: var(--space-6);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chart-container {
@@ -32,6 +36,8 @@
   padding: var(--space-6);
   backdrop-filter: blur(10px);
   transition: all var(--transition-normal);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chart-container:hover {
@@ -54,6 +60,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 /* Custom Tooltip */
@@ -95,6 +102,15 @@
 }
 
 @media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  
+  .charts-section {
+    margin-bottom: var(--space-6);
+  }
+
   .chart-container {
     padding: var(--space-4);
   }

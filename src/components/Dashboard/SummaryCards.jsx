@@ -6,14 +6,14 @@ import './SummaryCards.css';
 const SummaryCards = ({ totals, expenseChange, currentMonthVsAverage }) => {
   const cards = [
     {
-      title: 'Total Income',
+      title: 'Income',
       amount: totals.income,
       icon: TrendingUp,
       className: 'income',
       color: '#65a30d'
     },
     {
-      title: 'Total Expenses',
+      title: 'Expenses',
       amount: totals.expense,
       icon: TrendingDown,
       className: 'expense',
