@@ -218,137 +218,7 @@
   color: var(--accent-danger);
 }
 
-/* Smart Border Radius for Transaction Items */
-.transaction-item {
-  position: relative;
-  padding: var(--space-4);
-  border-bottom: 1px solid var(--border-secondary);
-  transition: background-color var(--transition-normal);
-  background: var(--background-primary);
-}
-
-.transaction-item:last-child {
-  border-bottom: none;
-}
-
-.transaction-item:hover {
-  background: var(--background-hover);
-}
-
-/* Border radius rules for transaction items */
-.transaction-item:first-child {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-
-.transaction-item:last-child {
-  border-bottom-left-radius: var(--radius-lg);
-  border-bottom-right-radius: var(--radius-lg);
-}
-
-/* Single transaction item in a day */
-.day-group:has(.transaction-item:only-child) .transaction-item {
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-}
-
-/* Two transaction items - first has no radius, last has bottom radius */
-.day-group:has(.transaction-item:nth-child(2):last-child) .transaction-item:first-child {
-  border-radius: 0;
-}
-
-.day-group:has(.transaction-item:nth-child(2):last-child) .transaction-item:last-child {
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-}
-
-/* More than two items - only first and last have radius */
-.day-group:has(.transaction-item:nth-child(3):last-child) .transaction-item:not(:first-child):not(:last-child),
-.day-group:has(.transaction-item:nth-child(n+4)) .transaction-item:not(:first-child):not(:last-child) {
-  border-radius: 0;
-}
-
-.transaction-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
-  gap: var(--space-4);
-  align-items: center;
-}
-
-.transaction-info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.category {
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  color: var(--text-primary);
-}
-
-.note {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.description {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  line-height: 1.4;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  max-width: 100%;
-}
-
-.transaction-amount {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  min-width: 120px;
-}
-
-.amount {
-  font-size: var(--text-base);
-  font-weight: var(--font-bold);
-}
-
-.amount.positive {
-  color: var(--accent-success);
-}
-
-.amount.negative {
-  color: var(--accent-danger);
-}
-
-/* Transaction Actions */
-.transaction-actions {
-  display: flex;
-  gap: var(--space-1);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
-.transaction-item:hover .transaction-actions {
-  opacity: 1;
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: var(--background-elevated);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-full);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  backdrop-filter: blur(10px);
-  flex-shrink: 0;
-}
+/* Transaction styles are now handled by the unified TransactionList component */
 
 .action-btn:hover {
   box-shadow: var(--shadow-md);
@@ -370,13 +240,7 @@
 .transaction-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 .form-group {
@@ -420,7 +284,7 @@
   display: flex;
   gap: var(--space-3);
   justify-content: flex-end;
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
 }
 
 .btn-primary,
@@ -591,10 +455,6 @@
     gap: var(--space-2);
     padding: var(--space-3);
   }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 768px) {
@@ -635,7 +495,7 @@
   }
   
   .form-actions {
-    flex-direction: column;
+    /* flex-direction: column; */
   }
   
   .btn-primary,

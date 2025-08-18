@@ -3,7 +3,8 @@ import { useApp } from '../../contexts/AppContext';
 import { transactionsAPI } from '../../services/api';
 import { ArrowLeft, Edit2, Trash2 } from 'lucide-react';
 import DateNavigation from '../Common/DateNavigation';
-import TransactionEditModal from '../Common/TransactionEditModal';
+
+import TransactionList from '../Common/TransactionList';
 import './Accounts.css';
 
 const Accounts = () => {
@@ -12,8 +13,6 @@ const Accounts = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [accountBalances, setAccountBalances] = useState({});
   const [accountTransactions, setAccountTransactions] = useState([]);
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   // Calculate account balances from transactions
   useEffect(() => {
@@ -97,22 +96,29 @@ const Accounts = () => {
     setCurrentDate(new Date());
   };
 
-  const handleEditTransaction = (transaction) => {
-    setEditingTransaction(transaction);
-    setIsEditModalOpen(true);
+  const handleEditTransaction = async (updatedTransaction) => {
+    try {
+      const response = await transactionsAPI.update(updatedTransaction._id, updatedTransaction);
+      
+      if (response.success) {
+        // Update the transaction in local state
+        dispatch({ type: 'UPDATE_TRANSACTION', payload: updatedTransaction });
+      } else {
+        alert('Failed to update transaction: ' + response.message);
+      }
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+      alert('Error updating transaction');
+    }
   };
 
-  const handleDeleteTransaction = async (transactionId) => {
-    if (!window.confirm('Are you sure you want to delete this transaction?')) {
-      return;
-    }
-
+  const handleDeleteTransaction = async (transaction) => {
     try {
-      const response = await transactionsAPI.delete(transactionId);
+      const response = await transactionsAPI.delete(transaction._id);
       
       if (response.success) {
         // Remove from local state
-        dispatch({ type: 'DELETE_TRANSACTION', payload: transactionId });
+        dispatch({ type: 'DELETE_TRANSACTION', payload: transaction._id });
       } else {
         alert('Failed to delete transaction: ' + response.message);
       }
@@ -122,10 +128,7 @@ const Accounts = () => {
     }
   };
 
-  const handleTransactionUpdate = (updatedTransaction) => {
-    // Update the transaction in local state
-    dispatch({ type: 'UPDATE_TRANSACTION', payload: updatedTransaction });
-  };
+
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -252,103 +255,19 @@ const Accounts = () => {
           </div>
         </div>
 
-        <div className="transactions-container">
-          {Object.keys(transactionsByDay).length > 0 ? (
-            Object.entries(transactionsByDay).map(([date, transactions]) => (
-              <div key={date} className="day-group">
-                <div className="day-header">
-                  <h3>{new Date(date).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}</h3>
-                  <div className="day-totals">
-                    <span className="deposits">
-                      {formatCurrency(transactions.reduce((sum, t) => {
-                        const amount = parseFloat(t.INR);
-                        if (t['Income/Expense'] === 'Income' || 
-                            (t['Income/Expense'] === 'Transfer-Out' && t.Category === selectedAccount)) {
-                          return sum + amount;
-                        }
-                        return sum;
-                      }, 0))}
-                    </span>
-                    <span className="withdrawals">
-                      {formatCurrency(transactions.reduce((sum, t) => {
-                        const amount = parseFloat(t.INR);
-                        if (t['Income/Expense'] === 'Expense' || 
-                            (t['Income/Expense'] === 'Transfer-Out' && t.Account === selectedAccount)) {
-                          return sum + amount;
-                        }
-                        return sum;
-                      }, 0))}
-                    </span>
-                  </div>
-                </div>
-                
-                                 {transactions.map((transaction, index) => (
-                   <div key={index} className="transaction-item">
-                     <div className="transaction-details">
-                       <div className="transaction-info">
-                         <span className="category">{transaction.Category}</span>
-                         <span className="note">{transaction.Note}</span>
-                       </div>
-                       <div className="description">
-                         {transaction.Description}
-                       </div>
-                       <div className="transaction-amount">
-                         <span className={`amount ${transaction['Income/Expense'] === 'Income' ? 'positive' : 'negative'}`}>
-                           {transaction['Income/Expense'] === 'Income' ? '+' : '-'}
-                           {formatCurrency(parseFloat(transaction.INR))}
-                         </span>
-                       </div>
-                       <div className="transaction-actions">
-                         <button 
-                           className="action-btn edit"
-                           onClick={(e) => {
-                             e.stopPropagation();
-                             handleEditTransaction(transaction);
-                           }}
-                           title="Edit transaction"
-                         >
-                           <Edit2 size={12} />
-                         </button>
-                         <button 
-                           className="action-btn delete"
-                           onClick={(e) => {
-                             e.stopPropagation();
-                             handleDeleteTransaction(transaction._id);
-                           }}
-                           title="Delete transaction"
-                         >
-                           <Trash2 size={12} />
-                         </button>
-                       </div>
-                     </div>
-                   </div>
-                 ))}
-              </div>
-            ))
-          ) : (
-            <div className="no-transactions">
-              <p>No transactions found for {selectedAccount} in {currentDate.toLocaleDateString('en-US', { 
-                year: 'numeric', 
-                month: 'long' 
-              })}</p>
-            </div>
-          )}
-        </div>
-
-        <TransactionEditModal
-          transaction={editingTransaction}
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setEditingTransaction(null);
-          }}
-          onUpdate={handleTransactionUpdate}
+        <TransactionList
+          transactions={accountTransactions}
+          onEdit={handleEditTransaction}
+          onDelete={handleDeleteTransaction}
+          showAccount={true}
+          showSubcategory={true}
+          dayHeaderFormat="accounts"
+          accountName={selectedAccount}
+          accounts={state.accounts}
+          categories={state.categories}
         />
+
+
       </div>
     );
   }

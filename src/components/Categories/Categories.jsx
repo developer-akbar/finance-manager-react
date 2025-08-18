@@ -4,7 +4,8 @@ import { formatIndianCurrency, formatDate } from '../../utils/calculations';
 import DateNavigation from '../Common/DateNavigation';
 import CategoryChart from './CategoryChart';
 import TrendingChart from './TrendingChart';
-import TransactionEditModal from '../Common/TransactionEditModal';
+
+import TransactionList from '../Common/TransactionList';
 import { transactionsAPI } from '../../services/api';
 import { Edit, Trash2 } from 'lucide-react';
 import './Categories.css';
@@ -21,8 +22,6 @@ const Categories = () => {
   const [showSubcategories, setShowSubcategories] = useState(false);
   const [categories, setCategories] = useState({});
   const [totalAmount, setTotalAmount] = useState(0);
-  const [editingTransaction, setEditingTransaction] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [trendingData, setTrendingData] = useState([]);
 
   // Helper function to parse date from DD/MM/YYYY format (same as Transactions page)
@@ -149,40 +148,10 @@ const Categories = () => {
     setShowSubcategories(false);
   }, [currentMainTab, currentTab]);
 
-  // Handle edit transaction
-  const handleEditTransaction = (transaction) => {
-    setEditingTransaction(transaction);
-    setShowEditModal(true);
-  };
-
-  // Handle delete transaction
-  const handleDeleteTransaction = async (transaction) => {
-    if (window.confirm('Are you sure you want to delete this transaction?')) {
-      try {
-        await transactionsAPI.delete(transaction._id);
-        // Refresh data without page reload
-        if (refreshTransactions) {
-          refreshTransactions();
-        }
-      } catch (error) {
-        console.error('Error deleting transaction:', error);
-        alert('Failed to delete transaction');
-      }
-    }
-  };
-
-  // Handle edit modal close
-  const handleEditModalClose = () => {
-    setShowEditModal(false);
-    setEditingTransaction(null);
-  };
-
-  // Handle edit modal save
-  const handleEditModalSave = async (updatedTransaction) => {
+  // Handle edit transaction - this will be called by the integrated form in TransactionList
+  const handleEditTransaction = async (updatedTransaction) => {
     try {
       await transactionsAPI.update(updatedTransaction._id, updatedTransaction);
-      setShowEditModal(false);
-      setEditingTransaction(null);
       // Refresh data without page reload
       if (refreshTransactions) {
         refreshTransactions();
@@ -192,6 +161,22 @@ const Categories = () => {
       alert('Failed to update transaction');
     }
   };
+
+  // Handle delete transaction - this will be called by the integrated form in TransactionList
+  const handleDeleteTransaction = async (transaction) => {
+    try {
+      await transactionsAPI.delete(transaction._id);
+      // Refresh data without page reload
+      if (refreshTransactions) {
+        refreshTransactions();
+      }
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      alert('Failed to delete transaction');
+    }
+  };
+
+
 
   // Get filtered transactions for selected category/subcategory
   const getSelectedTransactions = () => {
@@ -474,91 +459,20 @@ const Categories = () => {
             />
 
             {/* Transactions Container */}
-            <div className="transactions-container">
-              {Object.keys(groupedTransactions).length > 0 ? (
-                Object.entries(groupedTransactions)
-                  .sort(([a], [b]) => new Date(b) - new Date(a))
-                  .map(([date, dayTransactions]) => {
-                    const dayTotals = calculateTotals(dayTransactions);
-                    
-                    return (
-                      <div key={date} className="day-group">
-                        <div className="day-header">
-                          <h3 className="day-title">{new Date(date).toLocaleDateString()}</h3>
-                          <div className="day-totals">
-                            <span className={`day-amount ${currentMainTab}`}>
-                              {formatIndianCurrency(dayTotals[currentMainTab])}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="day-transactions">
-                          {dayTransactions
-                            .sort((a, b) => parseDate(b.Date) - parseDate(a.Date))
-                            .map((transaction, index) => (
-                              <div key={index} className="transaction-item">
-                                <div className="transaction-info">
-                                  <div className="transaction-details">
-                                    <span className="transaction-category">{transaction.Category}</span>
-                                    {transaction.Subcategory && (
-                                      <span className="transaction-subcategory">• {transaction.Subcategory}</span>
-                                    )}
-                                  </div>
-                                  {transaction.Note && (
-                                    <div className="transaction-note">{transaction.Note}</div>
-                                  )}
-                                  {transaction.Description && (
-                                    <div className="transaction-description">{transaction.Description}</div>
-                                  )}
-                                </div>
-                                <div className="transaction-actions">
-                                  <div className="transaction-amount">
-                                    <span className={`amount ${transaction["Income/Expense"].toLowerCase()}`}>
-                                      {formatIndianCurrency(parseFloat(transaction.INR))}
-                                    </span>
-                                  </div>
-                                  <div className="action-buttons">
-                                    <button
-                                      className="action-btn edit-btn"
-                                      onClick={() => handleEditTransaction(transaction)}
-                                      title="Edit transaction"
-                                    >
-                                      <Edit size={14} />
-                                    </button>
-                                    <button
-                                      className="action-btn delete-btn"
-                                      onClick={() => handleDeleteTransaction(transaction)}
-                                      title="Delete transaction"
-                                    >
-                                      <Trash2 size={14} />
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    );
-                  })
-              ) : (
-                <div className="no-transactions">
-                  <p>No transactions found for <strong>{selectedCategory}</strong>
-                    {selectedSubcategory && ` - ${selectedSubcategory}`} in the selected period.</p>
-                </div>
-              )}
-            </div>
+            <TransactionList
+              transactions={Object.values(groupedTransactions).flat()}
+              onEdit={handleEditTransaction}
+              onDelete={handleDeleteTransaction}
+              showAccount={false}
+              showSubcategory={true}
+              dayHeaderFormat="categories"
+              accounts={state.accounts}
+              categories={state.categories}
+            />
           </div>
         )}
 
-               {/* Edit Transaction Modal */}
-        {showEditModal && editingTransaction && (
-          <TransactionEditModal
-            transaction={editingTransaction}
-            isOpen={showEditModal}
-            onClose={handleEditModalClose}
-            onUpdate={handleEditModalSave}
-          />
-        )}
+
      </div>
    );
  };

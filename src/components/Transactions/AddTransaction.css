@@ -1,13 +1,14 @@
 .add-transaction {
-  max-width: none;
+  max-width: 600px;
   width: 100%;
+  margin: 0 auto;
 }
 
 .page-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  /* margin-bottom: 1.5rem; */
 }
 
 .back-btn {
@@ -37,64 +38,60 @@
 }
 
 .transaction-form {
-  background: var(--card-bg);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid var(--border-color);
+  background: var(--background-elevated);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-primary);
   max-height: calc(100vh - 200px);
   overflow-y: auto;
+  backdrop-filter: blur(20px);
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  gap: var(--space-4);
 }
 
-.form-group label {
+.form-row label {
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.9rem;
+  flex-basis: 15ch;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-  padding: 0.875rem;
+.form-row input,
+.form-row select,
+.form-row textarea {
+  padding: var(--space-2);
   border: 2px solid var(--border-color);
   border-radius: 0.5rem;
-  font-size: 1rem;
+  /* font-size: 1rem; */
   transition: all 0.2s ease;
   background: var(--input-bg);
   color: var(--text-primary);
+  flex: 1;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus {
   outline: none;
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.form-group input.error,
-.form-group select.error {
+.form-row input.error,
+.form-row select.error {
   border-color: #dc2626;
 }
 
-.form-group select.expense {
+.form-row select.expense {
   border-color: #dc2626;
 }
 
-.form-group select.income {
+.form-row select.income {
   border-color: #65a30d;
 }
 
@@ -109,7 +106,7 @@
   gap: 1rem;
   justify-content: flex-end;
   margin-top: 2rem;
-  padding-top: 1.5rem;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--border-color);
 }
 
@@ -117,9 +114,8 @@
   background: var(--background-secondary);
   color: var(--text-primary);
   border: 2px solid var(--border-color);
-  padding: 0.875rem 1.5rem;
+  padding: var(--space-2);
   border-radius: 0.5rem;
-  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -134,9 +130,8 @@
   background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
   color: var(--text-inverse);
   border: none;
-  padding: 0.875rem 1.5rem;
+  padding: var(--space-2);
   border-radius: 0.5rem;
-  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -152,17 +147,7 @@
 
 @media (max-width: 768px) {
   .transaction-form {
-    padding: 1.5rem;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .form-actions {
-    flex-direction: column;
+    padding: var(--space-3);
   }
   
   .page-header h1 {

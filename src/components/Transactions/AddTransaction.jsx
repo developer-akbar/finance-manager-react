@@ -151,19 +151,17 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
 
   return (
     <div className="add-transaction">
-      <div className="page-header">
-        <button 
-          className="back-btn"
-          onClick={() => dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' })}
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1>Add Transaction</h1>
-      </div>
-
       <form onSubmit={handleSubmit} className="transaction-form">
-        <div className="form-row">
-          <div className="form-group">
+        <div className="page-header">
+          <button 
+            className="back-btn"
+            onClick={() => dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' })}
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <h4>Add Transaction</h4>
+        </div>
+          <div className="form-row">
             <label htmlFor="type">Type</label>
             <select
               id="type"
@@ -177,7 +175,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
             </select>
           </div>
 
-          <div className="form-group">
+          <div className="form-row">
             <label htmlFor="date">Date</label>
             <input
               type="date"
@@ -188,12 +186,10 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
             />
             {errors.Date && <span className="error-text">{errors.Date}</span>}
           </div>
-        </div>
 
-        <div className="form-row">
           {formData['Income/Expense'] === 'Transfer-Out' ? (
             <>
-              <div className="form-group">
+              <div className="form-row">
                 <label htmlFor="fromAccount">From Account</label>
                 <select
                   id="fromAccount"
@@ -209,7 +205,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
                 {errors.FromAccount && <span className="error-text">{errors.FromAccount}</span>}
               </div>
 
-              <div className="form-group">
+              <div className="form-row">
                 <label htmlFor="toAccount">To Account</label>
                 <select
                   id="toAccount"
@@ -226,7 +222,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
               </div>
             </>
           ) : (
-            <div className="form-group">
+            <div className="form-row">
               <label htmlFor="account">Account</label>
               <select
                 id="account"
@@ -243,7 +239,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
             </div>
           )}
 
-          <div className="form-group">
+          <div className="form-row">
             <label htmlFor="amount">Amount</label>
             <input
               type="number"
@@ -257,11 +253,10 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
             />
             {errors.Amount && <span className="error-text">{errors.Amount}</span>}
           </div>
-        </div>
 
         {formData['Income/Expense'] !== 'Transfer-Out' && (
-          <div className="form-row">
-            <div className="form-group">
+          <>
+            <div className="form-row">
               <label htmlFor="category">Category</label>
               <select
                 id="category"
@@ -277,7 +272,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
               {errors.Category && <span className="error-text">{errors.Category}</span>}
             </div>
 
-            <div className="form-group">
+            <div className="form-row">
               <label htmlFor="subcategory">Subcategory</label>
               <select
                 id="subcategory"
@@ -291,10 +286,10 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
                 ))}
               </select>
             </div>
-          </div>
+          </>
         )}
 
-        <div className="form-group">
+        <div className="form-row">
           <label htmlFor="note">Note</label>
           <input
             type="text"
@@ -305,7 +300,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
           />
         </div>
 
-        <div className="form-group">
+        <div className="form-row">
           <label htmlFor="description">Description</label>
           <textarea
             id="description"
@@ -332,7 +327,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
           </button>
           <button type="submit" className="save-btn">
             <Save size={18} />
-            {isEditMode ? 'Update Transaction' : 'Save Transaction'}
+            {isEditMode ? 'Update' : 'Save'}
           </button>
         </div>
       </form>

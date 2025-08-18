@@ -473,13 +473,13 @@
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
-  padding: 1.5rem 2rem;
+  padding: var(--space-2);
   border-top: 1px solid var(--border-color);
   background: var(--card-bg);
 }
 
 .modal-actions button {
-  padding: 0.75rem 1.5rem;
+  padding: var(--space-2);
   border-radius: 0.5rem;
   font-weight: 600;
   cursor: pointer;
@@ -540,6 +540,6 @@
   }
   
   .modal-actions {
-    flex-direction: column;
+    /* flex-direction: column; */
   }
 }

@@ -11,7 +11,7 @@
 .page-header {
   display: flex;
   align-items: center;
-  padding: var(--space-6);
+  padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--border-primary);
   background-color: var(--background-elevated);
 }
@@ -817,10 +817,10 @@
 
 @media (max-width: 768px) {
   .page-header {
-    flex-direction: column;
-    align-items: stretch;
+    /* flex-direction: column; */
+    align-items: center;
     gap: var(--space-3);
-    padding: var(--space-4);
+    /* padding: var(--space-4); */
   }
   
   .page-header h1 {
@@ -840,6 +840,7 @@
   }
   
   .view-navigation {
+    align-items: normal;
     flex-direction: column;
     gap: var(--space-3);
     padding: var(--space-3) var(--space-4);
@@ -933,7 +934,7 @@
 
 @media (max-width: 640px) {
   .page-header {
-    padding: var(--space-3);
+    /* padding: var(--space-3); */
   }
   
   .page-header h1 {

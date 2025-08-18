@@ -3,16 +3,17 @@ import { useApp } from '../../contexts/AppContext';
 import { formatCurrency, formatDate, convertDateFormat } from '../../utils/calculations';
 import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, BarChart3, TrendingUp } from 'lucide-react';
 import TransactionFilters from './TransactionFilters';
-import EditTransactionModal from './EditTransactionModal';
+
 import DateNavigation from '../Common/DateNavigation';
+import TransactionList from '../Common/TransactionList';
 import './TransactionsList.css';
 
 const TransactionsList = () => {
-  const { state, deleteTransaction, dispatch } = useApp();
+  const { state, deleteTransaction, updateTransaction, dispatch } = useApp();
   const { transactions, searchTerm, filters } = state;
   
   const [showFilters, setShowFilters] = useState(false);
-  const [editingTransaction, setEditingTransaction] = useState(null);
+
   const [sortBy, setSortBy] = useState('date-desc');
   const [currentView, setCurrentView] = useState('daily'); // 'daily', 'monthly', 'total'
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -244,9 +245,12 @@ const TransactionsList = () => {
     return yearlyData;
   };
 
-  const handleDelete = (transaction) => {
-    if (window.confirm(`Are you sure you want to delete this ${transaction['Income/Expense'].toLowerCase()}?`)) {
-      deleteTransaction(transaction.ID);
+  const handleDelete = async (transaction) => {
+    try {
+      await deleteTransaction(transaction._id);
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+      alert('Failed to delete transaction');
     }
   };
 
@@ -304,7 +308,7 @@ const TransactionsList = () => {
   return (
     <div className="transactions-list">
       <div className="page-header">
-        <h1>Transactions</h1>
+        <h3>Transactions</h3>
         <div className="header-actions">
           <button 
             className={`filter-toggle ${showFilters ? 'active' : ''}`}
@@ -406,139 +410,20 @@ const TransactionsList = () => {
 
           <div className="transactions-summary">
             <p>
-              Showing {startIndex + 1}-{Math.min(endIndex, viewTransactions.length)} of {viewTransactions.length} transactions
+              Showing {viewTransactions.length} transactions
             </p>
           </div>
 
-          <div className="transactions-table">
-            {paginatedTransactions.length === 0 ? (
-              <div className="no-transactions">
-                <p>{searchTerm || Object.values(filters).some(f => f !== 'all') 
-                  ? 'No transactions match your search criteria' 
-                  : 'No transactions found for this month'}</p>
-              </div>
-            ) : (
-              <>
-                <div className="table-header">
-                  <div className="header-cell date">Date</div>
-                  <div className="header-cell category">Category/Account</div>
-                  <div className="header-cell details">Details</div>
-                  <div className="header-cell amount">Amount</div>
-                </div>
-                
-                <div className="table-body">
-                  {paginatedTransactions.map((transaction) => (
-                    <div 
-                      key={transaction.ID} 
-                      className="table-row"
-                    >
-                      <div className="cell date">
-                        {formatDate(transaction.Date)}
-                      </div>
-                      <div className="cell category">
-                        <div className="transaction-type">
-                          {transaction['Income/Expense'] === 'Income' ? (
-                            <ArrowUpRight className="income-icon" size={16} />
-                          ) : transaction['Income/Expense'] === 'Expense' ? (
-                            <ArrowDownLeft className="expense-icon" size={16} />
-                          ) : (
-                            <div className="transfer-icon">↔</div>
-                          )}
-                          <span className={`type-badge ${transaction['Income/Expense'].toLowerCase()}`}>
-                            {transaction['Income/Expense']}
-                          </span>
-                        </div>
-                        <div className="category-name">
-                          {transaction['Income/Expense'] === 'Transfer-Out' 
-                            ? `${transaction.FromAccount} → ${transaction.ToAccount}`
-                            : transaction.Category || 'Uncategorized'
-                          }
-                        </div>
-                      </div>
-                      <div className="cell details">
-                        <div className="note">{transaction.Note || 'No note'}</div>
-                        <div className="description">{transaction.Description || 'No description'}</div>
-                        <div className="account">Account: {transaction.Account}</div>
-                      </div>
-                      <div className="cell amount">
-                        <span className={`amount-value ${transaction['Income/Expense'].toLowerCase()}`}>
-                          {formatCurrency(transaction.INR || transaction.Amount)}
-                        </span>
-                        <div className="transaction-actions action-buttons">
-                          <button
-                            className="action-btn edit-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingTransaction(transaction);
-                            }}
-                            title="Edit transaction"
-                          >
-                            <Edit2 size={12} />
-                          </button>
-                          <button
-                            className="action-btn delete-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(transaction);
-                            }}
-                            title="Delete transaction"
-                          >
-                            <Trash2 size={12} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="pagination-btn"
-              >
-                Previous
-              </button>
-              
-              <div className="page-numbers">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-                  
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`page-btn ${currentPage === pageNum ? 'active' : ''}`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-              </div>
-              
-              <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="pagination-btn"
-              >
-                Next
-              </button>
-            </div>
-          )}
+          <TransactionList
+            transactions={viewTransactions}
+            onEdit={updateTransaction}
+            onDelete={handleDelete}
+            showAccount={true}
+            showSubcategory={true}
+            dayHeaderFormat="default"
+            accounts={state.accounts}
+            categories={state.categories}
+          />
         </>
       )}
 
@@ -602,12 +487,7 @@ const TransactionsList = () => {
         </div>
       )}
 
-      {editingTransaction && (
-        <EditTransactionModal
-          transaction={editingTransaction}
-          onClose={() => setEditingTransaction(null)}
-        />
-      )}
+
     </div>
   );
 };
