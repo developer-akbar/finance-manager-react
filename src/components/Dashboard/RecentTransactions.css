@@ -9,9 +9,8 @@
 
 .section-header {
   display: flex;
-  justify-content: between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
 }
 
 .section-header h2 {
@@ -67,7 +66,7 @@
 }
 
 .transaction-item {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   gap: 1rem;
   padding: 0.75rem;
@@ -156,13 +155,7 @@
 
 @media (max-width: 768px) {
   .recent-transactions {
-    padding: 1rem;
-  }
-  
-  .section-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+    padding: var(--space-2);
   }
   
   .transaction-item {

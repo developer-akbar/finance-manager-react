@@ -8,7 +8,7 @@
 
 .day-group {
   background: var(--background-elevated);
-  border: 1px solid var(--border-primary);
+  /* border: 1px solid var(--border-primary);  */
   border-radius: var(--radius-xl);
   overflow: hidden;
   backdrop-filter: blur(10px);
