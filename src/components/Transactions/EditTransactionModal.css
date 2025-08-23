@@ -182,6 +182,6 @@
   
   .modal-actions {
     /* flex-direction: column; */
-    padding: 1rem 1.5rem;
+    padding: var(--space-2);
   }
 }

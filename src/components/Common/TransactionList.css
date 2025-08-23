@@ -384,7 +384,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--z-modal);
   padding: var(--space-4);
   pointer-events: auto;
 }
@@ -394,6 +394,15 @@
   .transaction-modal-overlay {
     left: 280px; /* Width of sidebar */
     right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .transaction-modal-overlay .transaction-modal {
+    margin: 0;
+    transform: none;
+    position: relative;
   }
 }
 
