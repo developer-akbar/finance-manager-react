@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { calculateTotals, getMonthlyData, getCategoryWiseData, formatCurrency, formatIndianCurrency } from '../../utils/calculations';
+import { calculateTotals, getMonthlyData, getCategoryWiseData } from '../../utils/calculations';
 import SummaryCards from './SummaryCards';
-import RecentTransactions from './RecentTransactions';
+import ExpenseInsights from './ExpenseInsights';
 import ChartsSection from './ChartsSection';
+import RecentTransactions from './RecentTransactions';
 import MonthlyTrends from './MonthlyTrends';
 import YearlyAnalysis from './YearlyAnalysis';
-import ExpenseInsights from './ExpenseInsights';
 import './Dashboard.css';
 
 const Dashboard = () => {

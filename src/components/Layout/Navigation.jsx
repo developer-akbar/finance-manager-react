@@ -3,7 +3,6 @@ import { useApp } from '../../contexts/AppContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { 
   Home, 
-  PlusCircle, 
   Search, 
   BarChart3, 
   Settings, 
@@ -22,7 +21,6 @@ const Navigation = () => {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'add-transaction', label: 'Add Transaction', icon: PlusCircle },
     { id: 'transactions', label: 'Transactions', icon: Search },
     { id: 'accounts', label: 'Accounts', icon: CreditCard },
     { id: 'categories', label: 'Categories', icon: PieChart },

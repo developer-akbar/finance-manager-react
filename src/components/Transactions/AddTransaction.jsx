@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { Save, ArrowLeft } from 'lucide-react';
 import { convertDateFormat } from '../../utils/calculations';
@@ -7,6 +7,14 @@ import './AddTransaction.css';
 const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = null, setIsSubmitting = null }) => {
   const { state, addTransaction, updateTransaction, dispatch } = useApp();
   const { accounts, categories } = state;
+
+  // Prevent body scrolling when modal is open
+  useEffect(() => {
+    document.body.classList.add('modal-open');
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, []);
 
   // Helper function to convert DD/MM/YYYY to YYYY-MM-DD for HTML input
   // Based on user's proven date handling approach
@@ -39,9 +47,9 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     }
     return {
       Date: new Date().toISOString().split('T')[0],
-      Account: accounts[0] || '',
-      FromAccount: accounts[0] || '',
-      ToAccount: accounts[1] || '',
+      Account: '',
+      FromAccount: '',
+      ToAccount: '',
       Category: '',
       Subcategory: '',
       'Income/Expense': 'Expense',
@@ -150,188 +158,216 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     : ['Default'];
 
   return (
-    <div className="add-transaction">
-      <form onSubmit={handleSubmit} className="transaction-form">
-        <div className="page-header">
-          <button 
-            className="back-btn"
-            onClick={() => dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' })}
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <h4>Add Transaction</h4>
-        </div>
-          <div className="form-row">
-            <label htmlFor="type">Type</label>
-            <select
-              id="type"
-              value={formData['Income/Expense']}
-              onChange={(e) => handleInputChange('Income/Expense', e.target.value)}
-              className={formData['Income/Expense'].toLowerCase()}
+    <>
+      {/* Modal Overlay */}
+      <div className="transaction-modal-overlay" onClick={onClose}>
+        {/* Modal Content */}
+        <div className="transaction-modal add-transaction-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h3>Add</h3>
+            <button 
+              className="modal-close-btn"
+              onClick={onClose}
             >
-              <option value="Expense">Expense</option>
-              <option value="Income">Income</option>
-              <option value="Transfer-Out">Transfer</option>
-            </select>
+              ×
+            </button>
           </div>
-
-          <div className="form-row">
-            <label htmlFor="date">Date</label>
-            <input
-              type="date"
-              id="date"
-              value={formData.Date}
-              onChange={(e) => handleInputChange('Date', e.target.value)}
-              className={errors.Date ? 'error' : ''}
-            />
-            {errors.Date && <span className="error-text">{errors.Date}</span>}
-          </div>
-
-          {formData['Income/Expense'] === 'Transfer-Out' ? (
-            <>
-              <div className="form-row">
-                <label htmlFor="fromAccount">From Account</label>
-                <select
-                  id="fromAccount"
-                  value={formData.FromAccount}
-                  onChange={(e) => handleInputChange('FromAccount', e.target.value)}
-                  className={errors.FromAccount ? 'error' : ''}
-                >
-                  <option value="">Select From Account</option>
-                  {accounts.map(account => (
-                    <option key={account} value={account}>{account}</option>
-                  ))}
-                </select>
-                {errors.FromAccount && <span className="error-text">{errors.FromAccount}</span>}
+          
+          <div className="modal-content">
+            <form onSubmit={handleSubmit} className="transaction-form">
+              {/* Type Selection - Buttons/Tabs */}
+              <div className="type-selection">
+                <div className="type-buttons">
+                  <button
+                    type="button"
+                    className={`type-btn ${formData['Income/Expense'] === 'Expense' ? 'active expense' : ''}`}
+                    onClick={() => handleInputChange('Income/Expense', 'Expense')}
+                  >
+                    Expense
+                  </button>
+                  <button
+                    type="button"
+                    className={`type-btn ${formData['Income/Expense'] === 'Income' ? 'active income' : ''}`}
+                    onClick={() => handleInputChange('Income/Expense', 'Income')}
+                  >
+                    Income
+                  </button>
+                  <button
+                    type="button"
+                    className={`type-btn ${formData['Income/Expense'] === 'Transfer-Out' ? 'active transfer' : ''}`}
+                    onClick={() => handleInputChange('Income/Expense', 'Transfer-Out')}
+                  >
+                    Transfer
+                  </button>
+                </div>
               </div>
 
+              {/* Date Field */}
               <div className="form-row">
-                <label htmlFor="toAccount">To Account</label>
-                <select
-                  id="toAccount"
-                  value={formData.ToAccount}
-                  onChange={(e) => handleInputChange('ToAccount', e.target.value)}
-                  className={errors.ToAccount ? 'error' : ''}
-                >
-                  <option value="">Select To Account</option>
-                  {accounts.map(account => (
-                    <option key={account} value={account}>{account}</option>
-                  ))}
-                </select>
-                {errors.ToAccount && <span className="error-text">{errors.ToAccount}</span>}
+                <label htmlFor="date">Date</label>
+                <input
+                  type="date"
+                  id="date"
+                  value={formData.Date}
+                  onChange={(e) => handleInputChange('Date', e.target.value)}
+                  className={errors.Date ? 'error' : ''}
+                />
+                {errors.Date && <span className="error-text">{errors.Date}</span>}
               </div>
-            </>
-          ) : (
-            <div className="form-row">
-              <label htmlFor="account">Account</label>
-              <select
-                id="account"
-                value={formData.Account}
-                onChange={(e) => handleInputChange('Account', e.target.value)}
-                className={errors.Account ? 'error' : ''}
-              >
-                <option value="">Select Account</option>
-                {accounts.map(account => (
-                  <option key={account} value={account}>{account}</option>
-                ))}
-              </select>
-              {errors.Account && <span className="error-text">{errors.Account}</span>}
-            </div>
-          )}
 
-          <div className="form-row">
-            <label htmlFor="amount">Amount</label>
-            <input
-              type="number"
-              id="amount"
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-              value={formData.Amount}
-              onChange={(e) => handleInputChange('Amount', e.target.value)}
-              className={errors.Amount ? 'error' : ''}
-            />
-            {errors.Amount && <span className="error-text">{errors.Amount}</span>}
+              {/* Account Field */}
+              {formData['Income/Expense'] === 'Transfer-Out' ? (
+                <>
+                  <div className="form-row">
+                    <label htmlFor="fromAccount">From Account</label>
+                    <select
+                      id="fromAccount"
+                      value={formData.FromAccount}
+                      onChange={(e) => handleInputChange('FromAccount', e.target.value)}
+                      className={errors.FromAccount ? 'error' : ''}
+                    >
+                      <option value="">Select From Account</option>
+                      {accounts.map(account => (
+                        <option key={account} value={account}>{account}</option>
+                      ))}
+                    </select>
+                    {errors.FromAccount && <span className="error-text">{errors.FromAccount}</span>}
+                  </div>
+
+                  <div className="form-row">
+                    <label htmlFor="toAccount">To Account</label>
+                    <select
+                      id="toAccount"
+                      value={formData.ToAccount}
+                      onChange={(e) => handleInputChange('ToAccount', e.target.value)}
+                      className={errors.ToAccount ? 'error' : ''}
+                    >
+                      <option value="">Select To Account</option>
+                      {accounts.map(account => (
+                        <option key={account} value={account}>{account}</option>
+                      ))}
+                    </select>
+                    {errors.ToAccount && <span className="error-text">{errors.ToAccount}</span>}
+                  </div>
+                </>
+              ) : (
+                <div className="form-row">
+                  <label htmlFor="account">Account</label>
+                  <select
+                    id="account"
+                    value={formData.Account}
+                    onChange={(e) => handleInputChange('Account', e.target.value)}
+                    className={errors.Account ? 'error' : ''}
+                  >
+                    <option value="">Select Account</option>
+                    {accounts.map(account => (
+                      <option key={account} value={account}>{account}</option>
+                    ))}
+                  </select>
+                  {errors.Account && <span className="error-text">{errors.Account}</span>}
+                </div>
+              )}
+
+              {/* Category and Subcategory Fields */}
+              {formData['Income/Expense'] !== 'Transfer-Out' && (
+                <>
+                  <div className="form-row">
+                    <label htmlFor="category">Category</label>
+                    <select
+                      id="category"
+                      value={formData.Category}
+                      onChange={(e) => handleInputChange('Category', e.target.value)}
+                      className={errors.Category ? 'error' : ''}
+                    >
+                      <option value="">Select Category</option>
+                      {availableCategories.map((categoryName) => (
+                        <option key={categoryName} value={categoryName}>{categoryName}</option>
+                      ))}
+                    </select>
+                    {errors.Category && <span className="error-text">{errors.Category}</span>}
+                  </div>
+
+                  <div className="form-row">
+                    <label htmlFor="subcategory">Subcategory</label>
+                    <select
+                      id="subcategory"
+                      value={formData.Subcategory}
+                      onChange={(e) => handleInputChange('Subcategory', e.target.value)}
+                      disabled={!availableSubcategories.length}
+                    >
+                      <option value="">Select Subcategory</option>
+                      {availableSubcategories.map(subcategory => (
+                        <option key={subcategory} value={subcategory}>{subcategory}</option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+
+              {/* Amount Field */}
+              <div className="form-row">
+                <label htmlFor="amount">Amount</label>
+                <input
+                  type="number"
+                  id="amount"
+				  inputmode="numeric"
+                  value={formData.Amount}
+                  onChange={(e) => handleInputChange('Amount', e.target.value)}
+                  className={errors.Amount ? 'error' : ''}
+                />
+                {errors.Amount && <span className="error-text">{errors.Amount}</span>}
+              </div>
+
+              {/* Note Field */}
+              <div className="form-row">
+                <label htmlFor="note">Note</label>
+                <input
+                  type="text"
+                  id="note"
+                  placeholder="Quick note about this transaction"
+                  value={formData.Note}
+                  onChange={(e) => handleInputChange('Note', e.target.value)}
+                />
+              </div>
+
+              {/* Description Field */}
+              <div className="form-row">
+                <label htmlFor="description">Description</label>
+                <textarea
+                  id="description"
+                  rows="3"
+                  placeholder="Detailed description (optional)"
+                  value={formData.Description}
+                  onChange={(e) => handleInputChange('Description', e.target.value)}
+                />
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => {
+                    if (isEditMode && onClose) {
+                      onClose();
+                    } else if (onClose) {
+                      onClose();
+                    } else {
+                      dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
+                    }
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="save-btn">
+                  <Save size={18} />
+                  {isEditMode ? 'Update' : 'Save'}
+                </button>
+              </div>
+            </form>
           </div>
-
-        {formData['Income/Expense'] !== 'Transfer-Out' && (
-          <>
-            <div className="form-row">
-              <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                value={formData.Category}
-                onChange={(e) => handleInputChange('Category', e.target.value)}
-                className={errors.Category ? 'error' : ''}
-              >
-                <option value="">Select Category</option>
-                {availableCategories.map((categoryName) => (
-                  <option key={categoryName} value={categoryName}>{categoryName}</option>
-                ))}
-              </select>
-              {errors.Category && <span className="error-text">{errors.Category}</span>}
-            </div>
-
-            <div className="form-row">
-              <label htmlFor="subcategory">Subcategory</label>
-              <select
-                id="subcategory"
-                value={formData.Subcategory}
-                onChange={(e) => handleInputChange('Subcategory', e.target.value)}
-                disabled={!availableSubcategories.length}
-              >
-                <option value="">Select Subcategory</option>
-                {availableSubcategories.map(subcategory => (
-                  <option key={subcategory} value={subcategory}>{subcategory}</option>
-                ))}
-              </select>
-            </div>
-          </>
-        )}
-
-        <div className="form-row">
-          <label htmlFor="note">Note</label>
-          <input
-            type="text"
-            id="note"
-            placeholder="Quick note about this transaction"
-            value={formData.Note}
-            onChange={(e) => handleInputChange('Note', e.target.value)}
-          />
         </div>
-
-        <div className="form-row">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            rows="3"
-            placeholder="Detailed description (optional)"
-            value={formData.Description}
-            onChange={(e) => handleInputChange('Description', e.target.value)}
-          />
-        </div>
-
-        <div className="form-actions">
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={() => {
-              if (isEditMode && onClose) {
-                onClose();
-              } else {
-                dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
-              }
-            }}
-          >
-            Cancel
-          </button>
-          <button type="submit" className="save-btn">
-            <Save size={18} />
-            {isEditMode ? 'Update' : 'Save'}
-          </button>
-        </div>
-      </form>
-    </div>
+      </div>
+    </>
   );
 };
 

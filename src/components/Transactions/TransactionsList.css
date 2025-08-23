@@ -928,7 +928,7 @@
   
   .stat {
     font-size: var(--text-xs);
-    padding: var(--space-1) var(--space-2);
+    padding: var(--space-1);
   }
 }
 
@@ -1061,5 +1061,45 @@
     font-size: var(--text-xs);
     padding: var(--space-1);
     min-width: 60px;
+  }
+}
+
+/* Floating Action Button */
+.fab {
+  position: fixed;
+  bottom: var(--space-6);
+  left: calc(280px + var(--space-6)); /* 280px is sidebar width + spacing */
+  width: 56px;
+  height: 56px;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-normal);
+  z-index: 1001; /* Higher than bottom navigation */
+}
+
+.fab:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+.fab:active {
+  transform: translateY(0);
+}
+
+/* Responsive FAB */
+@media (max-width: 768px) {
+  .fab {
+    bottom: calc(70px + var(--space-4)); /* Account for bottom navigation height */
+    left: var(--space-4); /* On mobile, no sidebar, so back to left edge */
+    width: 48px;
+    height: 48px;
   }
 }

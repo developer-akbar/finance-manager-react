@@ -2,7 +2,6 @@ import React from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { 
   Home, 
-  PlusCircle, 
   Search, 
   BarChart3, 
   Settings,
@@ -16,7 +15,6 @@ const MobileBottomNav = () => {
 
   const menuItems = [
     { id: 'dashboard', icon: Home, title: 'Dashboard' },
-    { id: 'add-transaction', icon: PlusCircle, title: 'Add' },
     { id: 'transactions', icon: Search, title: 'Transactions' },
     { id: 'accounts', icon: CreditCard, title: 'Accounts' },
     { id: 'categories', icon: PieChart, title: 'Categories' },

@@ -1,7 +1,62 @@
-.add-transaction {
+.type-buttons {
+  display: flex;
+  gap: var(--space-2);
+  background: var(--background-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+}
+
+.type-btn {
+  flex: 1;
+  padding: var(--space-2);
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.type-btn:hover {
+  color: var(--text-primary);
+  background: var(--background-hover);
+}
+
+.type-btn.active {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  background: var(--background-primary);
+}
+
+.type-btn.active.expense {
+  border-color: var(--accent-danger);
+  color: var(--accent-danger);
+}
+
+.type-btn.active.income {
+  border-color: var(--accent-success);
+  color: var(--accent-success);
+}
+
+.type-btn.active.transfer {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* Add Transaction Modal Styles */
+.add-transaction-modal {
+  min-width: 40%;
   max-width: 600px;
   width: 100%;
-  margin: 0 auto;
+}
+
+.add-transaction {
+  max-width: none;
+  width: 100%;
+  margin: 0;
 }
 
 .page-header {
@@ -38,14 +93,14 @@
 }
 
 .transaction-form {
-  background: var(--background-elevated);
-  border-radius: var(--radius-xl);
-  padding: var(--space-4);
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--border-primary);
-  max-height: calc(100vh - 200px);
-  overflow-y: auto;
-  backdrop-filter: blur(20px);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  max-height: none;
+  overflow-y: visible;
+  backdrop-filter: none;
 }
 
 .form-row {
@@ -59,6 +114,7 @@
   color: var(--text-primary);
   font-size: 0.9rem;
   flex-basis: 15ch;
+  min-width: 100px;
 }
 
 .form-row input,
@@ -152,5 +208,46 @@
   
   .page-header h1 {
     font-size: 1.5rem;
+  }
+  
+  .form-row {
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  
+  .form-row label {
+    flex-basis: auto;
+    font-size: var(--text-sm);
+  }
+  
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%;
+  }
+  
+  .form-actions {
+    /* flex-direction: column; */
+    gap: var(--space-2);
+  }
+  
+  .cancel-btn,
+  .save-btn {
+    /* width: 100%; */
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .transaction-form {
+    padding: var(--space-2);
+  }
+  
+  .form-row {
+    gap: var(--space-1);
+  }
+  
+  .form-row label {
+    font-size: var(--text-xs);
   }
 }

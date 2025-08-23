@@ -21,6 +21,7 @@ const TransactionList = ({
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showSubcategoryDropdown, setShowSubcategoryDropdown] = useState(false);
+  const [showToAccountDropdown, setShowToAccountDropdown] = useState(false);
 
   // Get accounts and categories from props
   const getAccounts = () => {
@@ -201,6 +202,7 @@ const TransactionList = ({
     setShowAccountDropdown(false);
     setShowCategoryDropdown(false);
     setShowSubcategoryDropdown(false);
+    setShowToAccountDropdown(false);
   };
 
   const handleDropdownSelect = (field, value) => {
@@ -224,6 +226,7 @@ const TransactionList = ({
     setShowAccountDropdown(false);
     setShowCategoryDropdown(false);
     setShowSubcategoryDropdown(false);
+    setShowToAccountDropdown(false);
   };
 
   const toggleDropdown = (dropdownType) => {
@@ -235,6 +238,9 @@ const TransactionList = ({
     );
     setShowSubcategoryDropdown(
       dropdownType === "subcategory" ? !showSubcategoryDropdown : false
+    );
+    setShowToAccountDropdown(
+      dropdownType === "toAccount" ? !showToAccountDropdown : false
     );
   };
 
@@ -252,6 +258,7 @@ const TransactionList = ({
         setShowAccountDropdown(false);
         setShowCategoryDropdown(false);
         setShowSubcategoryDropdown(false);
+        setShowToAccountDropdown(false);
       }
     };
 
@@ -406,7 +413,7 @@ const TransactionList = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-header">
-              <h3>{isEditMode ? "Edit Transaction" : "Transaction Details"}</h3>
+              <h3>{isEditMode ? "Edit" : "Details"}</h3>
               <button className="modal-close-btn" onClick={handleCloseModal}>
                 <X size={20} />
               </button>
@@ -416,160 +423,34 @@ const TransactionList = ({
               <>
                 <div className="modal-content">
                   <div className="edit-form">
-                    <div className="form-row">
-                      <label>Type</label>
-                      <select
-                        value={editForm["Income/Expense"]}
-                        onChange={(e) =>
-                          handleFormChange("Income/Expense", e.target.value)
-                        }
-                        className={
-                          editForm["Income/Expense"] === "Income"
-                            ? "income"
-                            : editForm["Income/Expense"] === "Transfer"
-                            ? "transfer"
-                            : "expense"
-                        }
-                      >
-                        <option value="Income">Income</option>
-                        <option value="Expense">Expense</option>
-                        <option value="Transfer">Transfer</option>
-                      </select>
-                    </div>
-                    <div className="form-row">
-                      <label>Amount</label>
-                      <input
-                        type="number"
-                        value={editForm.Amount}
-                        onChange={(e) =>
-                          handleFormChange("Amount", e.target.value)
-                        }
-                        placeholder="Enter amount"
-                      />
+                    {/* Type Selection - Buttons/Tabs */}
+                    <div className="type-selection">
+                      <div className="type-buttons">
+                        <button
+                          type="button"
+                          className={`type-btn ${editForm["Income/Expense"] === 'Expense' ? 'active expense' : ''}`}
+                          onClick={() => handleFormChange("Income/Expense", "Expense")}
+                        >
+                          Expense
+                        </button>
+                        <button
+                          type="button"
+                          className={`type-btn ${editForm["Income/Expense"] === 'Income' ? 'active income' : ''}`}
+                          onClick={() => handleFormChange("Income/Expense", "Income")}
+                        >
+                          Income
+                        </button>
+                        <button
+                          type="button"
+                          className={`type-btn ${editForm["Income/Expense"] === 'Transfer' ? 'active transfer' : ''}`}
+                          onClick={() => handleFormChange("Income/Expense", "Transfer")}
+                        >
+                          Transfer
+                        </button>
+                      </div>
                     </div>
 
-                    <div className="form-row">
-                      <label>
-                        {editForm["Income/Expense"] === "Transfer"
-                          ? "From Account"
-                          : "Category"}
-                      </label>
-                      <div className="custom-dropdown">
-                        <div
-                          className={`dropdown-btn ${
-                            showCategoryDropdown ? "active" : ""
-                          }`}
-                          onClick={() => toggleDropdown("category")}
-                        >
-                          {editForm.Category ||
-                            (editForm["Income/Expense"] === "Transfer"
-                              ? "Select From Account"
-                              : "Select Category")}
-                        </div>
-                        <div
-                          className={`dropdown-grid ${
-                            showCategoryDropdown ? "show" : ""
-                          }`}
-                        >
-                          {(
-                            getCategories(editForm["Income/Expense"]) || []
-                          ).map((category) => (
-                            <div
-                              key={category}
-                              className={`dropdown-item ${
-                                editForm.Category === category ? "selected" : ""
-                              }`}
-                              onClick={() =>
-                                handleDropdownSelect("Category", category)
-                              }
-                            >
-                              {category}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    {editForm["Income/Expense"] !== "Transfer" && (
-                      <div className="form-row">
-                        <label>Subcategory</label>
-                        <div className="custom-dropdown">
-                          <div
-                            className={`dropdown-btn ${
-                              showSubcategoryDropdown ? "active" : ""
-                            }`}
-                            onClick={() => toggleDropdown("subcategory")}
-                          >
-                            {editForm.Subcategory || "Select Subcategory"}
-                          </div>
-                          <div
-                            className={`dropdown-grid ${
-                              showSubcategoryDropdown ? "show" : ""
-                            }`}
-                          >
-                            {(getSubcategories(editForm.Category) || []).map(
-                              (subcategory) => (
-                                <div
-                                  key={subcategory}
-                                  className={`dropdown-item ${
-                                    editForm.Subcategory === subcategory
-                                      ? "selected"
-                                      : ""
-                                  }`}
-                                  onClick={() =>
-                                    handleDropdownSelect(
-                                      "Subcategory",
-                                      subcategory
-                                    )
-                                  }
-                                >
-                                  {subcategory}
-                                </div>
-                              )
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="form-row">
-                      <label>
-                        {editForm["Income/Expense"] === "Transfer"
-                          ? "To Account"
-                          : "Account"}
-                      </label>
-                      <div className="custom-dropdown">
-                        <div
-                          className={`dropdown-btn ${
-                            showAccountDropdown ? "active" : ""
-                          }`}
-                          onClick={() => toggleDropdown("account")}
-                        >
-                          {editForm.Account ||
-                            (editForm["Income/Expense"] === "Transfer"
-                              ? "Select To Account"
-                              : "Select Account")}
-                        </div>
-                        <div
-                          className={`dropdown-grid ${
-                            showAccountDropdown ? "show" : ""
-                          }`}
-                        >
-                          {(getAccounts() || []).map((account) => (
-                            <div
-                              key={account}
-                              className={`dropdown-item ${
-                                editForm.Account === account ? "selected" : ""
-                              }`}
-                              onClick={() =>
-                                handleDropdownSelect("Account", account)
-                              }
-                            >
-                              {account}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                    {/* Date Field */}
                     <div className="form-row">
                       <label>Date</label>
                       <input
@@ -596,6 +477,177 @@ const TransactionList = ({
                       />
                     </div>
 
+                    {/* Account Field */}
+                    <div className="form-row">
+                      <label>
+                        {editForm["Income/Expense"] === "Transfer"
+                          ? "From Account"
+                          : "Account"}
+                      </label>
+                      <div className="custom-dropdown">
+                        <div
+                          className={`dropdown-btn ${
+                            showAccountDropdown ? "active" : ""
+                          }`}
+                          onClick={() => toggleDropdown("account")}
+                        >
+                          {editForm.Account ||
+                            (editForm["Income/Expense"] === "Transfer"
+                              ? "Select From Account"
+                              : "Select Account")}
+                        </div>
+                        <div
+                          className={`dropdown-grid ${
+                            showAccountDropdown ? "show" : ""
+                          }`}
+                        >
+                          {(getAccounts() || []).map((account) => (
+                            <div
+                              key={account}
+                              className={`dropdown-item ${
+                                editForm.Account === account ? "selected" : ""
+                              }`}
+                              onClick={() =>
+                                handleDropdownSelect("Account", account)
+                              }
+                            >
+                              {account}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Category and Subcategory Fields */}
+                    {editForm["Income/Expense"] !== "Transfer" && (
+                      <>
+                        <div className="form-row">
+                          <label>Category</label>
+                          <div className="custom-dropdown">
+                            <div
+                              className={`dropdown-btn ${
+                                showCategoryDropdown ? "active" : ""
+                              }`}
+                              onClick={() => toggleDropdown("category")}
+                            >
+                              {editForm.Category || "Select Category"}
+                            </div>
+                            <div
+                              className={`dropdown-grid ${
+                                showCategoryDropdown ? "show" : ""
+                              }`}
+                            >
+                              {(
+                                getCategories(editForm["Income/Expense"]) || []
+                              ).map((category) => (
+                                <div
+                                  key={category}
+                                  className={`dropdown-item ${
+                                    editForm.Category === category ? "selected" : ""
+                                  }`}
+                                  onClick={() =>
+                                    handleDropdownSelect("Category", category)
+                                  }
+                                >
+                                  {category}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="form-row">
+                          <label>Subcategory</label>
+                          <div className="custom-dropdown">
+                            <div
+                              className={`dropdown-btn ${
+                                showSubcategoryDropdown ? "active" : ""
+                              }`}
+                              onClick={() => toggleDropdown("subcategory")}
+                            >
+                              {editForm.Subcategory || "Select Subcategory"}
+                            </div>
+                            <div
+                              className={`dropdown-grid ${
+                                showSubcategoryDropdown ? "show" : ""
+                              }`}
+                            >
+                              {(getSubcategories(editForm.Category) || []).map(
+                                (subcategory) => (
+                                  <div
+                                    key={subcategory}
+                                    className={`dropdown-item ${
+                                      editForm.Subcategory === subcategory
+                                        ? "selected"
+                                        : ""
+                                    }`}
+                                    onClick={() =>
+                                      handleDropdownSelect(
+                                        "Subcategory",
+                                        subcategory
+                                      )
+                                    }
+                                  >
+                                    {subcategory}
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* To Account for Transfer */}
+                    {editForm["Income/Expense"] === "Transfer" && (
+                      <div className="form-row">
+                        <label>To Account</label>
+                        <div className="custom-dropdown">
+                          <div
+                            className={`dropdown-btn ${
+                              showToAccountDropdown ? "active" : ""
+                            }`}
+                            onClick={() => toggleDropdown("toAccount")}
+                          >
+                            {editForm.ToAccount || "Select To Account"}
+                          </div>
+                          <div
+                            className={`dropdown-grid ${
+                              showToAccountDropdown ? "show" : ""
+                            }`}
+                          >
+                            {(getAccounts() || []).map((account) => (
+                              <div
+                                key={account}
+                                className={`dropdown-item ${
+                                  editForm.ToAccount === account ? "selected" : ""
+                                }`}
+                                onClick={() =>
+                                  handleDropdownSelect("ToAccount", account)
+                                }
+                              >
+                                {account}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Amount Field */}
+                    <div className="form-row">
+                      <label>Amount</label>
+                      <input
+                        type="number"
+                        value={editForm.Amount}
+                        onChange={(e) =>
+                          handleFormChange("Amount", e.target.value)
+                        }
+                        placeholder="Enter amount"
+                      />
+                    </div>
+
+                    {/* Note Field */}
                     <div className="form-row">
                       <label>Note</label>
                       <input
@@ -607,6 +659,8 @@ const TransactionList = ({
                         placeholder="Enter note"
                       />
                     </div>
+
+                    {/* Description Field */}
                     <div className="form-row">
                       <label>Description</label>
                       <textarea
@@ -640,11 +694,38 @@ const TransactionList = ({
               <>
                 <div className="modal-content">
                   <div className="modal-row">
-                    <span className="modal-label">Category:</span>
-                    <span className="modal-value">
-                      {selectedTransaction.Category}
+                    <span className="modal-label">Type:</span>
+                    <span
+                      className={`modal-value type-badge ${selectedTransaction[
+                        "Income/Expense"
+                      ].toLowerCase()}`}
+                    >
+                      {selectedTransaction["Income/Expense"]}
                     </span>
                   </div>
+
+                  <div className="modal-row">
+                    <span className="modal-label">Date:</span>
+                    <span className="modal-value">
+                      {selectedTransaction.Date}
+                    </span>
+                  </div>
+
+                  <div className="modal-row">
+                    <span className="modal-label">Account:</span>
+                    <span className="modal-value">
+                      {selectedTransaction.Account}
+                    </span>
+                  </div>
+
+                  {selectedTransaction.Category && (
+                    <div className="modal-row">
+                      <span className="modal-label">Category:</span>
+                      <span className="modal-value">
+                        {selectedTransaction.Category}
+                      </span>
+                    </div>
+                  )}
 
                   {selectedTransaction.Subcategory && (
                     <div className="modal-row">
@@ -664,15 +745,6 @@ const TransactionList = ({
                     </div>
                   )}
 
-                  {selectedTransaction.Account && (
-                    <div className="modal-row">
-                      <span className="modal-label">Account:</span>
-                      <span className="modal-value">
-                        {selectedTransaction.Account}
-                      </span>
-                    </div>
-                  )}
-
                   {selectedTransaction.Description && (
                     <div className="modal-row">
                       <span className="modal-label">Description:</span>
@@ -681,17 +753,6 @@ const TransactionList = ({
                       </span>
                     </div>
                   )}
-
-                  <div className="modal-row">
-                    <span className="modal-label">Type:</span>
-                    <span
-                      className={`modal-value type-badge ${selectedTransaction[
-                        "Income/Expense"
-                      ].toLowerCase()}`}
-                    >
-                      {selectedTransaction["Income/Expense"]}
-                    </span>
-                  </div>
 
                   <div className="modal-row">
                     <span className="modal-label">Amount:</span>
@@ -707,16 +768,15 @@ const TransactionList = ({
                       )}
                     </span>
                   </div>
-
-                  <div className="modal-row">
-                    <span className="modal-label">Date:</span>
-                    <span className="modal-value">
-                      {selectedTransaction.Date}
-                    </span>
-                  </div>
                 </div>
 
                 <div className="modal-actions">
+                  <button
+                    className="modal-btn cancel-btn"
+                    onClick={handleCloseModal}
+                  >
+                    Cancel
+                  </button>
                   {onEdit && (
                     <button
                       className="modal-btn edit-btn"

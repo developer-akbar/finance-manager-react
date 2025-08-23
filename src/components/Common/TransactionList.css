@@ -324,6 +324,54 @@
   }
 }
 
+.type-buttons {
+  display: flex;
+  gap: var(--space-2);
+  background: var(--background-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+}
+
+.type-btn {
+  flex: 1;
+  padding: var(--space-2);
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.type-btn:hover {
+  color: var(--text-primary);
+  background: var(--background-hover);
+}
+
+.type-btn.active {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  background: var(--background-primary);
+}
+
+.type-btn.active.expense {
+  border-color: var(--accent-danger);
+  color: var(--accent-danger);
+}
+
+.type-btn.active.income {
+  border-color: var(--accent-success);
+  color: var(--accent-success);
+}
+
+.type-btn.active.transfer {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
 /* Transaction Modal Styles */
 .transaction-modal-overlay {
   position: fixed;

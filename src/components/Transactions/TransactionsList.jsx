@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { formatCurrency, formatDate, convertDateFormat } from '../../utils/calculations';
-import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, BarChart3, TrendingUp } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, BarChart3, TrendingUp, Plus } from 'lucide-react';
 import TransactionFilters from './TransactionFilters';
+import AddTransaction from './AddTransaction';
 
 import DateNavigation from '../Common/DateNavigation';
 import TransactionList from '../Common/TransactionList';
@@ -13,6 +14,7 @@ const TransactionsList = () => {
   const { transactions, searchTerm, filters } = state;
   
   const [showFilters, setShowFilters] = useState(false);
+  const [showAddTransaction, setShowAddTransaction] = useState(false);
 
   const [sortBy, setSortBy] = useState('date-desc');
   const [currentView, setCurrentView] = useState('daily'); // 'daily', 'monthly', 'total'
@@ -295,6 +297,7 @@ const TransactionsList = () => {
   }, [searchTerm, filters, sortBy, currentView, currentDate]);
 
   return (
+    <>
     <div className="transactions-list">
       <div className="page-header">
         <h3>Transactions</h3>
@@ -478,6 +481,21 @@ const TransactionsList = () => {
 
 
     </div>
+    
+    {/* Floating Action Button */}
+    <button 
+      className="fab"
+      onClick={() => setShowAddTransaction(true)}
+      title="Add New Transaction"
+    >
+      <Plus size={24} />
+    </button>
+
+    {/* Add Transaction Modal */}
+    {showAddTransaction && (
+      <AddTransaction onClose={() => setShowAddTransaction(false)} />
+    )}
+  </>
   );
 };
 

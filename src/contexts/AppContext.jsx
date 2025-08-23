@@ -80,11 +80,20 @@ export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const { isAuthenticated } = useAuth();
 
+  // Load initial data
   useEffect(() => {
     if (isAuthenticated) {
       loadData();
     }
   }, [isAuthenticated]);
+
+  // Handle legacy navigation state
+  useEffect(() => {
+    // If user has old navigation state, redirect to dashboard
+    if (state.currentView === 'add-transaction') {
+      dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
+    }
+  }, [state.currentView, dispatch]);
 
   const loadData = async () => {
     try {

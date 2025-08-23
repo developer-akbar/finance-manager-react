@@ -35,7 +35,9 @@ const AppContent = () => {
       case 'dashboard':
         return <Dashboard />;
       case 'add-transaction':
-        return <AddTransaction />;
+        // Redirect to dashboard since we removed this from navigation
+        // The add transaction functionality will be available via floating action button
+        return <Dashboard />;
       case 'transactions':
         return <TransactionsList />;
       case 'accounts':
