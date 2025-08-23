@@ -506,10 +506,6 @@
     font-size: var(--text-2xl);
   }
   
-  .main-tabs {
-    flex-direction: column;
-  }
-  
   .period-tabs {
     flex-wrap: wrap;
   }

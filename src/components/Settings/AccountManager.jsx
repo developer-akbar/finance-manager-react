@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { settingsAPI } from '../../services/api';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
-import './AccountManager.css';
+import './ManagerCommon.css';
 
 const AccountManager = () => {
   const { state, loadData } = useApp();

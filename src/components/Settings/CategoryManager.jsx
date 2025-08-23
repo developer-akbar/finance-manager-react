@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { settingsAPI } from '../../services/api';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
-import './CategoryManager.css';
+import './ManagerCommon.css';
 
 const CategoryManager = () => {
   const { state, loadData } = useApp();
@@ -225,11 +225,11 @@ const CategoryManager = () => {
               </div>
 
               {categoryData.subcategories.length > 0 && (
-                <div className="subcategories">
+                <div className="settings-subcategories">
                   <h5>Subcategories:</h5>
-                  <div className="subcategories-list">
+                  <div className="settings-subcategories-list">
                     {categoryData.subcategories.map(subcategory => (
-                      <div key={subcategory} className="subcategory-item">
+                      <div key={subcategory} className="settings-subcategory-item">
                         {editingSubcategory === `${categoryName}-${subcategory}` ? (
                           <div className="edit-subcategory">
                             <input
@@ -320,11 +320,11 @@ const CategoryManager = () => {
               </div>
 
               {categoryData.subcategories.length > 0 && (
-                <div className="subcategories">
+                <div className="settings-subcategories">
                   <h5>Subcategories:</h5>
-                  <div className="subcategories-list">
+                  <div className="settings-subcategories-list">
                     {categoryData.subcategories.map(subcategory => (
-                      <div key={subcategory} className="subcategory-item">
+                      <div key={subcategory} className="settings-subcategory-item">
                         {editingSubcategory === `${categoryName}-${subcategory}` ? (
                           <div className="edit-subcategory">
                             <input
