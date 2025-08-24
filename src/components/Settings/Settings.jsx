@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import AccountManager from './AccountManager';
 import CategoryManager from './CategoryManager';
+import DataImport from './DataImport';
 import './Settings.css';
 
 const Settings = () => {
@@ -245,77 +246,7 @@ const Settings = () => {
         {activeSection === 'accounts' && <AccountManager />}
         {activeSection === 'categories' && <CategoryManager />}
         
-        {activeSection === 'data' && (
-          <div className="data-management">
-            <h2>Data Management</h2>
-            
-            <div className="data-actions">
-              <div className="action-card">
-                <div className="action-header">
-                  <Upload size={24} />
-                  <h3>Export Data</h3>
-                </div>
-                <p>Download all your financial data as a backup file</p>
-                <button 
-                  className="action-btn export"
-                  onClick={() => setShowExportModal(true)}
-                >
-                  Export Data
-                </button>
-              </div>
-
-              <div className="action-card">
-                <div className="action-header">
-                  <Download size={24} />
-                  <h3>Import Data</h3>
-                </div>
-                <p>Restore your data from a previously exported backup file</p>
-                <button 
-                  className="action-btn import"
-                  onClick={() => setShowImportModal(true)}
-                >
-                  Import Data
-                </button>
-              </div>
-
-              <div className="action-card">
-                <div className="action-header">
-                  <Trash2 size={24} />
-                  <h3>Clear All Data</h3>
-                </div>
-                <p>Remove all transactions, accounts, and categories (cannot be undone)</p>
-                <button 
-                  className="action-btn danger"
-                  onClick={() => setShowClearModal(true)}
-                >
-                  Clear All Data
-                </button>
-              </div>
-            </div>
-
-            <div className="data-stats">
-              <h3>Data Statistics</h3>
-              <div className="stats-grid">
-                <div className="stat-item">
-                  <span className="stat-label">Transactions:</span>
-                  <span className="stat-value">{state.transactions.length}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Accounts:</span>
-                  <span className="stat-value">{state.accounts.length}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Categories:</span>
-                  <span className="stat-value">{Object.keys(state.categories).length}</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-label">Account Groups:</span>
-                  <span className="stat-value">{state.accountGroups.length}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {activeSection === 'data' && <DataImport />}
 
         {activeSection === 'about' && (
           <div className="about-section">
