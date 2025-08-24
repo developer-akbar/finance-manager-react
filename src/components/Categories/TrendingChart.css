@@ -18,7 +18,7 @@
 
 .chart-header h3 {
   margin: 0;
-  font-size: var(--text-lg);
+  /* font-size: var(--text-lg); */
   font-weight: var(--font-semibold);
   color: var(--text-primary);
 }
@@ -160,6 +160,10 @@
   .bar-label .amount,
   .bar-label .date {
     font-size: 10px;
+  }  
+
+  .total-amount {
+    font-size: var(--text-sm);
   }
 }
 

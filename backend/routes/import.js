@@ -167,7 +167,7 @@ async function transformTransactions(transactions, userId) {
         fromAccount = transaction.Account || '';
         toAccount = transaction.Category || '';
         account = fromAccount; // For display purposes
-        category = '';
+        category = 'Transfer';
         subcategory = '';
       } else {
         // For Income/Expense: normal mapping

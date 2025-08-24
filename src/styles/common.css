@@ -5,11 +5,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
-  padding: var(--space-4);
+  gap: var(--space-2);
+  padding: 0 var(--space-2);
   background: var(--background-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-primary);
+  /* border: 1px solid var(--border-primary); */
   backdrop-filter: blur(10px);
 }
 
@@ -201,15 +201,6 @@
   border-color: #dc2626;
 }
 
-/* Transaction Item Styles */
-.transaction-item {
-  position: relative;
-  padding: var(--space-4);
-  border-bottom: 1px solid var(--border-secondary);
-  transition: background-color var(--transition-normal);
-  background: var(--background-primary);
-}
-
 .transaction-item:last-child {
   border-bottom: none;
 }
@@ -266,26 +257,6 @@
 
 .amount.negative {
   color: var(--accent-danger);
-}
-
-/* Day Group Styles */
-.day-group {
-  background: var(--background-elevated);
-  /* border: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg); */
-  overflow: hidden;
-  backdrop-filter: blur(10px);
-  /* margin-bottom: var(--space-6); */
-}
-
-.day-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--space-4);
-  background: var(--background-primary);
-  border-bottom: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg) var(--radius-lg);
 }
 
 .day-header h3 {

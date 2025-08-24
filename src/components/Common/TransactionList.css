@@ -8,7 +8,7 @@
 
 .day-group {
   background: var(--background-elevated);
-  /* border: 1px solid var(--border-primary);  */
+  border: 1px solid var(--border-primary); 
   border-radius: var(--radius-xl);
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -19,8 +19,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-4);
-  background: var(--background-secondary);
+  padding: var(--space-2) var(--space-4);
+  background: var(--background-primary);
   border-bottom: 1px solid var(--border-primary);
 }
 
@@ -40,30 +40,30 @@
 .day-totals .income {
   color: var(--accent-success);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 .day-totals .expense {
   color: var(--accent-danger);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 .day-totals .deposits {
   color: var(--accent-success);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 .day-totals .withdrawals {
   color: var(--accent-danger);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-base);
 }
 
 .day-totals .day-amount {
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .day-totals .day-amount.income {
@@ -80,7 +80,7 @@
 }
 
 .transaction-item {
-  padding: var(--space-4);
+  padding: var(--space-2) var(--space-4);
   border-bottom: 1px solid var(--border-secondary);
   transition: all 0.2s ease;
   position: relative;
@@ -112,9 +112,8 @@
 }
 
 .category-text {
-  font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -123,8 +122,7 @@
 
 .subcategory-text {
   color: var(--text-secondary);
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: var(--text-xs);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -140,8 +138,8 @@
 
 .note-text {
   color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-style: italic;
+  font-size: var(--text-sm);
+  /* font-style: italic; */
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -149,9 +147,8 @@
 }
 
 .account-text {
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  font-weight: 500;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
@@ -164,7 +161,7 @@
 
 .description-text {
   color: var(--text-tertiary);
-  font-size: 0.75rem;
+  font-size: var(--text-sm);
   line-height: 1.4;
   white-space: nowrap;
   overflow: hidden;
@@ -180,7 +177,7 @@
 
 .transaction-amount .amount {
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: var(--text-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -243,28 +240,24 @@
 
 .no-transactions p {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .day-header {
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-4);
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-2);
   }
 
   .day-title {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
 
   .day-totals {
-    font-size: 0.75rem;
-  }
-
-  .transaction-item {
-    padding: var(--space-3);
+    font-size: var(--text-sm);
   }
 
   .transaction-grid {
@@ -289,29 +282,29 @@
   }
 
   .category-text {
-    font-size: 0.85rem;
+    font-size: var(--text-sm);
   }
 
   .subcategory-text {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
   }
 
   .note-text {
-    font-size: 0.75rem;
+    font-size: var(--text-sm);
   }
 
   .account-text {
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
   }
 
   .transaction-amount .amount {
-    font-size: 0.8rem;
+    font-size:var(--text-sm);
   }
 }
 
 @media (max-width: 480px) {
   .day-header {
-    padding: var(--space-2);
+    padding: var(--space-2) var(--space-4);
   }
 
   .transaction-item {

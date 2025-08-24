@@ -452,6 +452,10 @@
     align-items: center;
     gap: 0.75rem;
   }
+
+  .category-name {
+    font-size: var(--text-sm);
+  }
   
   .category-actions {
     align-self: flex-end;

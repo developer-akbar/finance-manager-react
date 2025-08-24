@@ -247,11 +247,11 @@
   }
   
   .chart-header h3 {
-    font-size: var(--text-lg);
+    font-size: var(--text-sm);
   }
   
   .total-value {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
   }
   
   .pie-chart svg {
@@ -307,7 +307,7 @@
   }
   
   .chart-header h3 {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
   }
   
   .pie-chart svg {
