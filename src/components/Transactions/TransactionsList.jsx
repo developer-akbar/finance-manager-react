@@ -300,7 +300,7 @@ const TransactionsList = () => {
     <>
     <div className="transactions-list">
       <div className="page-header">
-        <h3>Transactions</h3>
+        {/* <h3>Transactions</h3> */}
         <div className="header-actions">
           <button 
             className={`filter-toggle ${showFilters ? 'active' : ''}`}
@@ -310,7 +310,18 @@ const TransactionsList = () => {
             Filters
           </button>
         </div>
+        
+        {(currentView === 'daily' || currentView === 'monthly') && (
+          <DateNavigation 
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            viewType={currentView === 'monthly' ? 'monthly' : 'daily'}
+            showQuickSelector={true}
+          />
+        )}
       </div>
+
+      {showFilters && <TransactionFilters />}
 
       {/* View Ribbons */}
       <div className="view-ribbons">
@@ -338,7 +349,6 @@ const TransactionsList = () => {
       </div>
 
       {/* View Navigation */}
-      <div className="view-navigation">
         <div className="view-title">
           <div className="view-totals">
             <div className="total-item income">
@@ -357,23 +367,11 @@ const TransactionsList = () => {
             </div>
           </div>
         </div>
-        
-        {(currentView === 'daily' || currentView === 'monthly') && (
-          <DateNavigation 
-            currentDate={currentDate}
-            onDateChange={setCurrentDate}
-            viewType={currentView === 'monthly' ? 'monthly' : 'daily'}
-            showQuickSelector={true}
-          />
-        )}
-      </div>
-
-      {showFilters && <TransactionFilters />}
 
       {/* View Content */}
       {currentView === 'daily' && (
         <>
-          <div className="transactions-controls">
+          <div className="search-controls">
             <div className="search-bar">
               <Search size={18} />
               <input
@@ -385,7 +383,7 @@ const TransactionsList = () => {
             </div>
 
             <div className="sort-controls">
-              <label htmlFor="sort">Sort by:</label>
+              {/* <label htmlFor="sort">Sort by:</label> */}
               <select
                 id="sort"
                 value={sortBy}

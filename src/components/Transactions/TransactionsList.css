@@ -64,8 +64,9 @@
 /* View Ribbons */
 .view-ribbons {
   display: flex;
+  justify-content: space-between;
   gap: var(--space-2);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-4);
   background-color: var(--background-secondary);
   border-bottom: 1px solid var(--border-primary);
 }
@@ -73,6 +74,7 @@
 .ribbon-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   background: none;
@@ -83,6 +85,7 @@
   font-weight: var(--font-medium);
   cursor: pointer;
   transition: all var(--transition-fast);
+  width: 100%;
   position: relative;
   overflow: hidden;
 }
@@ -123,7 +126,7 @@
 
 /* View Navigation */
 .view-navigation {
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: space-between;
   padding: var(--space-4) var(--space-6);
@@ -176,7 +179,7 @@
 .view-totals {
   display: flex;
   gap: var(--space-4);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-2);
   background-color: var(--background-secondary);
   border-bottom: 1px solid var(--border-primary);
 }
@@ -285,16 +288,16 @@
 }
 
 /* Search and Controls Section */
-.transactions-controls {
+.search-controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: var(--space-4) var(--space-6);
-  background-color: var(--background-elevated);
-  border: 1px solid var(--border-primary);
+  /* padding: var(--space-4) var(--space-6); */
+  /* background-color: var(--background-elevated); */
+  /* border: 1px solid var(--border-primary); */
   border-radius: var(--radius-lg);
-  margin-bottom: var(--space-4);
+  /* margin-bottom: var(--space-4); */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -368,13 +371,7 @@
 }
 
 .transactions-summary {
-  padding: var(--space-3) var(--space-6);
-  background-color: var(--background-secondary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  padding: var(--space-2) var(--space-3);
 }
 
 .transactions-summary p {
@@ -608,7 +605,7 @@
 /* Monthly and Yearly Views */
 .monthly-view,
 .total-view {
-  padding: var(--space-6);
+  padding: var(--space-2);
 }
 
 .months-grid,
@@ -623,7 +620,7 @@
   background-color: var(--background-elevated);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-2) var(--space-4);
   cursor: pointer;
   transition: all var(--transition-normal);
   text-align: center;
@@ -661,7 +658,7 @@
   font-size: var(--text-xl);
   font-weight: var(--font-bold);
   color: var(--text-primary);
-  margin-bottom: var(--space-4);
+  /* margin-bottom: var(--space-4); */
 }
 
 .month-stats,
@@ -799,12 +796,12 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .view-totals {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: var(--space-3);
   }
   
   .total-item {
-    flex-direction: row;
+    /* flex-direction: row; */
     justify-content: space-between;
     text-align: left;
   }
@@ -828,7 +825,7 @@
   }
   
   .view-ribbons {
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-2);
     overflow-x: auto;
     gap: var(--space-1);
   }
@@ -847,23 +844,23 @@
   }
   
   .view-totals {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: var(--space-2);
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-2);
   }
   
   .total-item {
-    flex-direction: row;
+    /* flex-direction: row; */
     justify-content: space-between;
     text-align: left;
-    padding: var(--space-3);
+    padding: var(--space-2);
   }
   
-  .transactions-controls {
+  .search-controls {
     flex-direction: column;
     align-items: stretch;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
+    gap: var(--space-2);
+    /* padding: var(--space-2) var(--space-4); */
   }
   
   .search-bar {
@@ -918,7 +915,7 @@
   
   .month-card,
   .year-card {
-    padding: var(--space-3);
+    padding: var(--space-2) var(--space-4);
   }
   
   .month-name,
@@ -942,7 +939,7 @@
   }
   
   .view-ribbons {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2);
     gap: var(--space-1);
   }
   
@@ -953,11 +950,11 @@
   }
   
   .view-navigation {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2);
   }
   
   .view-totals {
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2);
     gap: var(--space-1);
   }
   
@@ -977,8 +974,8 @@
     min-width: 0;
   }
   
-  .transactions-controls {
-    padding: var(--space-2) var(--space-3);
+  .search-controls {
+    /* padding: var(--space-2) var(--space-3); */
     gap: var(--space-2);
   }
   
@@ -1000,10 +997,6 @@
   .sort-controls select {
     padding: var(--space-2);
     font-size: var(--text-xs);
-  }
-  
-  .transactions-summary {
-    padding: var(--space-2) var(--space-3);
   }
   
   .transactions-summary p {
@@ -1049,7 +1042,7 @@
   
   .month-card,
   .year-card {
-    padding: var(--space-2);
+    padding: var(--space-2) var(--space-4);
   }
   
   .month-name,

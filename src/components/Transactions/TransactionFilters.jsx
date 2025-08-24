@@ -29,7 +29,7 @@ const TransactionFilters = () => {
   return (
     <div className="transaction-filters">
       <div className="filters-header">
-        <h3>Filters</h3>
+        {/* <h3>Filters</h3> */}
         {hasActiveFilters && (
           <button className="clear-filters" onClick={clearFilters}>
             <X size={16} />
