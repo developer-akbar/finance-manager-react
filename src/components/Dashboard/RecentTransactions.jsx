@@ -12,11 +12,11 @@ const RecentTransactions = ({ transactions }) => {
 
   const handleEditTransaction = async (transactionId, updatedData) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/${transactionId}`, {
+      const response = await fetch(`http://localhost:5000/api/transactions/${transactionId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         },
         body: JSON.stringify(updatedData)
       });
@@ -33,10 +33,10 @@ const RecentTransactions = ({ transactions }) => {
 
   const handleDeleteTransaction = async (transactionId) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions/${transactionId}`, {
+      const response = await fetch(`http://localhost:5000/api/transactions/${transactionId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
 

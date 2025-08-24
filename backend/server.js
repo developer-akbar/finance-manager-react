@@ -3,7 +3,16 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-require('dotenv').config({ path: './config.env' });
+// Set environment variables directly for development
+process.env.MONGODB_URI = 'mongodb://localhost:27017/finance-manager';
+process.env.JWT_SECRET = 'your-super-secret-jwt-key-change-this-in-production';
+process.env.JWT_EXPIRE = '7d';
+process.env.PORT = '5000';
+process.env.NODE_ENV = 'development';
+process.env.RATE_LIMIT_WINDOW_MS = '900000';
+process.env.RATE_LIMIT_MAX_REQUESTS = '100';
+
+console.log('🔧 Environment variables set for development');
 
 // Debug environment variables
 console.log('🔧 Environment Check:');

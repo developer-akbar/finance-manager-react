@@ -1,678 +1,459 @@
 const express = require('express');
+const router = express.Router();
 const multer = require('multer');
 const XLSX = require('xlsx');
 const Transaction = require('../models/Transaction');
 const UserSettings = require('../models/UserSettings');
 const { protect } = require('../middleware/auth');
 
-const router = express.Router();
-
-// Apply authentication middleware to all routes
-router.use(protect);
-
-// Date parsing for CSV approach (like legacy)
-const parseDate = (dateValue) => {
-  if (!dateValue) return null;
-  
-  const dateStr = dateValue.toString().trim();
-  
-  // Remove time portion if present
-  const dateOnly = dateStr.split(' ')[0];
-  
-  // If it's DD-MM-YYYY format, just replace hyphens with slashes (like legacy)
-  if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateOnly)) {
-    return dateOnly.replace(/-/g, '/');
-  }
-  
-  // If already in DD/MM/YYYY format, return as is
-  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateOnly)) {
-    return dateOnly;
-  }
-  
-  // Handle Excel serial numbers if they come through as strings
-  if (/^\d+\.\d+$/.test(dateOnly)) {
-    const serialNumber = parseFloat(dateOnly);
-    if (!isNaN(serialNumber)) {
-      // Excel serial number conversion
-      const excelEpoch = new Date(1900, 0, 1);
-      const daysSinceEpoch = serialNumber - 1;
-      const resultDate = new Date(excelEpoch);
-      resultDate.setDate(resultDate.getDate() + daysSinceEpoch);
-      
-      if (!isNaN(resultDate.getTime())) {
-        const day = String(resultDate.getDate()).padStart(2, '0');
-        const month = String(resultDate.getMonth() + 1).padStart(2, '0');
-        const year = resultDate.getFullYear();
-        return `${day}/${month}/${year}`;
-      }
-    }
-  }
-  
-  // Try standard Date parsing as fallback
-  const parsedDate = new Date(dateStr);
-  if (!isNaN(parsedDate.getTime())) {
-    const day = String(parsedDate.getDate()).padStart(2, '0');
-    const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
-    const year = parsedDate.getFullYear();
-    return `${day}/${month}/${year}`;
-  }
-  
-  return null; // Could not parse
-};
-
-// Configure multer for file upload
+// Configure multer for file uploads
 const storage = multer.memoryStorage();
-const upload = multer({
+const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 100 * 1024 * 1024 // 100MB limit
+    fileSize: 10 * 1024 * 1024 // 10MB limit
   },
   fileFilter: (req, file, cb) => {
-    // Accept Excel and CSV files
-    if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-        file.mimetype === 'application/vnd.ms-excel' ||
-        file.mimetype === 'text/csv' ||
-        file.originalname.endsWith('.xlsx') ||
-        file.originalname.endsWith('.xls') ||
-        file.originalname.endsWith('.csv')) {
+    const allowedTypes = [
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+      'application/vnd.ms-excel', // .xls
+      'text/csv', // .csv
+      'application/json' // .json
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only Excel and CSV files are allowed'), false);
+      cb(new Error('Invalid file type. Only Excel, CSV, and JSON files are allowed.'), false);
     }
   }
 });
 
-// @desc    Import transactions from Excel/CSV file
-// @route   POST /api/import/excel
-// @access  Private
-router.post('/excel', upload.single('file'), async (req, res) => {
+// Import data from file
+router.post('/upload', protect, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please upload an Excel file'
+      return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
+
+    const { mode = 'override' } = req.body; // 'override' or 'merge'
+    const userId = req.user.id;
+
+    let transactions = [];
+    const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
+
+    // Parse file based on type
+    if (fileExtension === 'json') {
+      transactions = JSON.parse(req.file.buffer.toString());
+    } else if (['xlsx', 'xls', 'csv'].includes(fileExtension)) {
+      transactions = await parseExcelFile(req.file.buffer, fileExtension);
+    } else {
+      return res.status(400).json({ success: false, message: 'Unsupported file type' });
+    }
+
+    // Validate and transform transactions
+    const transformedTransactions = await transformTransactions(transactions, userId);
+
+    // Handle import mode
+    if (mode === 'override') {
+      // Delete existing transactions and import new ones
+      await Transaction.deleteMany({ user: userId });
+      if (transformedTransactions.length > 0) {
+        await Transaction.insertMany(transformedTransactions);
+      }
+    } else if (mode === 'merge') {
+      // Find and handle duplicates
+      const existingTransactions = await Transaction.find({ user: userId });
+      const { newTransactions, duplicates } = findDuplicates(existingTransactions, transformedTransactions);
+      
+      if (newTransactions.length > 0) {
+        await Transaction.insertMany(newTransactions);
+      }
+
+      // Update accounts and categories
+      await updateAccountsAndCategories(transformedTransactions, userId, mode);
+      
+      return res.json({
+        success: true,
+        message: `Import completed successfully. ${newTransactions.length} new transactions imported.`,
+        stats: {
+          total: transformedTransactions.length,
+          new: newTransactions.length,
+          duplicates: duplicates.length
+        }
       });
     }
 
-    // Get import mode from request body (merge or override)
-    const { mode = 'override' } = req.body;
+    // Update accounts and categories
+    await updateAccountsAndCategories(transformedTransactions, userId, mode);
 
-    // Parse Excel file and convert to CSV first (like legacy approach)
-    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    res.json({
+      success: true,
+      message: `Import completed successfully. ${transformedTransactions.length} transactions imported.`,
+      stats: {
+        total: transformedTransactions.length
+      }
+    });
+
+  } catch (error) {
+    console.error('Import error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error processing import: ' + error.message 
+    });
+  }
+});
+
+// Parse Excel/CSV file
+async function parseExcelFile(buffer, fileExtension) {
+  try {
+    const workbook = XLSX.read(buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     
-    // Convert worksheet to CSV data first (like legacy approach)
-    let csvData = XLSX.utils.sheet_to_csv(worksheet, { FS: ',', RS: '\n', strip: false });
-    
-    // Handle line breaks within cells (like legacy approach)
-    csvData = csvData.replace(/"([^"]*)"/g, function (match, p1) {
-      return p1.replace(/\n/g, '|new-line|').replace(/,/g, '|comma|');
-    });
-    
-    // Split CSV into rows
-    const csvRows = csvData.split('\n').filter(row => row.trim().length > 0);
-    
-    if (csvRows.length < 2) {
-      return res.status(400).json({
-        success: false,
-        message: 'Excel file must contain at least a header row and one data row'
-      });
-    }
-    
-    // Parse CSV rows manually
-    const rawData = csvRows.map(row => {
-      // Split by comma, but handle quoted fields
-      const fields = [];
-      let currentField = '';
-      let inQuotes = false;
-      
-      for (let i = 0; i < row.length; i++) {
-        const char = row[i];
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          fields.push(currentField.trim());
-          currentField = '';
-        } else {
-          currentField += char;
-        }
-      }
-      fields.push(currentField.trim()); // Add the last field
-      
-      return fields;
-    });
-    
-    if (rawData.length < 2) {
-      return res.status(400).json({
-        success: false,
-        message: 'Excel file must contain at least a header row and one data row'
-      });
-    }
-
-    // Extract headers (first row)
-    const headers = rawData[0];
-    
-    // Find required column indices based on expected format
-    // Expected columns: Date, Account, Category, Subcategory, Note, INR, Income/Expense, Description, Currency, ID
-    const dateIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('date')
-    );
-    const accountIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('account')
-    );
-    const categoryIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('category')
-    );
-    const subcategoryIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('subcategory')
-    );
-    const noteIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('note')
-    );
-    const inrIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('inr')
-    );
-    const typeIndex = headers.findIndex(h => 
-      h && (h.toString().toLowerCase().includes('income/expense') || 
-           h.toString().toLowerCase().includes('type'))
-    );
-    const descriptionIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('description')
-    );
-    const currencyIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('currency')
-    );
-    const idIndex = headers.findIndex(h => 
-      h && h.toString().toLowerCase().includes('id')
-    );
-
-    if (dateIndex === -1 || inrIndex === -1) {
-      return res.status(400).json({
-        success: false,
-        message: 'Excel file must contain Date and INR columns'
-      });
-    }
-
-    // Process data rows
-    const transactions = [];
-    const errors = [];
-    
-         // Log sample data for debugging
-     console.log('Sample headers:', headers);
-     console.log('Sample first row:', rawData[1]);
-     console.log('Date column index:', dateIndex);
-     console.log('Sample date value:', rawData[1] ? rawData[1][dateIndex] : 'No data');
-     console.log('Total rows to process:', rawData.length - 1);
-    
-    for (let i = 1; i < rawData.length; i++) {
-      const row = rawData[i];
-      
-      try {
-        // Skip only truly empty rows (missing date or completely empty INR field)
-        if (!row[dateIndex] || row[inrIndex] === undefined || row[inrIndex] === null || row[inrIndex] === '') {
-          console.log(`Row ${i + 1}: Skipping empty row - Date: ${row[dateIndex]}, INR: ${row[inrIndex]}`);
-          continue;
-        }
-
-                 // Parse date using helper function
-         const date = parseDate(row[dateIndex]);
-         if (!date) {
-           errors.push(`Row ${i + 1}: Invalid date format - ${row[dateIndex]}`);
-           continue;
-         }
-
-        // Parse INR amount - allow 0 values
-        let amount;
-        if (typeof row[inrIndex] === 'number') {
-          amount = row[inrIndex];
-        } else {
-          const amountStr = row[inrIndex].toString().replace(/[^\d.-]/g, '');
-          amount = parseFloat(amountStr);
-          if (isNaN(amount)) {
-            errors.push(`Row ${i + 1}: Invalid INR amount - ${row[inrIndex]}`);
-            continue;
-          }
-        }
-        
-        // Allow 0 values - don't skip them
-        console.log(`Row ${i + 1}: Processing amount ${amount} (original: ${row[inrIndex]})`);
-
-        // Determine transaction type
-        let transactionType = 'Expense'; // Default
-        if (typeIndex !== -1 && row[typeIndex]) {
-          const typeStr = row[typeIndex].toString().toLowerCase();
-          if (typeStr.includes('income')) {
-            transactionType = 'Income';
-          } else if (typeStr.includes('expense')) {
-            transactionType = 'Expense';
-          } else if (typeStr.includes('transfer')) {
-            transactionType = 'Transfer-Out';
-          }
-        } else {
-          // Fallback: determine by amount sign
-          transactionType = amount >= 0 ? 'Income' : 'Expense';
-        }
-
-        const absAmount = Math.abs(amount);
-
-        // Create transaction object based on type
-        let transaction = {
-          Date: date,
-          Note: row[noteIndex] || '',
-          INR: absAmount,
-          'Income/Expense': transactionType,
-          Description: row[descriptionIndex] || 'Imported transaction',
-          Amount: absAmount.toString(),
-          Currency: row[currencyIndex] || 'INR',
-          ID: row[idIndex] || `import_${Date.now()}_${i}`,
-          user: req.user.id
-        };
-        
-        console.log(`Row ${i + 1}: Created transaction with amount ${absAmount} (type: ${transactionType})`);
-
-        // Handle different transaction types
-        if (transactionType === 'Transfer-Out') {
-          // For Transfer-Out: Account = FromAccount, Category = ToAccount
-          transaction.FromAccount = row[accountIndex] || 'Cash';
-          transaction.ToAccount = row[categoryIndex] || 'Other';
-          transaction.Account = row[accountIndex] || 'Cash'; // For display purposes
-        } else {
-          // For Income/Expense: regular fields
-          transaction.Account = row[accountIndex] || 'Cash';
-          transaction.Category = row[categoryIndex] || 'Other';
-          transaction.Subcategory = row[subcategoryIndex] || 'Imported';
-        }
-
-        transactions.push(transaction);
-      } catch (error) {
-        errors.push(`Row ${i + 1}: ${error.message}`);
-      }
-    }
-
-    if (transactions.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'No valid transactions found in the Excel file',
-        errors
-      });
-    }
-
-    // Extract unique accounts and categories from imported data
-    const uniqueAccounts = new Set();
-    const uniqueCategories = new Map();
-    const accountGroups = [
-      { id: 1, name: 'Cash & Bank' },
-      { id: 2, name: 'Credit Cards' },
-      { id: 3, name: 'Investments' }
-    ];
-    
-    transactions.forEach(transaction => {
-      // Extract accounts
-      if (transaction.Account) uniqueAccounts.add(transaction.Account);
-      if (transaction.FromAccount) uniqueAccounts.add(transaction.FromAccount);
-      if (transaction.ToAccount) uniqueAccounts.add(transaction.ToAccount);
-
-      // Extract categories with proper structure (flat structure)
-      if (transaction.Category && transaction['Income/Expense']) {
-        const categoryName = transaction.Category;
-        if (!uniqueCategories.has(categoryName)) {
-          uniqueCategories.set(categoryName, {
-            type: transaction['Income/Expense'],
-            subcategories: [transaction.Subcategory || 'Default']
-          });
-        } else {
-          // Add subcategory if not already present
-          const existingCategory = uniqueCategories.get(categoryName);
-          if (transaction.Subcategory && !existingCategory.subcategories.includes(transaction.Subcategory)) {
-            existingCategory.subcategories.push(transaction.Subcategory);
-          }
-        }
-      }
+    // Convert to JSON
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+      header: 1,
+      defval: '',
+      raw: false
     });
 
-    // Handle import mode
-    let finalTransactions = transactions;
-    let duplicates = [];
-    
-    if (mode === 'override') {
-      // Clear existing transactions for this user
-      await Transaction.deleteMany({ user: req.user.id });
-      finalTransactions = transactions;
-    } else if (mode === 'merge') {
-      // Get existing transactions for this user
-      const existingTransactions = await Transaction.find({ user: req.user.id });
-      
-      // Check for duplicates based on user's legacy logic
-      const nonDuplicates = [];
-      
-      transactions.forEach(newTransaction => {
-        const isDuplicate = existingTransactions.some(existingTransaction => {
-          // Check if transactions are duplicates based on key fields
-          return (
-            existingTransaction.Date === newTransaction.Date &&
-            existingTransaction.Account === newTransaction.Account &&
-            existingTransaction.Category === newTransaction.Category &&
-            existingTransaction.Subcategory === newTransaction.Subcategory &&
-            existingTransaction.Note === newTransaction.Note &&
-            existingTransaction.INR === newTransaction.INR &&
-            existingTransaction['Income/Expense'] === newTransaction['Income/Expense']
-          );
-        });
-        
-        if (isDuplicate) {
-          duplicates.push(newTransaction);
-        } else {
-          nonDuplicates.push(newTransaction);
+    if (jsonData.length < 2) {
+      throw new Error('File must contain at least a header row and one data row');
+    }
+
+    // Extract headers and data
+    const headers = jsonData[0];
+    const dataRows = jsonData.slice(1);
+
+    // Map data to objects
+    const transactions = dataRows.map(row => {
+      const transaction = {};
+      headers.forEach((header, index) => {
+        if (header && row[index] !== undefined) {
+          transaction[header.trim()] = row[index];
         }
       });
-      
-      finalTransactions = nonDuplicates;
-    }
-    
-    // Insert transactions into database
-    const result = finalTransactions.length > 0 ? await Transaction.insertMany(finalTransactions) : [];
-
-    // Update user settings with extracted accounts and categories
-    const UserSettings = require('../models/UserSettings');
-    let userSettings = await UserSettings.findOne({ user: req.user.id });
-    
-    if (!userSettings) {
-      userSettings = new UserSettings({ user: req.user.id });
-    }
-
-    // Merge new accounts with existing ones
-    const existingAccounts = new Set(userSettings.accounts || []);
-    uniqueAccounts.forEach(account => existingAccounts.add(account));
-    userSettings.accounts = Array.from(existingAccounts);
-
-    // Create account mapping based on account types
-    const accountMapping = new Map();
-    accountMapping.set('Cash & Bank', []);
-    accountMapping.set('Credit Cards', []);
-    accountMapping.set('Investments', []);
-
-    // Map accounts to groups
-    Array.from(existingAccounts).forEach(account => {
-      if (account.toLowerCase().includes('cash') || account.toLowerCase().includes('bank')) {
-        accountMapping.get('Cash & Bank').push(account);
-      } else if (account.toLowerCase().includes('credit')) {
-        accountMapping.get('Credit Cards').push(account);
-      } else if (account.toLowerCase().includes('investment') || account.toLowerCase().includes('savings')) {
-        accountMapping.get('Investments').push(account);
-      } else {
-        // Default to Cash & Bank
-        accountMapping.get('Cash & Bank').push(account);
-      }
+      return transaction;
     });
 
-    // Update account groups and mapping
-    userSettings.accountGroups = accountGroups;
-    userSettings.accountMapping = accountMapping;
-
-    // Merge new categories with existing ones (flat structure)
-    const existingCategories = new Map(userSettings.categories || []);
-    uniqueCategories.forEach((categoryData, categoryName) => {
-      if (!existingCategories.has(categoryName)) {
-        existingCategories.set(categoryName, categoryData);
-      } else {
-        // Merge subcategories
-        const existingCategory = existingCategories.get(categoryName);
-        categoryData.subcategories.forEach(subcategory => {
-          if (!existingCategory.subcategories.includes(subcategory)) {
-            existingCategory.subcategories.push(subcategory);
-          }
-        });
-      }
-    });
-    userSettings.categories = existingCategories;
-
-    await userSettings.save();
-
-    const totalRows = rawData.length - 1; // Exclude header row
-    const importedCount = result.length;
-    const skippedCount = totalRows - importedCount;
-    
-    console.log(`Import Summary:
-      - Total rows processed: ${totalRows}
-      - Successfully imported: ${importedCount}
-      - Skipped rows: ${skippedCount}
-      - Duplicates found: ${duplicates.length}
-      - Errors: ${errors.length}
-      - New accounts found: ${Array.from(uniqueAccounts).length}
-      - New categories found: ${uniqueCategories.size}`);
-    
-    res.json({
-      success: true,
-      message: `Successfully imported ${result.length} transactions using ${mode} mode`,
-      data: {
-        imported: result.length,
-        totalProcessed: totalRows,
-        skipped: mode === 'merge' ? totalRows - importedCount : 0,
-        mode: mode,
-        errors: errors.length > 0 ? errors : null,
-        newAccounts: Array.from(uniqueAccounts),
-        newAccountGroups: accountGroups,
-        newAccountMapping: Object.fromEntries(accountMapping),
-        newCategories: Object.fromEntries(uniqueCategories)
-      }
-    });
+    return transactions.filter(t => Object.keys(t).length > 0);
 
   } catch (error) {
-    console.error('Excel import error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while importing Excel file'
-    });
+    throw new Error(`Error parsing file: ${error.message}`);
   }
-});
+}
 
-// @desc    Import transactions from JSON data
-// @route   POST /api/import/json
-// @access  Private
-router.post('/json', async (req, res) => {
-  try {
-    // Check request size (100MB limit for JSON)
-    const contentLength = parseInt(req.headers['content-length'] || '0');
-    if (contentLength > 100 * 1024 * 1024) {
-      return res.status(413).json({
-        success: false,
-        message: 'Request too large. Maximum file size is 100MB.'
-      });
-    }
+// Transform transactions to match database model
+async function transformTransactions(transactions, userId) {
+  const transformed = [];
+  
+  for (let i = 0; i < transactions.length; i++) {
+    const transaction = transactions[i];
+    
+    try {
+      // Parse and validate date
+      const parsedDate = parseDate(transaction.Date);
+      if (!parsedDate) {
+        console.warn(`Skipping transaction ${i + 1}: Invalid date format - ${transaction.Date}`);
+        continue;
+      }
 
-    const { transactions, mode = 'override' } = req.body;
-
-    if (!Array.isArray(transactions) || transactions.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'Transactions array is required'
-      });
-    }
-
-    // Process and validate transactions
-    const processedTransactions = [];
-    const errors = [];
-
-    for (let i = 0; i < transactions.length; i++) {
-      const transaction = transactions[i];
+      // Handle Transfer type mapping
+      let account, fromAccount, toAccount, category, subcategory;
       
-      try {
-        // Validate required fields
-        if (!transaction.Date || !transaction.Amount) {
-          errors.push(`Transaction ${i + 1}: Missing required fields (Date, Amount)`);
+      if (transaction['Income/Expense'] === 'Transfer' || transaction['Income/Expense'] === 'Transfer-Out') {
+        // For transfers: Account = FromAccount, Category = ToAccount
+        fromAccount = transaction.Account || '';
+        toAccount = transaction.Category || '';
+        account = fromAccount; // For display purposes
+        category = '';
+        subcategory = '';
+      } else {
+        // For Income/Expense: normal mapping
+        account = transaction.Account || '';
+        fromAccount = '';
+        toAccount = '';
+        category = transaction.Category || '';
+        subcategory = transaction.Subcategory || '';
+      }
+
+      // Generate unique ID if not present
+      const transactionId = transaction.ID || generateTransactionId(userId, i);
+
+      const transformedTransaction = {
+        user: userId,
+        Date: parsedDate,
+        Account: account,
+        FromAccount: fromAccount,
+        ToAccount: toAccount,
+        Category: category,
+        Subcategory: subcategory,
+        Note: transaction.Note || '',
+        INR: parseFloat(transaction.INR) || 0,
+        'Income/Expense': transaction['Income/Expense'] || 'Expense',
+        Description: transaction.Description || '',
+        Amount: transaction.Amount || transaction.INR || '0',
+        Currency: transaction.Currency || 'INR',
+        ID: transactionId
+      };
+
+      // Validate required fields
+      if (!transformedTransaction['Income/Expense']) {
+        console.warn(`Skipping transaction ${i + 1}: Missing transaction type`);
+        continue;
+      }
+
+      if (transformedTransaction['Income/Expense'] === 'Transfer' || transformedTransaction['Income/Expense'] === 'Transfer-Out') {
+        if (!transformedTransaction.FromAccount || !transformedTransaction.ToAccount) {
+          console.warn(`Skipping transaction ${i + 1}: Transfer missing FromAccount or ToAccount`);
           continue;
         }
-
-        // Ensure transaction has required structure
-        const processedTransaction = {
-          Date: transaction.Date,
-          Account: transaction.Account || 'Cash',
-          Category: transaction.Category || 'Other',
-          Subcategory: transaction.Subcategory || 'Imported',
-          Note: transaction.Note || '',
-          INR: parseFloat(transaction.Amount) || parseFloat(transaction.INR) || 0,
-          'Income/Expense': transaction['Income/Expense'] || 
-                          (parseFloat(transaction.Amount) >= 0 ? 'Income' : 'Expense'),
-          Description: transaction.Description || 'Imported transaction',
-          Amount: (parseFloat(transaction.Amount) || parseFloat(transaction.INR) || 0).toString(),
-          Currency: transaction.Currency || 'INR',
-          ID: transaction.ID || `import_${Date.now()}_${i}`,
-          user: req.user.id
-        };
-
-        processedTransactions.push(processedTransaction);
-      } catch (error) {
-        errors.push(`Transaction ${i + 1}: ${error.message}`);
-      }
-    }
-
-    if (processedTransactions.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: 'No valid transactions found in the data',
-        errors
-      });
-    }
-
-    // Handle import mode
-    let result;
-    if (mode === 'override') {
-      // Clear existing transactions for this user
-      await Transaction.deleteMany({ user: req.user.id });
-      // Insert new transactions
-      result = await Transaction.insertMany(processedTransactions);
-    } else if (mode === 'merge') {
-      // Check for duplicates based on ID or Date+Amount+Account combination
-      const existingTransactions = await Transaction.find({ user: req.user.id });
-      const existingIds = new Set(existingTransactions.map(t => t.ID));
-      const existingKeys = new Set(existingTransactions.map(t => `${t.Date}_${t.Amount}_${t.Account}`));
-      
-      const newTransactions = processedTransactions.filter(transaction => {
-        const key = `${transaction.Date}_${transaction.Amount}_${transaction.Account}`;
-        return !existingIds.has(transaction.ID) && !existingKeys.has(key);
-      });
-      
-      if (newTransactions.length > 0) {
-        result = await Transaction.insertMany(newTransactions);
       } else {
-        result = { length: 0 };
+        if (!transformedTransaction.Account || !transformedTransaction.Category) {
+          console.warn(`Skipping transaction ${i + 1}: Missing Account or Category`);
+          continue;
+        }
       }
-    } else {
-      // Default to override
-      await Transaction.deleteMany({ user: req.user.id });
-      result = await Transaction.insertMany(processedTransactions);
+
+      transformed.push(transformedTransaction);
+
+    } catch (error) {
+      console.warn(`Skipping transaction ${i + 1}: ${error.message}`);
     }
+  }
 
-    // Extract unique accounts and categories from imported data
-    const uniqueAccounts = new Set();
-    const uniqueCategories = new Map();
-    const accountGroups = [
-      { id: 1, name: 'Cash & Bank' },
-      { id: 2, name: 'Credit Cards' },
-      { id: 3, name: 'Investments' }
-    ];
+  return transformed;
+}
 
-    processedTransactions.forEach(transaction => {
-      // Extract accounts
-      if (transaction.Account) uniqueAccounts.add(transaction.Account);
-      if (transaction.FromAccount) uniqueAccounts.add(transaction.FromAccount);
-      if (transaction.ToAccount) uniqueAccounts.add(transaction.ToAccount);
+// Parse date with multiple format support
+function parseDate(dateString) {
+  if (!dateString) return null;
 
-      // Extract categories with proper structure (flat structure)
-      if (transaction.Category && transaction['Income/Expense']) {
-        const categoryName = transaction.Category;
-        if (!uniqueCategories.has(categoryName)) {
-          uniqueCategories.set(categoryName, {
-            type: transaction['Income/Expense'],
-            subcategories: [transaction.Subcategory || 'Default']
-          });
-        } else {
-          // Add subcategory if not already present
-          const existingCategory = uniqueCategories.get(categoryName);
-          if (transaction.Subcategory && !existingCategory.subcategories.includes(transaction.Subcategory)) {
-            existingCategory.subcategories.push(transaction.Subcategory);
+  try {
+    // Handle DD-MM-YYYY HH:MM:SS AM/PM format
+    if (typeof dateString === 'string') {
+      // Remove extra spaces and normalize
+      dateString = dateString.trim();
+      
+      // Handle DD-MM-YYYY HH:MM:SS AM/PM format
+      const dateTimeRegex = /^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})\s+(AM|PM)$/i;
+      const match = dateString.match(dateTimeRegex);
+      
+      if (match) {
+        const [, day, month, year, hour, minute, second, ampm] = match;
+        let hour24 = parseInt(hour);
+        
+        // Convert 12-hour to 24-hour format
+        if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
+          hour24 += 12;
+        } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
+          hour24 = 0;
+        }
+        
+        // IMPORTANT: Use day, month, year in correct order (DD-MM-YYYY)
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour24, parseInt(minute), parseInt(second));
+        return formatDateForDB(date);
+      }
+      
+      // Handle DD-MM-YYYY format
+      const dateRegex = /^(\d{1,2})-(\d{1,2})-(\d{4})$/;
+      const dateMatch = dateString.match(dateRegex);
+      
+      if (dateMatch) {
+        const [, day, month, year] = dateMatch;
+        // IMPORTANT: Use day, month, year in correct order (DD-MM-YYYY)
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        return formatDateForDB(date);
+      }
+      
+      // Handle DD/MM/YYYY format (already correct)
+      const slashDateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+      const slashDateMatch = dateString.match(slashDateRegex);
+      
+      if (slashDateMatch) {
+        const [, day, month, year] = slashDateMatch;
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        return formatDateForDB(date);
+      }
+      
+      // Handle MM/DD/YYYY format (American format - convert to DD/MM/YYYY)
+      const americanDateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+      const americanDateMatch = dateString.match(americanDateRegex);
+      
+      if (americanDateMatch) {
+        const [, month, day, year] = americanDateMatch;
+        // Check if this looks like American format (month > 12 would be invalid for DD-MM)
+        if (parseInt(month) > 12 && parseInt(day) <= 12) {
+          // This is likely MM/DD/YYYY, convert to DD/MM/YYYY
+          const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          return formatDateForDB(date);
+        }
+      }
+      
+      // Handle other common formats
+      const parsedDate = new Date(dateString);
+      if (!isNaN(parsedDate.getTime())) {
+        return formatDateForDB(parsedDate);
+      }
+    }
+    
+    // If it's already a Date object
+    if (dateString instanceof Date) {
+      return formatDateForDB(dateString);
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Date parsing error:', error);
+    return null;
+  }
+}
+
+// Format date for database storage (DD/MM/YYYY format)
+function formatDateForDB(date) {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Generate unique transaction ID
+function generateTransactionId(userId, index) {
+  const timestamp = Date.now();
+  return `${userId}_${timestamp}_${index}`;
+}
+
+// Find duplicates between existing and new transactions
+function findDuplicates(existingTransactions, newTransactions) {
+  const duplicates = [];
+  const newTransactionsFiltered = [];
+
+  newTransactions.forEach(newTransaction => {
+    const isDuplicate = existingTransactions.some(existingTransaction =>
+      isDuplicateTransaction(existingTransaction, newTransaction)
+    );
+
+    if (isDuplicate) {
+      duplicates.push(newTransaction);
+    } else {
+      newTransactionsFiltered.push(newTransaction);
+    }
+  });
+
+  return {
+    newTransactions: newTransactionsFiltered,
+    duplicates
+  };
+}
+
+// Check if two transactions are duplicates
+function isDuplicateTransaction(txn1, txn2) {
+  return txn1.Date === txn2.Date &&
+         txn1.Account === txn2.Account &&
+         txn1.Category === txn2.Category &&
+         txn1.Subcategory === txn2.Subcategory &&
+         txn1.Note === txn2.Note &&
+         txn1.INR === txn2.INR &&
+         txn1['Income/Expense'] === txn2['Income/Expense'];
+}
+
+// Update accounts and categories in user settings
+async function updateAccountsAndCategories(transactions, userId, mode) {
+  try {
+    // Extract unique accounts
+    const newAccounts = new Set();
+    transactions.forEach(transaction => {
+      if (transaction.Account) newAccounts.add(transaction.Account);
+      if (transaction.FromAccount) newAccounts.add(transaction.FromAccount);
+      if (transaction.ToAccount) newAccounts.add(transaction.ToAccount);
+    });
+
+    // Extract unique categories
+    const newCategories = new Map();
+    transactions.forEach(transaction => {
+      if (transaction['Income/Expense'] !== 'Transfer' && transaction['Income/Expense'] !== 'Transfer-Out') {
+        if (transaction.Category) {
+          if (!newCategories.has(transaction.Category)) {
+            newCategories.set(transaction.Category, {
+              type: transaction['Income/Expense'],
+              subcategories: new Set()
+            });
+          }
+          if (transaction.Subcategory) {
+            newCategories.get(transaction.Category).subcategories.add(transaction.Subcategory);
           }
         }
       }
     });
 
-    // Update user settings with extracted data
-    let userSettings = await UserSettings.findOne({ user: req.user.id });
-    
+    // Get current user settings
+    let userSettings = await UserSettings.findOne({ user: userId });
     if (!userSettings) {
-      userSettings = new UserSettings({ user: req.user.id });
+      userSettings = new UserSettings({ user: userId });
     }
 
-    // Merge new accounts with existing ones
-    const existingAccounts = new Set(userSettings.accounts || []);
-    uniqueAccounts.forEach(account => existingAccounts.add(account));
-    userSettings.accounts = Array.from(existingAccounts);
+    // Update accounts
+    if (mode === 'override') {
+      userSettings.accounts = Array.from(newAccounts);
+    } else {
+      // Merge mode
+      const existingAccounts = userSettings.accounts || [];
+      userSettings.accounts = [...new Set([...existingAccounts, ...Array.from(newAccounts)])];
+    }
 
-    // Create account mapping based on account types
-    const accountMapping = new Map();
-    accountMapping.set('Cash & Bank', []);
-    accountMapping.set('Credit Cards', []);
-    accountMapping.set('Investments', []);
-
-    // Map accounts to groups
-    Array.from(existingAccounts).forEach(account => {
-      if (account.toLowerCase().includes('cash') || account.toLowerCase().includes('bank')) {
-        accountMapping.get('Cash & Bank').push(account);
-      } else if (account.toLowerCase().includes('credit')) {
-        accountMapping.get('Credit Cards').push(account);
-      } else if (account.toLowerCase().includes('investment') || account.toLowerCase().includes('savings')) {
-        accountMapping.get('Investments').push(account);
-      } else {
-        // Default to Cash & Bank
-        accountMapping.get('Cash & Bank').push(account);
-      }
-    });
-
-    // Update account groups and mapping
-    userSettings.accountGroups = accountGroups;
-    userSettings.accountMapping = accountMapping;
-
-    // Merge new categories with existing ones (flat structure)
-    const existingCategories = new Map(userSettings.categories || []);
-    uniqueCategories.forEach((categoryData, categoryName) => {
-      if (!existingCategories.has(categoryName)) {
-        existingCategories.set(categoryName, categoryData);
-      } else {
-        // Merge subcategories
-        const existingCategory = existingCategories.get(categoryName);
-        categoryData.subcategories.forEach(subcategory => {
-          if (!existingCategory.subcategories.includes(subcategory)) {
-            existingCategory.subcategories.push(subcategory);
-          }
+    // Update categories
+    if (mode === 'override') {
+      const categoriesMap = new Map();
+      newCategories.forEach((value, key) => {
+        categoriesMap.set(key, {
+          type: value.type,
+          subcategories: Array.from(value.subcategories)
         });
-      }
-    });
-    userSettings.categories = existingCategories;
+      });
+      userSettings.categories = Object.fromEntries(categoriesMap);
+    } else {
+      // Merge mode
+      const existingCategories = userSettings.categories || {};
+      newCategories.forEach((value, key) => {
+        if (existingCategories[key]) {
+          const existingSubcategories = existingCategories[key].subcategories || [];
+          const newSubcategories = Array.from(value.subcategories);
+          existingCategories[key].subcategories = [...new Set([...existingSubcategories, ...newSubcategories])];
+        } else {
+          existingCategories[key] = {
+            type: value.type,
+            subcategories: Array.from(value.subcategories)
+          };
+        }
+      });
+      userSettings.categories = existingCategories;
+    }
 
     await userSettings.save();
 
+  } catch (error) {
+    console.error('Error updating accounts and categories:', error);
+    throw error;
+  }
+}
+
+// Get import status and statistics
+router.get('/status', protect, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const totalTransactions = await Transaction.countDocuments({ user: userId });
+    
     res.json({
       success: true,
-      message: `Successfully imported ${result.length} transactions using ${mode} mode`,
-      data: {
-        imported: result.length,
-        totalProcessed: processedTransactions.length,
-        skipped: mode === 'merge' ? processedTransactions.length - result.length : 0,
-        mode: mode,
-        errors: errors.length > 0 ? errors : null,
-        newAccounts: Array.from(uniqueAccounts),
-        newAccountGroups: accountGroups,
-        newAccountMapping: Object.fromEntries(accountMapping),
-        newCategories: Object.fromEntries(uniqueCategories)
+      stats: {
+        totalTransactions
       }
     });
-
   } catch (error) {
-    console.error('JSON import error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while importing JSON data'
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error getting import status: ' + error.message 
     });
   }
 });

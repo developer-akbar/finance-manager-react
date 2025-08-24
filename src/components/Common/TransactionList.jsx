@@ -296,11 +296,11 @@ const TransactionList = ({
                     const weekday = dateObj.toLocaleDateString("en-US", {
                       weekday: "short",
                     });
-                    const month = (dateObj.getMonth() + 1)
-                      .toString()
-                      .padStart(2, "0");
+                    const month = dateObj.toLocaleDateString("en-US", {
+                      month: "short",
+                    });
                     const year = dateObj.getFullYear();
-                    return `${day} ${weekday} ${month}.${year}`;
+                    return `${weekday}, ${day} ${month} ${year}`;
                   })()}
                 </h3>
                 <div className="day-totals">

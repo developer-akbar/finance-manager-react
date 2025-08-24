@@ -311,4 +311,96 @@ router.put('/account-mapping', [
   }
 });
 
+// @desc    Clear all user data (transactions, accounts, categories)
+// @route   DELETE /api/settings/clear-all
+// @access  Private
+router.delete('/clear-all', async (req, res) => {
+  try {
+    const Transaction = require('../models/Transaction');
+    
+    // Delete all transactions for the user
+    const transactionResult = await Transaction.deleteMany({ user: req.user.id });
+    
+    // Reset user settings to defaults
+    let userSettings = await UserSettings.findOne({ user: req.user.id });
+    
+    if (userSettings) {
+      // Reset to default accounts and categories
+      userSettings.accounts = [
+        'Cash',
+        'Bank Account',
+        'Credit Card',
+        'Savings Account',
+        'Investment Account',
+        'Digital Wallet'
+      ];
+      
+      userSettings.categories = new Map([
+        ['Housing', {
+          type: 'Expense',
+          subcategories: ['Rent', 'Groceries', 'Electricity', 'Gas']
+        }],
+        ['Travel', {
+          type: 'Expense',
+          subcategories: []
+        }],
+        ['Utilities', {
+          type: 'Expense',
+          subcategories: ['Recharge', 'DTH', 'Water']
+        }],
+        ['Shopping', {
+          type: 'Expense',
+          subcategories: []
+        }],
+        ['Health', {
+          type: 'Expense',
+          subcategories: ['Medicines', 'Hospital']
+        }],
+        ['Subscriptions', {
+          type: 'Expense',
+          subcategories: ['Netflix', 'Prime']
+        }],
+        ['Entertainment', {
+          type: 'Expense',
+          subcategories: ['Cinema', 'Outing']
+        }],
+        ['Groceries', {
+          type: 'Expense',
+          subcategories: []
+        }],
+        ['Dining', {
+          type: 'Expense',
+          subcategories: []
+        }],
+        ['Salary', {
+          type: 'Income',
+          subcategories: []
+        }],
+        ['Bonus', {
+          type: 'Income',
+          subcategories: []
+        }],
+        ['Petty Cash', {
+          type: 'Income',
+          subcategories: []
+        }]
+      ]);
+      
+      await userSettings.save();
+    }
+
+    res.json({
+      success: true,
+      message: 'All user data cleared successfully',
+      deletedCount: transactionResult.deletedCount
+    });
+  } catch (error) {
+    console.error('Clear all data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error while clearing all data'
+    });
+  }
+});
+
 module.exports = router; 
