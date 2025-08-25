@@ -76,16 +76,38 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
   
-  /* Font Sizes */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-  --text-5xl: 3rem;
+  /* Font Sizes - Base (Desktop) */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+  
+  /* Font Sizes - Mobile */
+  --text-xs-mobile: 0.75rem;      /* 12px */
+  --text-sm-mobile: 0.8125rem;    /* 13px */
+  --text-base-mobile: 0.9375rem;  /* 15px */
+  --text-lg-mobile: 1rem;         /* 16px */
+  --text-xl-mobile: 1.125rem;     /* 18px */
+  --text-2xl-mobile: 1.375rem;    /* 22px */
+  --text-3xl-mobile: 1.625rem;    /* 26px */
+  --text-4xl-mobile: 1.875rem;    /* 30px */
+  --text-5xl-mobile: 2.5rem;      /* 40px */
+  
+  /* Font Sizes - Tablet */
+  --text-xs-tablet: 0.75rem;      /* 12px */
+  --text-sm-tablet: 0.875rem;     /* 14px */
+  --text-base-tablet: 1rem;       /* 16px */
+  --text-lg-tablet: 1.125rem;     /* 18px */
+  --text-xl-tablet: 1.25rem;      /* 20px */
+  --text-2xl-tablet: 1.5rem;      /* 24px */
+  --text-3xl-tablet: 1.875rem;    /* 30px */
+  --text-4xl-tablet: 2.25rem;     /* 36px */
+  --text-5xl-tablet: 3rem;        /* 48px */
   
   /* Font Weights */
   --font-light: 300;
@@ -448,9 +470,66 @@ a:hover {
     --space-8: 1.5rem;
   }
   
-  h1 { font-size: var(--text-3xl); }
-  h2 { font-size: var(--text-2xl); }
-  h3 { font-size: var(--text-xl); }
+  /* Mobile Font Sizes */
+  h1 { font-size: var(--text-3xl-mobile); }
+  h2 { font-size: var(--text-2xl-mobile); }
+  h3 { font-size: var(--text-xl-mobile); }
+  h4 { font-size: var(--text-lg-mobile); }
+  h5 { font-size: var(--text-base-mobile); }
+  h6 { font-size: var(--text-sm-mobile); }
+  
+  body { font-size: var(--text-base-mobile); }
+  .text-xs { font-size: var(--text-xs-mobile); }
+  .text-sm { font-size: var(--text-sm-mobile); }
+  .text-base { font-size: var(--text-base-mobile); }
+  .text-lg { font-size: var(--text-lg-mobile); }
+  .text-xl { font-size: var(--text-xl-mobile); }
+  .text-2xl { font-size: var(--text-2xl-mobile); }
+  .text-3xl { font-size: var(--text-3xl-mobile); }
+  .text-4xl { font-size: var(--text-4xl-mobile); }
+  .text-5xl { font-size: var(--text-5xl-mobile); }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Tablet Font Sizes */
+  h1 { font-size: var(--text-3xl-tablet); }
+  h2 { font-size: var(--text-2xl-tablet); }
+  h3 { font-size: var(--text-xl-tablet); }
+  h4 { font-size: var(--text-lg-tablet); }
+  h5 { font-size: var(--text-base-tablet); }
+  h6 { font-size: var(--text-sm-tablet); }
+  
+  body { font-size: var(--text-base-tablet); }
+  .text-xs { font-size: var(--text-xs-tablet); }
+  .text-sm { font-size: var(--text-sm-tablet); }
+  .text-base { font-size: var(--text-base-tablet); }
+  .text-lg { font-size: var(--text-lg-tablet); }
+  .text-xl { font-size: var(--text-xl-tablet); }
+  .text-2xl { font-size: var(--text-2xl-tablet); }
+  .text-3xl { font-size: var(--text-3xl-tablet); }
+  .text-4xl { font-size: var(--text-4xl-tablet); }
+  .text-5xl { font-size: var(--text-5xl-tablet); }
+}
+
+@media (min-width: 1025px) {
+  /* Desktop Font Sizes */
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
+  h4 { font-size: var(--text-xl); }
+  h5 { font-size: var(--text-lg); }
+  h6 { font-size: var(--text-base); }
+  
+  body { font-size: var(--text-base); }
+  .text-xs { font-size: var(--text-xs); }
+  .text-sm { font-size: var(--text-sm); }
+  .text-base { font-size: var(--text-base); }
+  .text-lg { font-size: var(--text-lg); }
+  .text-xl { font-size: var(--text-xl); }
+  .text-2xl { font-size: var(--text-2xl); }
+  .text-3xl { font-size: var(--text-3xl); }
+  .text-4xl { font-size: var(--text-4xl); }
+  .text-5xl { font-size: var(--text-5xl); }
 }
 
 @media (max-width: 768px) {

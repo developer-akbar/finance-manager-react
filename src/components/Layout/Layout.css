@@ -30,8 +30,8 @@
 
 .content-header {
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  gap: var(--space-4);
   margin-bottom: var(--space-6);
   padding-bottom: var(--space-4);
   border-bottom: 1px solid var(--border-primary);

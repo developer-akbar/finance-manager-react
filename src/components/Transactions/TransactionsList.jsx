@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { formatCurrency, formatDate, convertDateFormat } from '../../utils/calculations';
-import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, BarChart3, TrendingUp, Plus } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, ArrowUpRight, ArrowDownLeft, Calendar, BarChart3, TrendingUp, Plus, X, ArrowLeft } from 'lucide-react';
 import TransactionFilters from './TransactionFilters';
 import AddTransaction from './AddTransaction';
 
@@ -15,6 +15,31 @@ const TransactionsList = () => {
   
   const [showFilters, setShowFilters] = useState(false);
   const [showAddTransaction, setShowAddTransaction] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [isClosingSearch, setIsClosingSearch] = useState(false);
+  const [isHidingFilters, setIsHidingFilters] = useState(false);
+
+  const handleCloseSearch = () => {
+    setIsClosingSearch(true);
+    setTimeout(() => {
+      setShowSearch(false);
+      setIsClosingSearch(false);
+      setShowFilters(false);
+      dispatch({ type: 'SET_SEARCH_TERM', payload: '' });
+    }, 300); // Match the CSS animation duration
+  };
+
+  const handleToggleFilters = () => {
+    if (showFilters) {
+      setIsHidingFilters(true);
+      setTimeout(() => {
+        setShowFilters(false);
+        setIsHidingFilters(false);
+      }, 300); // Match the CSS animation duration
+    } else {
+      setShowFilters(true);
+    }
+  };
 
   const [sortBy, setSortBy] = useState('date-desc');
   const [currentView, setCurrentView] = useState('daily'); // 'daily', 'monthly', 'total'
@@ -25,7 +50,7 @@ const TransactionsList = () => {
   // Filter and search transactions
   const filteredTransactions = useMemo(() => {
     let filtered = transactions.filter(transaction => {
-      // Search filter
+      // Search filter - works on ALL transactions regardless of date
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         return (
@@ -33,7 +58,9 @@ const TransactionsList = () => {
           transaction?.Subcategory?.toLowerCase().includes(searchLower) ||
           transaction?.Account?.toLowerCase().includes(searchLower) ||
           transaction?.Note?.toLowerCase().includes(searchLower) ||
-          transaction?.Description?.toLowerCase().includes(searchLower)
+          transaction?.Description?.toLowerCase().includes(searchLower) ||
+          transaction?.Amount?.toString().includes(searchLower) ||
+          transaction?.INR?.toString().includes(searchLower)
         );
       }
       return true;
@@ -299,32 +326,82 @@ const TransactionsList = () => {
   return (
     <>
     <div className="transactions-list">
-      <div className="page-header">
-        {/* <h3>Transactions</h3> */}
-        <div className="header-actions">
-          <button 
-            className={`filter-toggle ${showFilters ? 'active' : ''}`}
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter size={18} />
-            Filters
-          </button>
+      {/* Sticky Header */}
+      <div className={`sticky-header ${showSearch ? 'search-expanded' : ''}`} style={{ animation: 'fadeIn 0.3s ease-out' }}>
+        <div className="header-left" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          {(currentView === 'daily' || currentView === 'monthly') && (
+            <DateNavigation 
+              currentDate={currentDate}
+              onDateChange={setCurrentDate}
+              viewType={currentView === 'monthly' ? 'monthly' : 'daily'}
+              showQuickSelector={true}
+            />
+          )}
         </div>
         
-        {(currentView === 'daily' || currentView === 'monthly') && (
-          <DateNavigation 
-            currentDate={currentDate}
-            onDateChange={setCurrentDate}
-            viewType={currentView === 'monthly' ? 'monthly' : 'daily'}
-            showQuickSelector={true}
-          />
-        )}
+        <div className="header-right" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          <div className="search-section" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+            {showSearch ? (
+              <div className={`search-input-container ${isClosingSearch ? 'closing' : ''}`} style={{ animation: 'slideIn 0.3s ease-out' }}>
+                <ArrowLeft 
+                  size={18} 
+                  className="search-icon back-arrow"
+                  onClick={handleCloseSearch}
+                  style={{ cursor: 'pointer', animation: 'fadeIn 0.2s ease-out' }}
+                />
+                <div className="input-wrapper" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+                  <input
+                    type="text"
+                    placeholder="Search all transactions..."
+                    value={searchTerm}
+                    onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}
+                    className="search-input"
+                    autoFocus
+                    style={{ animation: 'fadeIn 0.3s ease-out' }}
+                  />
+                  {searchTerm && (
+                    <button 
+                      className="clear-search-btn"
+                      onClick={() => dispatch({ type: 'SET_SEARCH_TERM', payload: '' })}
+                      title="Clear Search"
+                      style={{ animation: 'fadeIn 0.2s ease-out' }}
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+                <button 
+                  className="filter-btn"
+                  onClick={handleToggleFilters}
+                  title="Show/Hide Filters"
+                  style={{ animation: 'fadeIn 0.3s ease-out' }}
+                >
+                  <Filter size={16} />
+                </button>
+              </div>
+            ) : (
+              <button 
+                className={`search-toggle ${!showSearch ? 'reappearing' : ''}`}
+                onClick={() => setShowSearch(true)}
+                title="Search Transactions"
+                style={{ animation: 'fadeIn 0.3s ease-out' }}
+              >
+                <Search size={18} />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {showFilters && <TransactionFilters />}
+      {/* Filters Section */}
+      {showFilters && (
+        <div className={isHidingFilters ? 'transaction-filters hiding' : 'transaction-filters'}>
+          <TransactionFilters />
+        </div>
+      )}
 
       {/* View Ribbons */}
-      <div className="view-ribbons">
+      <div className="view-ribbons" style={{ animation: 'fadeIn 0.3s ease-out' }}>
         <button
           className={`ribbon-btn ${currentView === 'daily' ? 'active' : ''}`}
           onClick={() => handleViewChange('daily')}
@@ -348,77 +425,64 @@ const TransactionsList = () => {
         </button>
       </div>
 
-      {/* View Navigation */}
-        <div className="view-title">
-          <div className="view-totals">
-            <div className="total-item income">
-              <span className="total-label">Income</span>
-              <span className="total-value">{formatCurrency(totals.income)}</span>
-            </div>
-            <div className="total-item expense">
-              <span className="total-label">Expense</span>
-              <span className="total-value">{formatCurrency(totals.expense)}</span>
-            </div>
-            <div className={`total-item balance ${totals.balance >= 0 ? 'positive' : 'negative'}`}>
-              <span className="total-label">Balance</span>
-              <span className="total-value">
-                {totals.balance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(totals.balance))}
-              </span>
-            </div>
-          </div>
+      {/* View Totals */}
+      <div className="view-totals" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+        <div className="total-item income">
+          <span className="total-label">Income</span>
+          <span className="total-value">{formatCurrency(totals.income)}</span>
         </div>
+        <div className="total-item expense">
+          <span className="total-label">Expense</span>
+          <span className="total-value">{formatCurrency(totals.expense)}</span>
+        </div>
+        <div className={`total-item balance ${totals.balance >= 0 ? 'positive' : 'negative'}`}>
+          <span className="total-label">Balance</span>
+          <span className="total-value">
+            {totals.balance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(totals.balance))}
+          </span>
+        </div>
+      </div>
 
       {/* View Content */}
       {currentView === 'daily' && (
         <>
-          <div className="search-controls">
-            <div className="search-bar">
-              <Search size={18} />
-              <input
-                type="text"
-                placeholder="Search transactions..."
-                value={searchTerm}
-                onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}
-              />
-            </div>
-
-            <div className="sort-controls">
-              {/* <label htmlFor="sort">Sort by:</label> */}
-              <select
-                id="sort"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="date-desc">Date (Newest)</option>
-                <option value="date-asc">Date (Oldest)</option>
-                <option value="amount-desc">Amount (High to Low)</option>
-                <option value="amount-asc">Amount (Low to High)</option>
-                <option value="category">Category</option>
-              </select>
-            </div>
+          <div className="sort-controls" style={{ animation: 'fadeIn 0.3s ease-out' }}>
+            <select
+              id="sort"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="date-desc">Date (Newest)</option>
+              <option value="date-asc">Date (Oldest)</option>
+              <option value="amount-desc">Amount (High to Low)</option>
+              <option value="amount-asc">Amount (Low to High)</option>
+              <option value="category">Category</option>
+            </select>
           </div>
 
-          <div className="transactions-summary">
+          <div className="transactions-summary" style={{ animation: 'fadeIn 0.3s ease-out' }}>
             <p>
               Showing {viewTransactions.length} transactions
             </p>
           </div>
 
-          <TransactionList
-            transactions={viewTransactions}
-            onEdit={updateTransaction}
-            onDelete={handleDelete}
-            showAccount={true}
-            showSubcategory={true}
-            dayHeaderFormat="default"
-            accounts={state.accounts}
-            categories={state.categories}
-          />
+          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+            <TransactionList
+              transactions={viewTransactions}
+              onEdit={updateTransaction}
+              onDelete={handleDelete}
+              showAccount={true}
+              showSubcategory={true}
+              dayHeaderFormat="default"
+              accounts={state.accounts}
+              categories={state.categories}
+            />
+          </div>
         </>
       )}
 
       {currentView === 'monthly' && (
-        <div className="monthly-view">
+        <div className="monthly-view" style={{ animation: 'fadeIn 0.3s ease-out' }}>
           <div className="months-grid">
             {Array.from({ length: 12 }, (_, i) => {
               const monthData = getMonthlyData()[i] || { income: 0, expense: 0, count: 0 };
@@ -448,7 +512,7 @@ const TransactionsList = () => {
       )}
 
       {currentView === 'total' && (
-        <div className="total-view">
+        <div className="total-view" style={{ animation: 'fadeIn 0.3s ease-out' }}>
           <div className="years-grid">
             {Object.entries(getYearlyData())
               .sort(([a], [b]) => parseInt(b) - parseInt(a))
@@ -485,13 +549,16 @@ const TransactionsList = () => {
       className="fab"
       onClick={() => setShowAddTransaction(true)}
       title="Add New Transaction"
+      style={{ animation: 'fadeIn 0.3s ease-out' }}
     >
       <Plus size={24} />
     </button>
 
     {/* Add Transaction Modal */}
     {showAddTransaction && (
-      <AddTransaction onClose={() => setShowAddTransaction(false)} />
+      <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+        <AddTransaction onClose={() => setShowAddTransaction(false)} />
+      </div>
     )}
   </>
   );

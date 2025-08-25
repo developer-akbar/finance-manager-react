@@ -3,7 +3,6 @@ import { useApp } from '../../contexts/AppContext';
 import Navigation from './Navigation';
 import MobileBottomNav from './MobileBottomNav';
 import ScrollToTop from './ScrollToTop';
-import ThemeToggle from './ThemeToggle';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -24,9 +23,6 @@ const Layout = ({ children }) => {
       {!isMobile && <Navigation />}
       <main className={`main-content ${!isMobile ? 'with-sidebar' : ''}`}>
         <div className="content-wrapper">
-          <div className="content-header">
-            <ThemeToggle />
-          </div>
           {children}
         </div>
       </main>

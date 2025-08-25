@@ -16,6 +16,7 @@ import AccountManager from './AccountManager';
 import CategoryManager from './CategoryManager';
 import DataImport from './DataImport';
 import './Settings.css';
+import ThemeToggle from '../Layout/ThemeToggle';
 
 const Settings = () => {
   const { state, loadData, refreshTransactions } = useApp();
@@ -228,6 +229,11 @@ const Settings = () => {
       <div className="settings-header">
         <h1>Settings</h1>
         <p>Manage your accounts, categories, and application data</p>
+      </div>
+
+      <div className="content-header">
+        <span>Theme</span>
+        <ThemeToggle />
       </div>
 
       <div className="settings-nav">

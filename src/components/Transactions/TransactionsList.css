@@ -2,10 +2,324 @@
 .transactions-list {
   background-color: transparent;
   border-radius: var(--radius-xl);
-  overflow: hidden;
+  overflow: visible;
   transition: all var(--transition-normal);
   width: 100%;
   max-width: none;
+  position: relative;
+}
+
+/* Sticky Header */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--background-primary);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  left: 0;
+  right: 0;
+  /* Ensure sticky works in all browsers */
+  position: -webkit-sticky;
+  position: sticky;
+  /* Add shadow when sticky */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* Add smooth transitions */
+  transition: all var(--transition-normal);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.search-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  transition: all var(--transition-normal);
+}
+
+.search-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.search-toggle.reappearing {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.search-toggle:hover {
+  background: var(--background-tertiary);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--background-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  transition: all var(--transition-normal);
+  animation: slideIn 0.3s ease-out;
+}
+
+.search-input-container.closing {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+.search-input-container.closing .input-wrapper {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+.search-input-container:focus-within {
+  border-color: var(--border-focus);
+}
+
+.search-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  min-width: 200px;
+  padding: 0;
+  padding-right: 32px; /* Space for clear button */
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--background-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.filter-btn:hover {
+  background: var(--background-hover);
+  color: var(--text-primary);
+  border-color: var(--border-secondary);
+}
+
+.filter-btn.active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  border-color: var(--accent-primary);
+}
+
+.back-arrow {
+  color: var(--text-secondary);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.back-arrow:hover {
+  color: var(--text-primary);
+  transform: translateX(-2px);
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--background-secondary);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.clear-search-btn:hover {
+  background: var(--background-hover);
+  color: var(--text-primary);
+}
+
+/* Responsive Sticky Header */
+@media (max-width: 768px) {
+  .sticky-header {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+  
+  .header-left,
+  .header-right {
+    gap: var(--space-2);
+  }
+  
+  .search-input {
+    min-width: 150px;
+  }
+  
+  .search-input-container {
+    padding: var(--space-1) var(--space-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .sticky-header {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  
+  .header-left,
+  .header-right {
+    justify-content: center;
+  }
+  
+  .search-section {
+    width: 100%;
+  }
+  
+  .search-input {
+    min-width: 120px;
+  }
+  
+  /* Search expanded state for small screens */
+  .sticky-header.search-expanded {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+  
+  .sticky-header.search-expanded .header-left {
+    justify-content: center;
+  }
+  
+  .sticky-header.search-expanded .header-right {
+    justify-content: center;
+  }
+  
+  .sticky-header.search-expanded .search-input-container {
+    width: 100%;
+    min-width: unset !important;
+  }
+}
+
+/* Search Expanded State */
+.sticky-header.search-expanded .search-input {
+  min-width: 100%;
+}
+
+.sticky-header.search-expanded .search-input-container {
+  width: 100%;
+  max-width: none;
+  min-width: 400px;
 }
 
 .page-header {

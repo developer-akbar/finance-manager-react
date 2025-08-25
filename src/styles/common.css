@@ -7,7 +7,7 @@
   justify-content: center;
   gap: var(--space-2);
   padding: 0 var(--space-2);
-  background: var(--background-elevated);
+  /* background: var(--background-elevated); */
   border-radius: var(--radius-lg);
   /* border: 1px solid var(--border-primary); */
   backdrop-filter: blur(10px);
