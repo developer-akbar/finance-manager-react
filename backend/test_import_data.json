@@ -1,0 +1,67 @@
+[
+  {
+    "Date": "01-01-2024 10:30:00 AM",
+    "Account": "Cash",
+    "Category": "Food",
+    "Subcategory": "Groceries",
+    "Note": "Weekly groceries",
+    "INR": 1500,
+    "Income/Expense": "Expense",
+    "Description": "Purchased groceries from supermarket",
+    "Amount": "1500.00",
+    "Currency": "INR",
+    "ID": "test_1"
+  },
+  {
+    "Date": "01-01-2024 02:15:00 PM",
+    "Account": "Bank",
+    "Category": "Salary",
+    "Subcategory": "Monthly",
+    "Note": "Monthly salary",
+    "INR": 50000,
+    "Income/Expense": "Income",
+    "Description": "Salary credited to bank account",
+    "Amount": "50000.00",
+    "Currency": "INR",
+    "ID": "test_2"
+  },
+  {
+    "Date": "02-01-2024 09:00:00 AM",
+    "Account": "Cash",
+    "Category": "Bank",
+    "Subcategory": "Transfer",
+    "Note": "Cash withdrawal",
+    "INR": 5000,
+    "Income/Expense": "Transfer",
+    "Description": "Withdrew cash from ATM",
+    "Amount": "5000.00",
+    "Currency": "INR",
+    "ID": "test_3"
+  },
+  {
+    "Date": "02-01-2024 11:45:00 AM",
+    "Account": "Credit Card",
+    "Category": "Shopping",
+    "Subcategory": "Clothing",
+    "Note": "New clothes",
+    "INR": 2500,
+    "Income/Expense": "Expense",
+    "Description": "Purchased new clothes from mall",
+    "Amount": "2500.00",
+    "Currency": "INR",
+    "ID": "test_4"
+  },
+  {
+    "Date": "03-01-2024 08:30:00 AM",
+    "Account": "Savings",
+    "Category": "Investment",
+    "Subcategory": "Mutual Fund",
+    "Note": "Monthly investment",
+    "INR": 10000,
+    "Income/Expense": "Expense",
+    "Description": "Monthly mutual fund investment",
+    "Amount": "10000.00",
+    "Currency": "INR",
+    "ID": "test_5"
+  }
+]

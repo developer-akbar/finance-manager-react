@@ -1,0 +1,6 @@
+Date,Account,Category,Subcategory,Note,INR,Income/Expense,Description,Amount,Currency,ID
+01-01-2024 10:30:00 AM,Cash,Food,Groceries,Weekly groceries,1500,Expense,Purchased groceries from supermarket,1500.00,INR,test_1
+01-01-2024 02:15:00 PM,Bank,Salary,Monthly,Monthly salary,50000,Income,Salary credited to bank account,50000.00,INR,test_2
+02-01-2024 09:00:00 AM,Cash,Bank,Transfer,Cash withdrawal,5000,Transfer,Withdrew cash from ATM,5000.00,INR,test_3
+02-01-2024 11:45:00 AM,Credit Card,Shopping,Clothing,New clothes,2500,Expense,Purchased new clothes from mall,2500.00,INR,test_4
+03-01-2024 08:30:00 AM,Savings,Investment,Mutual Fund,Monthly investment,10000,Expense,Monthly mutual fund investment,10000.00,INR,test_5
