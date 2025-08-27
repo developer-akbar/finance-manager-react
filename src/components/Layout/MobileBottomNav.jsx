@@ -26,14 +26,6 @@ const MobileBottomNav = () => {
 
   return (
     <nav className="bottom-nav">
-      <button
-        className="bottom-nav-item"
-        onClick={logout}
-        title="Logout"
-      >
-        {/* Simple power icon using Settings rotated is not ideal; keep text only? Using title is fine */}
-        <span className="nav-text">Logout</span>
-      </button>
       {menuItems.map(item => {
         const Icon = item.icon;
         return (
@@ -48,6 +40,13 @@ const MobileBottomNav = () => {
           </button>
         );
       })}
+      <button
+        className="bottom-nav-item"
+        onClick={logout}
+        title="Logout"
+      >
+        <span className="nav-text">Logout</span>
+      </button>
     </nav>
   );
 };

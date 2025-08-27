@@ -52,13 +52,16 @@ const Navigation = () => {
         </div>
         <div className="header-actions">
           <ThemeToggle />
-          {isCompact && (
-            <button className="hamburger" aria-label="Toggle menu" onClick={() => setIsExpanded(v => !v)}>
-              <span></span><span></span><span></span>
-            </button>
-          )}
         </div>
       </div>
+
+      {isCompact && (
+        <div className="sidebar-controls">
+          <button className="hamburger" aria-label="Toggle menu" onClick={() => setIsExpanded(v => !v)}>
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      )}
       
       <ul className="nav-menu">
         {menuItems.map(item => {
@@ -69,8 +72,9 @@ const Navigation = () => {
                 className={`nav-item ${state.currentView === item.id ? 'active' : ''}`}
                 onClick={() => {
                   if (state.currentView === item.id) {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo(0, 0);
                   } else {
+                    window.scrollTo(0, 0);
                     dispatch({ type: 'SET_CURRENT_VIEW', payload: item.id });
                   }
                   if (isCompact) setIsExpanded(false);
@@ -84,12 +88,7 @@ const Navigation = () => {
         })}
       </ul>
 
-      <div className="sidebar-footer">
-        <button className="nav-item logout-btn" onClick={logout}>
-          <LogOut size={20} />
-          {(!isCompact || isExpanded) && <span>Logout</span>}
-        </button>
-      </div>
+      <div className="sidebar-footer"></div>
     </nav>
   );
 };

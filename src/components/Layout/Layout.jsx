@@ -18,9 +18,9 @@ const Layout = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Scroll to top on view change
+  // Jump to top instantly on view change (no scrolling animation)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   }, [state.currentView]);
 
   return (

@@ -37,6 +37,11 @@
   justify-content: space-between;
 }
 
+.sidebar-controls {
+  padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--border-primary);
+}
+
 .header-actions {
   display: flex;
   align-items: center;

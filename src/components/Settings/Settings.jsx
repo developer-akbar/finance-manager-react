@@ -260,6 +260,7 @@ const Settings = () => {
             <div className="password-actions">
               <h3>Security</h3>
               <p>For now, use the logout and re-register to reset credentials. I can wire change/reset password endpoints next.</p>
+              <button className="btn btn-danger" onClick={logout}>Logout</button>
             </div>
           </div>
         )}
