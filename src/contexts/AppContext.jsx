@@ -78,7 +78,7 @@ const appReducer = (state, action) => {
 
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // Load initial data
   useEffect(() => {
@@ -277,6 +277,7 @@ export const AppProvider = ({ children }) => {
   const value = {
     state,
     dispatch,
+    user,
     addTransaction,
     updateTransaction,
     deleteTransaction,

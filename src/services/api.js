@@ -104,6 +104,14 @@ export const authAPI = {
     setAuthToken(null);
   },
 
+  // Change password
+  changePassword: async (currentPassword, newPassword) => {
+    return await apiRequest('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  },
+
   // Check if user is authenticated
   isAuthenticated: () => {
     return !!getAuthToken();

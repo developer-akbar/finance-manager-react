@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { authAPI } from '../../services/api';
 import { importAPI, transactionsAPI, settingsAPI } from '../../services/api';
 import { 
   Download, 
@@ -19,7 +20,7 @@ import './Settings.css';
 import ThemeToggle from '../Layout/ThemeToggle';
 
 const Settings = () => {
-  const { state, loadData, refreshTransactions } = useApp();
+  const { state, loadData, refreshTransactions, user } = useApp();
   const { logout } = useAuth();
   const [activeSection, setActiveSection] = useState('accounts');
   const [showExportModal, setShowExportModal] = useState(false);
@@ -254,12 +255,12 @@ const Settings = () => {
           <div className="profile-section">
             <h2>Profile</h2>
             <div className="profile-card">
-              <div className="profile-row"><strong>Username:</strong> {state?.user?.username || '—'}</div>
-              <div className="profile-row"><strong>Email:</strong> {state?.user?.email || '—'}</div>
+              <div className="profile-row"><strong>Username:</strong> {user?.username || '—'}</div>
+              <div className="profile-row"><strong>Email:</strong> {user?.email || '—'}</div>
             </div>
             <div className="password-actions">
               <h3>Security</h3>
-              <p>For now, use the logout and re-register to reset credentials. I can wire change/reset password endpoints next.</p>
+              <ChangePasswordForm />
               <button className="btn btn-danger" onClick={logout}>Logout</button>
             </div>
           </div>
@@ -507,3 +508,60 @@ const Settings = () => {
 };
 
 export default Settings;
+
+// Change Password subcomponent
+function ChangePasswordForm() {
+  const [currentPassword, setCurrentPassword] = React.useState('');
+  const [newPassword, setNewPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [message, setMessage] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    if (!currentPassword || !newPassword) {
+      setMessage('Please fill all fields');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setMessage('New passwords do not match');
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await authAPI.changePassword(currentPassword, newPassword);
+      if (res.success) {
+        setMessage('Password changed successfully');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setMessage(res.message || 'Failed to change password');
+      }
+    } catch (err) {
+      setMessage(err.message || 'Failed to change password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="change-password-form">
+      {message && <p>{message}</p>}
+      <div className="form-row">
+        <label htmlFor="cp-current">Current Password</label>
+        <input id="cp-current" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+      </div>
+      <div className="form-row">
+        <label htmlFor="cp-new">New Password</label>
+        <input id="cp-new" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+      </div>
+      <div className="form-row">
+        <label htmlFor="cp-confirm">Confirm New Password</label>
+        <input id="cp-confirm" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+      </div>
+      <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? 'Saving...' : 'Change Password'}</button>
+    </form>
+  );
+}
