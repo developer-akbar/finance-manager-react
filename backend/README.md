@@ -30,14 +30,9 @@ A robust Express.js backend API for the Finance Manager React application with M
    ```
 
 3. **Configure environment:**
-   - Copy `config.env` and update the values:
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/finance-manager
-   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-   JWT_EXPIRE=7d
-   PORT=5000
-   NODE_ENV=development
-   CORS_ORIGIN=http://localhost:5173
+   - Copy `config.env.example` to `config.env` and update the values:
+   ```bash
+   cp config.env.example config.env
    ```
 
 4. **Start MongoDB:**
