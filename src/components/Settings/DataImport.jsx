@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import api from '../../services/api';
 import { Upload, FileText, AlertCircle, CheckCircle, X, Download, Info, Trash2 } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import './DataImport.css';
@@ -67,17 +68,9 @@ const DataImport = () => {
         throw new Error('Authentication required. Please log in again.');
       }
 
-      const response = await fetch(`http://localhost:5000/api/import/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
+      const result = await api.import.importExcel(formData, mode);
 
-      const result = await response.json();
-
-      if (!response.ok) {
+      if (!result.success) {
         throw new Error(result.message || 'Import failed');
       }
 
@@ -186,17 +179,7 @@ const DataImport = () => {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch(`http://localhost:5000/api/transactions`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to export data');
-      }
-
-      const result = await response.json();
+      const result = await api.transactions.getAll();
       
       if (!result.success || !result.data) {
         throw new Error('No data available for export');
@@ -245,18 +228,7 @@ const DataImport = () => {
         throw new Error('Authentication required');
       }
 
-      const response = await fetch(`http://localhost:5000/api/settings/clear-all`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete all data');
-      }
-
-      const result = await response.json();
+      const result = await api.settings.deleteAll();
       
       if (result.success) {
         setError(null);
