@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -12,10 +12,20 @@ import Categories from './components/Categories/Categories';
 import Analytics from './components/Analytics/Analytics';
 import Settings from './components/Settings/Settings';
 import { useApp } from './contexts/AppContext';
+import api from './services/api';
 
 const AppContent = () => {
   const { isAuthenticated, loading } = useAuth();
   const { state } = useApp();
+
+  // Warm up backend (Render free tier may sleep)
+  useEffect(() => {
+    api.health
+      .check()
+      .catch(() => {
+        // Ignore errors; this is best-effort warm-up
+      });
+  }, []);
 
   if (loading) {
     return (
