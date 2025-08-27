@@ -235,62 +235,53 @@ function parseDate(dateString) {
     if (typeof dateString === 'string') {
       // Remove extra spaces and normalize
       dateString = dateString.trim();
-      
-      // Handle DD-MM-YYYY HH:MM:SS AM/PM format
-      const dateTimeRegex = /^(\d{1,2})-(\d{1,2})-(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})\s+(AM|PM)$/i;
-      const match = dateString.match(dateTimeRegex);
-      
-      if (match) {
-        const [, day, month, year, hour, minute, second, ampm] = match;
-        let hour24 = parseInt(hour);
-        
-        // Convert 12-hour to 24-hour format
-        if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
-          hour24 += 12;
-        } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
-          hour24 = 0;
+
+      // Unified parser: DD[/-]MM[/-]YYYY with optional time and optional AM/PM
+      // Examples:
+      // 14/08/2025 16:50:19
+      // 14-08-2025 04:50:19 PM
+      // 14/08/2025
+      const unifiedRegex = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*(AM|PM))?)?$/i;
+      const unifiedMatch = dateString.match(unifiedRegex);
+      if (unifiedMatch) {
+        const [, d, m, y, hh, mm, ss, ampm] = unifiedMatch;
+        const day = parseInt(d);
+        const month = parseInt(m) - 1;
+        const year = parseInt(y);
+        let hour24 = hh !== undefined ? parseInt(hh) : 0;
+        const minute = mm !== undefined ? parseInt(mm) : 0;
+        const second = ss !== undefined ? parseInt(ss) : 0;
+
+        if (ampm) {
+          const upper = ampm.toUpperCase();
+          if (upper === 'PM' && hour24 !== 12) hour24 += 12;
+          if (upper === 'AM' && hour24 === 12) hour24 = 0;
         }
-        
-        // IMPORTANT: Use day, month, year in correct order (DD-MM-YYYY)
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), hour24, parseInt(minute), parseInt(second));
-        return formatDateForDB(date);
+
+        const date = new Date(year, month, day, hour24, minute, second);
+        if (!isNaN(date.getTime())) {
+          return formatDateForDB(date);
+        }
       }
-      
+
       // Handle DD-MM-YYYY format
       const dateRegex = /^(\d{1,2})-(\d{1,2})-(\d{4})$/;
       const dateMatch = dateString.match(dateRegex);
-      
       if (dateMatch) {
         const [, day, month, year] = dateMatch;
-        // IMPORTANT: Use day, month, year in correct order (DD-MM-YYYY)
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         return formatDateForDB(date);
       }
-      
-      // Handle DD/MM/YYYY format (already correct)
+
+      // Handle DD/MM/YYYY format
       const slashDateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
       const slashDateMatch = dateString.match(slashDateRegex);
-      
       if (slashDateMatch) {
         const [, day, month, year] = slashDateMatch;
         const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         return formatDateForDB(date);
       }
-      
-      // Handle MM/DD/YYYY format (American format - convert to DD/MM/YYYY)
-      const americanDateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
-      const americanDateMatch = dateString.match(americanDateRegex);
-      
-      if (americanDateMatch) {
-        const [, month, day, year] = americanDateMatch;
-        // Check if this looks like American format (month > 12 would be invalid for DD-MM)
-        if (parseInt(month) > 12 && parseInt(day) <= 12) {
-          // This is likely MM/DD/YYYY, convert to DD/MM/YYYY
-          const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-          return formatDateForDB(date);
-        }
-      }
-      
+
       // Handle other common formats
       const parsedDate = new Date(dateString);
       if (!isNaN(parsedDate.getTime())) {
