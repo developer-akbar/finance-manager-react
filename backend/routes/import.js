@@ -52,22 +52,40 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     }
 
     // Validate and transform transactions
+    console.log(`[IMPORT DEBUG] Starting import for user ${userId}, mode: ${mode}`);
+    console.log(`[IMPORT DEBUG] Raw transactions count: ${transactions.length}`);
+    console.log(`[IMPORT DEBUG] Sample raw transaction:`, transactions[0]);
+    
     const transformedTransactions = await transformTransactions(transactions, userId);
+    
+    console.log(`[IMPORT DEBUG] Transformed transactions count: ${transformedTransactions.length}`);
+    console.log(`[IMPORT DEBUG] Sample transformed transaction:`, transformedTransactions[0]);
 
     // Handle import mode
     if (mode === 'override') {
       // Delete existing transactions and import new ones
-      await Transaction.deleteMany({ user: userId });
+      console.log(`[IMPORT DEBUG] Override mode: Deleting existing transactions for user ${userId}`);
+      const deleteResult = await Transaction.deleteMany({ user: userId });
+      console.log(`[IMPORT DEBUG] Deleted ${deleteResult.deletedCount} existing transactions`);
+      
       if (transformedTransactions.length > 0) {
-        await Transaction.insertMany(transformedTransactions);
+        console.log(`[IMPORT DEBUG] Inserting ${transformedTransactions.length} new transactions`);
+        const insertResult = await Transaction.insertMany(transformedTransactions);
+        console.log(`[IMPORT DEBUG] Successfully inserted ${insertResult.length} transactions`);
       }
     } else if (mode === 'merge') {
       // Find and handle duplicates
+      console.log(`[IMPORT DEBUG] Merge mode: Finding existing transactions for user ${userId}`);
       const existingTransactions = await Transaction.find({ user: userId });
+      console.log(`[IMPORT DEBUG] Found ${existingTransactions.length} existing transactions`);
+      
       const { newTransactions, duplicates } = findDuplicates(existingTransactions, transformedTransactions);
+      console.log(`[IMPORT DEBUG] Merge results: ${newTransactions.length} new, ${duplicates.length} duplicates`);
       
       if (newTransactions.length > 0) {
-        await Transaction.insertMany(newTransactions);
+        console.log(`[IMPORT DEBUG] Inserting ${newTransactions.length} new transactions in merge mode`);
+        const insertResult = await Transaction.insertMany(newTransactions);
+        console.log(`[IMPORT DEBUG] Successfully inserted ${insertResult.length} transactions in merge mode`);
       }
 
       // Update accounts and categories
@@ -85,8 +103,11 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     }
 
     // Update accounts and categories
+    console.log(`[IMPORT DEBUG] Updating accounts and categories for user ${userId}`);
     await updateAccountsAndCategories(transformedTransactions, userId, mode);
+    console.log(`[IMPORT DEBUG] Accounts and categories updated successfully`);
 
+    console.log(`[IMPORT DEBUG] Import completed successfully for user ${userId}`);
     res.json({
       success: true,
       message: `Import completed successfully. ${transformedTransactions.length} transactions imported.`,
@@ -96,7 +117,8 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Import error:', error);
+    console.error('[IMPORT ERROR] Import failed:', error);
+    console.error('[IMPORT ERROR] Stack trace:', error.stack);
     res.status(500).json({ 
       success: false, 
       message: 'Error processing import: ' + error.message 
