@@ -40,11 +40,7 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     const userId = req.user.id;
     
     // Debug mode parameter
-    console.log(`[IMPORT DEBUG] Raw mode from req.body: "${mode}"`);
-    console.log(`[IMPORT DEBUG] Mode type: ${typeof mode}`);
-    console.log(`[IMPORT DEBUG] Mode length: ${mode ? mode.length : 'undefined'}`);
-    console.log(`[IMPORT DEBUG] Mode === 'override': ${mode === 'override'}`);
-    console.log(`[IMPORT DEBUG] Mode === 'merge': ${mode === 'merge'}`);
+    console.log(`[IMPORT DEBUG] Mode from req.body: "${mode}"`);
 
     let transactions = [];
     const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
@@ -61,16 +57,13 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     // Validate and transform transactions
     console.log(`[IMPORT DEBUG] Starting import for user ${userId}, mode: ${mode}`);
     console.log(`[IMPORT DEBUG] Raw transactions count: ${transactions.length}`);
-    console.log(`[IMPORT DEBUG] Sample raw transaction:`, transactions[0]);
     
     const transformedTransactions = await transformTransactions(transactions, userId);
     
     console.log(`[IMPORT DEBUG] Transformed transactions count: ${transformedTransactions.length}`);
-    console.log(`[IMPORT DEBUG] Sample transformed transaction:`, transformedTransactions[0]);
 
     // Handle import mode - normalize mode to handle potential concatenation issues
     const normalizedMode = mode ? mode.toString().split(',')[0].trim() : 'override';
-    console.log(`[IMPORT DEBUG] Normalized mode: "${normalizedMode}"`);
     
     if (normalizedMode === 'override') {
       // Delete existing transactions and import new ones
@@ -113,9 +106,7 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     }
 
     // Update accounts and categories
-    console.log(`[IMPORT DEBUG] Updating accounts and categories for user ${userId}`);
     await updateAccountsAndCategories(transformedTransactions, userId, mode);
-    console.log(`[IMPORT DEBUG] Accounts and categories updated successfully`);
 
     console.log(`[IMPORT DEBUG] Import completed successfully for user ${userId}`);
     res.json({
