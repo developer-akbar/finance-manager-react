@@ -1,5 +1,5 @@
 import React from 'react';
-import api from '../../services/api';
+import api, { API_BASE_URL } from '../../services/api';
 import { useApp } from '../../contexts/AppContext';
 import TransactionList from '../Common/TransactionList';
 import './RecentTransactions.css';
@@ -13,7 +13,18 @@ const RecentTransactions = ({ transactions }) => {
 
   const handleEditTransaction = async (transactionId, updatedData) => {
     try {
-      await api.transactions.update(transactionId, updatedData);
+      const response = await fetch(`${API_BASE_URL}/transactions/${transactionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(updatedData)
+      });
+      if (!response.ok) {
+        console.error('Failed to update transaction');
+        return;
+      }
       dispatch({ type: 'UPDATE_TRANSACTION', payload: { id: transactionId, data: updatedData } });
     } catch (error) {
       console.error('Error updating transaction:', error);
@@ -22,7 +33,16 @@ const RecentTransactions = ({ transactions }) => {
 
   const handleDeleteTransaction = async (transactionId) => {
     try {
-      await api.transactions.delete(transactionId);
+      const response = await fetch(`${API_BASE_URL}/transactions/${transactionId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      if (!response.ok) {
+        console.error('Failed to delete transaction');
+        return;
+      }
       dispatch({ type: 'DELETE_TRANSACTION', payload: transactionId });
     } catch (error) {
       console.error('Error deleting transaction:', error);

@@ -282,3 +282,6 @@ export default {
   import: importAPI,
   health: healthAPI,
 }; 
+
+// Named export for components that need explicit fetch flows
+export { API_BASE_URL };

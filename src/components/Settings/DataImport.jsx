@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import api from '../../services/api';
+import api, { API_BASE_URL } from '../../services/api';
 import { Upload, FileText, AlertCircle, CheckCircle, X, Download, Info, Trash2 } from 'lucide-react';
 import { useApp } from '../../contexts/AppContext';
 import './DataImport.css';
@@ -179,7 +179,15 @@ const DataImport = () => {
         throw new Error('Authentication required');
       }
 
-      const result = await api.transactions.getAll();
+      const response = await fetch(`${API_BASE_URL}/transactions`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to export data');
+      }
+      const result = await response.json();
       
       if (!result.success || !result.data) {
         throw new Error('No data available for export');
@@ -228,7 +236,16 @@ const DataImport = () => {
         throw new Error('Authentication required');
       }
 
-      const result = await api.settings.deleteAll();
+      const response = await fetch(`${API_BASE_URL}/settings/clear-all`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete all data');
+      }
+      const result = await response.json();
       
       if (result.success) {
         setError(null);
