@@ -38,6 +38,13 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
 
     const { mode = 'override' } = req.body; // 'override' or 'merge'
     const userId = req.user.id;
+    
+    // Debug mode parameter
+    console.log(`[IMPORT DEBUG] Raw mode from req.body: "${mode}"`);
+    console.log(`[IMPORT DEBUG] Mode type: ${typeof mode}`);
+    console.log(`[IMPORT DEBUG] Mode length: ${mode ? mode.length : 'undefined'}`);
+    console.log(`[IMPORT DEBUG] Mode === 'override': ${mode === 'override'}`);
+    console.log(`[IMPORT DEBUG] Mode === 'merge': ${mode === 'merge'}`);
 
     let transactions = [];
     const fileExtension = req.file.originalname.split('.').pop().toLowerCase();
@@ -61,8 +68,11 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
     console.log(`[IMPORT DEBUG] Transformed transactions count: ${transformedTransactions.length}`);
     console.log(`[IMPORT DEBUG] Sample transformed transaction:`, transformedTransactions[0]);
 
-    // Handle import mode
-    if (mode === 'override') {
+    // Handle import mode - normalize mode to handle potential concatenation issues
+    const normalizedMode = mode ? mode.toString().split(',')[0].trim() : 'override';
+    console.log(`[IMPORT DEBUG] Normalized mode: "${normalizedMode}"`);
+    
+    if (normalizedMode === 'override') {
       // Delete existing transactions and import new ones
       console.log(`[IMPORT DEBUG] Override mode: Deleting existing transactions for user ${userId}`);
       const deleteResult = await Transaction.deleteMany({ user: userId });
@@ -73,7 +83,7 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
         const insertResult = await Transaction.insertMany(transformedTransactions);
         console.log(`[IMPORT DEBUG] Successfully inserted ${insertResult.length} transactions`);
       }
-    } else if (mode === 'merge') {
+    } else if (normalizedMode === 'merge') {
       // Find and handle duplicates
       console.log(`[IMPORT DEBUG] Merge mode: Finding existing transactions for user ${userId}`);
       const existingTransactions = await Transaction.find({ user: userId });
