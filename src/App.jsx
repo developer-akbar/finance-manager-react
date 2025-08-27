@@ -30,8 +30,9 @@ const AppContent = () => {
   if (loading) {
     return (
       <div className="loading-screen">
+        <img src="/favicon.svg" alt="Finance Manager" className="welcome-logo" />
         <div className="loading-spinner"></div>
-        <p>Loading...</p>
+        <p>Loading your Finance Manager...</p>
       </div>
     );
   }

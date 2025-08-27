@@ -73,7 +73,8 @@ router.get('/', async (req, res) => {
       }
     }
 
-    let queryBuilder = Transaction.find(query).sort(sort);
+    // Use lean for faster read performance and return plain JS objects
+    let queryBuilder = Transaction.find(query).sort(sort).lean();
     
     // Apply pagination only if limit is specified
     if (limit) {

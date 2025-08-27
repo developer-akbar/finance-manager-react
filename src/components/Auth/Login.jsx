@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { DollarSign, Eye, EyeOff, UserPlus, LogIn } from 'lucide-react';
 import './Login.css';
+import api from '../../services/api';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +17,11 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login, register } = useAuth();
+
+  // Warm up backend on login page mount to reduce cold start latency
+  useEffect(() => {
+    api.health.check().catch(() => {});
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

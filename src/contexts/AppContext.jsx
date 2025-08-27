@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { transactionsAPI, settingsAPI } from '../services/api';
+import api, { transactionsAPI, settingsAPI } from '../services/api';
 import { useAuth } from './AuthContext';
 
 const AppContext = createContext();
@@ -83,6 +83,24 @@ export const AppProvider = ({ children }) => {
   // Load initial data
   useEffect(() => {
     if (isAuthenticated) {
+      // Hydrate from cache to avoid empty UI while network loads
+      try {
+        const cached = JSON.parse(localStorage.getItem('fm_cached_state') || 'null');
+        if (cached && cached.transactions && Array.isArray(cached.transactions)) {
+          dispatch({ type: 'INITIALIZE_DATA', payload: {
+            accounts: cached.accounts || [],
+            categories: cached.categories || {},
+            accountGroups: cached.accountGroups || [],
+            accountMapping: cached.accountMapping || {},
+            csvConversionDetails: cached.csvConversionDetails || {}
+          }});
+          dispatch({ type: 'SET_TRANSACTIONS', payload: cached.transactions });
+        }
+      } catch {}
+
+      // Warm up backend just before loading data
+      api.health.check().catch(() => {});
+
       loadData();
     }
   }, [isAuthenticated]);
@@ -122,6 +140,17 @@ export const AppProvider = ({ children }) => {
 
       if (transactionsResponse.success) {
         dispatch({ type: 'SET_TRANSACTIONS', payload: transactionsResponse.data });
+        // Cache for faster perceived load next time
+        try {
+          localStorage.setItem('fm_cached_state', JSON.stringify({
+            accounts: settingsResponse.success ? settingsResponse.data.accounts : [],
+            categories: settingsResponse.success ? settingsResponse.data.categories : {},
+            accountGroups: settingsResponse.success ? settingsResponse.data.accountGroups : [],
+            accountMapping: settingsResponse.success ? settingsResponse.data.accountMapping : {},
+            csvConversionDetails: settingsResponse.success ? settingsResponse.data.csvConversionDetails : {},
+            transactions: transactionsResponse.data
+          }));
+        } catch {}
       }
     } catch (error) {
       console.error('Error loading data:', error);
