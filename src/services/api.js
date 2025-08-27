@@ -218,7 +218,7 @@ export const importAPI = {
     const token = getAuthToken();
     // Add mode to FormData
     formData.append('mode', mode);
-    const response = await fetch(`${API_BASE_URL}/import/excel`, {
+    const response = await fetch(`${API_BASE_URL}/import/upload`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -233,7 +233,7 @@ export const importAPI = {
     const formData = new FormData();
     formData.append('file', file);
     const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}/import/excel`, {
+    const response = await fetch(`${API_BASE_URL}/import/upload`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -265,6 +265,13 @@ export const healthAPI = {
   check: async () => {
     return await apiRequest('/health');
   },
+};
+
+// Extend settings API with delete all endpoint
+settingsAPI.deleteAll = async () => {
+  return await apiRequest('/settings/clear-all', {
+    method: 'DELETE',
+  });
 };
 
 // Export default API object
