@@ -1,14 +1,17 @@
-// Dynamic API base URL based on environment
+// Determine API base URL from Vite env with safe fallbacks
 const getAPIBaseURL = () => {
-  const hostname = window.location.hostname;
-  const port = '5000'; // Backend port
-  
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return `http://localhost:${port}/api`;
-  } else {
-    // For network access (like 10.213.181.81), use the same hostname
-    return `http://${hostname}:${port}/api`;
+  const configuredBaseUrl = (import.meta.env?.VITE_API_BASE_URL || '').trim();
+  if (configuredBaseUrl) {
+    return configuredBaseUrl.replace(/\/$/, '');
   }
+
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+
+  // Fallback for deployed environments (e.g., Vercel) if env is not set
+  return 'https://finance-manager-backend-4qf4.onrender.com/api';
 };
 
 const API_BASE_URL = getAPIBaseURL();

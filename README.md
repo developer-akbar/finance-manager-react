@@ -124,9 +124,9 @@ cd backend
 npm install
 
 # Configure environment variables
-# Copy config.env and update the values:
-cp config.env .env
-# Edit .env with your MongoDB connection and JWT secret
+# Create a config.env from example and update your values
+cp config.env.example config.env
+# Edit config.env with your MongoDB connection and JWT secret
 
 # Start MongoDB (ensure it's running on localhost:27017)
 # The database 'finance-manager' will be created automatically
@@ -154,15 +154,24 @@ npm run dev
 
 ## 🔧 Environment Configuration
 
-### Backend (.env)
-```env
-MONGODB_URI=mongodb://localhost:27017/finance-manager
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-JWT_EXPIRE=7d
-PORT=5000
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5173
-```
+Frontend (Vite):
+- Local: `.env.development` → `VITE_API_BASE_URL=http://localhost:5000/api`
+- Production: `.env.production` or Vercel env var `VITE_API_BASE_URL=https://finance-manager-backend-4qf4.onrender.com/api`
+
+Backend (Express): use `backend/config.env` (never commit secrets):
+- Local Mongo: `MONGODB_URI=mongodb://localhost:27017`, `MONGODB_DB_NAME=finance-manager`
+- Atlas Mongo: `MONGODB_URI=mongodb+srv://...`, `MONGODB_DB_NAME=finance-manager`
+- CORS: `CORS_ORIGINS=http://localhost:5173,https://finance-manager-react-black.vercel.app`
+
+Render (server) variables checklist:
+- `MONGODB_URI` (Atlas SRV with password)
+- `MONGODB_DB_NAME=finance-manager`
+- `JWT_SECRET` (strong secret)
+- `NODE_ENV=production`
+- `CORS_ORIGINS=https://finance-manager-react-black.vercel.app`
+
+Vercel (frontend) variables checklist:
+- `VITE_API_BASE_URL=https://finance-manager-backend-4qf4.onrender.com/api`
 
 ## 📊 Database Schema
 

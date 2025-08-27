@@ -3,22 +3,19 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-// Set environment variables directly for development
-process.env.MONGODB_URI = 'mongodb://localhost:27017/finance-manager';
-process.env.JWT_SECRET = 'your-super-secret-jwt-key-change-this-in-production';
-process.env.JWT_EXPIRE = '7d';
-process.env.PORT = '5000';
-process.env.NODE_ENV = 'development';
-process.env.RATE_LIMIT_WINDOW_MS = '900000';
-process.env.RATE_LIMIT_MAX_REQUESTS = '100';
+const dotenv = require('dotenv');
 
-console.log('🔧 Environment variables set for development');
+// Load environment variables from config.env if present (local dev)
+dotenv.config({ path: 'config.env' });
 
-// Debug environment variables
-console.log('🔧 Environment Check:');
-console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Set' : '❌ Missing');
-console.log('MONGODB_URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Missing');
-console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+// Basic environment debug (non-production)
+if ((process.env.NODE_ENV || 'development') !== 'production') {
+  console.log('🔧 Environment Check:');
+  console.log('JWT_SECRET:', process.env.JWT_SECRET ? '✅ Set' : '❌ Missing');
+  console.log('MONGODB_URI:', process.env.MONGODB_URI ? '✅ Set' : '❌ Missing');
+  console.log('MONGODB_DB_NAME:', process.env.MONGODB_DB_NAME || '(using default)');
+  console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+}
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -43,17 +40,25 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // CORS configuration
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:5174',
-  'http://localhost:5175',
-  'http://localhost:5176',
-  'http://localhost:5177',
-  'http://localhost:5178',
-  'http://localhost:5179',
-  'http://10.213.181.81:5173',
-  'http://172.30.160.1:5173'
-];
+const getAllowedOrigins = () => {
+  const fromEnv = process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '';
+  if (fromEnv) {
+    return fromEnv.split(',').map(o => o.trim()).filter(Boolean);
+  }
+  return [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'http://localhost:5176',
+    'http://localhost:5177',
+    'http://localhost:5178',
+    'http://localhost:5179',
+    'http://10.213.181.81:5173',
+    'http://172.30.160.1:5173',
+    'https://finance-manager-react-black.vercel.app'
+  ];
+};
+const allowedOrigins = getAllowedOrigins();
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -74,8 +79,12 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/finance-manager', {
+// Connect to MongoDB (cluster or local), using dbName to separate projects
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const mongoDbName = process.env.MONGODB_DB_NAME || 'finance-manager';
+
+mongoose.connect(mongoUri, {
+  dbName: mongoDbName,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
