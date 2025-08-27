@@ -1,6 +1,5 @@
 import React from 'react';
 import { useApp } from '../../contexts/AppContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { 
   Home, 
   Search, 
@@ -13,7 +12,6 @@ import './MobileBottomNav.css';
 
 const MobileBottomNav = () => {
   const { state, dispatch } = useApp();
-  const { logout } = useAuth();
 
   const menuItems = [
     { id: 'dashboard', icon: Home, title: 'Dashboard' },
@@ -40,13 +38,6 @@ const MobileBottomNav = () => {
           </button>
         );
       })}
-      <button
-        className="bottom-nav-item"
-        onClick={logout}
-        title="Logout"
-      >
-        <span className="nav-text">Logout</span>
-      </button>
     </nav>
   );
 };
