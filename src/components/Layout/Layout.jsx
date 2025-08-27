@@ -18,6 +18,11 @@ const Layout = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Scroll to top on view change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [state.currentView]);
+
   return (
     <div className="layout">
       {!isMobile && <Navigation />}

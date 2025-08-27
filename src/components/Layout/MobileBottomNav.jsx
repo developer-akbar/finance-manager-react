@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../contexts/AppContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   Home, 
   Search, 
@@ -12,6 +13,7 @@ import './MobileBottomNav.css';
 
 const MobileBottomNav = () => {
   const { state, dispatch } = useApp();
+  const { logout } = useAuth();
 
   const menuItems = [
     { id: 'dashboard', icon: Home, title: 'Dashboard' },
@@ -24,6 +26,14 @@ const MobileBottomNav = () => {
 
   return (
     <nav className="bottom-nav">
+      <button
+        className="bottom-nav-item"
+        onClick={logout}
+        title="Logout"
+      >
+        {/* Simple power icon using Settings rotated is not ideal; keep text only? Using title is fine */}
+        <span className="nav-text">Logout</span>
+      </button>
       {menuItems.map(item => {
         const Icon = item.icon;
         return (

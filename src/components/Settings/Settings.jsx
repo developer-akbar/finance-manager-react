@@ -31,6 +31,7 @@ const Settings = () => {
   const [importMode, setImportMode] = useState('override'); // 'override' or 'merge'
 
   const sections = [
+    { id: 'profile', label: 'Profile' },
     { id: 'accounts', label: 'Accounts' },
     { id: 'categories', label: 'Categories' },
     { id: 'data', label: 'Data Management' },
@@ -249,6 +250,19 @@ const Settings = () => {
       </div>
 
       <div className="settings-content">
+        {activeSection === 'profile' && (
+          <div className="profile-section">
+            <h2>Profile</h2>
+            <div className="profile-card">
+              <div className="profile-row"><strong>Username:</strong> {state?.user?.username || '—'}</div>
+              <div className="profile-row"><strong>Email:</strong> {state?.user?.email || '—'}</div>
+            </div>
+            <div className="password-actions">
+              <h3>Security</h3>
+              <p>For now, use the logout and re-register to reset credentials. I can wire change/reset password endpoints next.</p>
+            </div>
+          </div>
+        )}
         {activeSection === 'accounts' && <AccountManager />}
         {activeSection === 'categories' && <CategoryManager />}
         

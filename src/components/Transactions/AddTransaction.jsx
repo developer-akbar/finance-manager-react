@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { Save, ArrowLeft } from 'lucide-react';
 import { convertDateFormat } from '../../utils/calculations';
@@ -6,7 +6,7 @@ import './AddTransaction.css';
 
 const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = null, setIsSubmitting = null }) => {
   const { state, addTransaction, updateTransaction, dispatch } = useApp();
-  const { accounts, categories } = state;
+  const { accounts, categories, transactions } = state;
 
   // Prevent body scrolling when modal is open
   useEffect(() => {
@@ -321,13 +321,34 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
               {/* Note Field */}
               <div className="form-row">
                 <label htmlFor="note">Note</label>
-                <input
-                  type="text"
-                  id="note"
-                  placeholder="Quick note about this transaction"
-                  value={formData.Note}
-                  onChange={(e) => handleInputChange('Note', e.target.value)}
-                />
+                <div className="note-input-wrapper">
+                  <input
+                    type="text"
+                    id="note"
+                    placeholder="Quick note about this transaction"
+                    value={formData.Note}
+                    onChange={(e) => handleInputChange('Note', e.target.value)}
+                    list="notes-suggestions"
+                    autoComplete="off"
+                  />
+                  {formData.Note && (
+                    <button
+                      type="button"
+                      className="clear-input"
+                      onClick={() => handleInputChange('Note', '')}
+                      aria-label="Clear note"
+                    >
+                      ×
+                    </button>
+                  )}
+                  <datalist id="notes-suggestions">
+                    {Array.from(new Set((transactions || []).map(t => t.Note).filter(n => n && n.trim().length > 0)))
+                      .slice(0, 50)
+                      .map((n) => (
+                        <option value={n} key={n} />
+                      ))}
+                  </datalist>
+                </div>
               </div>
 
               {/* Description Field */}
