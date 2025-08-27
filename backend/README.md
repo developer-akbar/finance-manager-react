@@ -157,16 +157,31 @@ curl -X GET http://localhost:5000/api/transactions \
 
 ## 🔧 Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/finance-manager` |
-| `JWT_SECRET` | JWT signing secret | `your-super-secret-jwt-key-change-this-in-production` |
-| `JWT_EXPIRE` | JWT expiration time | `7d` |
-| `PORT` | Server port | `5000` |
-| `NODE_ENV` | Environment | `development` |
-| `CORS_ORIGIN` | Allowed CORS origin | `http://localhost:5173` |
-| `RATE_LIMIT_WINDOW_MS` | Rate limit window | `900000` (15 minutes) |
-| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | `100` |
+Create a `config.env` file (not committed) based on `config.env.template`. The server uses `dotenv` to load variables.
+
+### Local development (connect to local MongoDB)
+```
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DB_NAME=finance-manager
+JWT_SECRET=change-me-in-prod
+PORT=5000
+NODE_ENV=development
+CORS_ORIGINS=http://localhost:5173
+```
+
+### Production (connect to Atlas cluster)
+Do NOT commit secrets. Set these in your hosting provider's environment settings.
+```
+MONGODB_URI=mongodb+srv://akbarak219:<password>@bitetrack.qdailf6.mongodb.net/?retryWrites=true&w=majority&appName=bitetrack
+MONGODB_DB_NAME=finance-manager
+JWT_SECRET=<strong-random-secret>
+NODE_ENV=production
+CORS_ORIGINS=https://finance-manager-react-black.vercel.app
+```
+
+Notes:
+- `MONGODB_DB_NAME` keeps Finance Manager data separate even if you reuse the Bitetrack cluster.
+- Avoid hardcoding the password; use environment variables provided by your host (Render).
 
 ## 🚨 Security Features
 
