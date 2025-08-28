@@ -18,6 +18,7 @@ import CategoryManager from './CategoryManager';
 import DataImport from './DataImport';
 import './Settings.css';
 import ThemeToggle from '../Layout/ThemeToggle';
+import ProfilePage from './ProfilePage';
 
 const Settings = () => {
   const { state, loadData, refreshTransactions, user } = useApp();
@@ -251,20 +252,7 @@ const Settings = () => {
       </div>
 
       <div className="settings-content">
-        {activeSection === 'profile' && (
-          <div className="profile-section">
-            <h2>Profile</h2>
-            <div className="profile-card">
-              <div className="profile-row"><strong>Username:</strong> {user?.username || '—'}</div>
-              <div className="profile-row"><strong>Email:</strong> {user?.email || '—'}</div>
-            </div>
-            <div className="password-actions">
-              <h3>Security</h3>
-              <ChangePasswordForm />
-              <button className="btn btn-danger" onClick={logout}>Logout</button>
-            </div>
-          </div>
-        )}
+        {activeSection === 'profile' && <ProfilePage />}
         {activeSection === 'accounts' && <AccountManager />}
         {activeSection === 'categories' && <CategoryManager />}
         
