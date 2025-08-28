@@ -23,7 +23,7 @@ import ProfilePage from './ProfilePage';
 const Settings = () => {
   const { state, loadData, refreshTransactions, user } = useApp();
   const { logout } = useAuth();
-  const [activeSection, setActiveSection] = useState('accounts');
+  const [activeSection, setActiveSection] = useState('profile');
   const [showExportModal, setShowExportModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showClearModal, setShowClearModal] = useState(false);

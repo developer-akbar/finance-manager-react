@@ -60,6 +60,8 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     };
   });
 
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -147,6 +149,22 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     }
   };
 
+  const handleNoteChange = (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, Note: value }));
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleNoteSelect = (note) => {
+    setFormData(prev => ({ ...prev, Note: note }));
+    setShowSuggestions(false);
+  };
+
+  const handleNoteBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => setShowSuggestions(false), 200);
+  };
+
   // Get categories for the current transaction type
   const availableCategories = Object.entries(categories || {})
     .filter(([categoryName, categoryData]) => categoryData.type === formData['Income/Expense'])
@@ -160,15 +178,21 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
   return (
     <>
       {/* Modal Overlay */}
-      <div className="transaction-modal-overlay" onClick={onClose}>
+             <div className="transaction-modal-overlay" onClick={() => {
+         setShowSuggestions(false);
+         if (onClose) onClose();
+       }}>
         {/* Modal Content */}
         <div className="transaction-modal add-transaction-modal" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
             <h3>Add</h3>
-            <button 
-              className="modal-close-btn"
-              onClick={onClose}
-            >
+                         <button 
+               className="modal-close-btn"
+               onClick={() => {
+                 setShowSuggestions(false);
+                 if (onClose) onClose();
+               }}
+             >
               ×
             </button>
           </div>
@@ -321,33 +345,53 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
               {/* Note Field */}
               <div className="form-row">
                 <label htmlFor="note">Note</label>
-                <div className="note-input-wrapper">
+                <div className="note-input-container">
                   <input
                     type="text"
-                    id="note"
-                    placeholder="Quick note about this transaction"
+                    name="Note"
                     value={formData.Note}
-                    onChange={(e) => handleInputChange('Note', e.target.value)}
-                    list="notes-suggestions"
-                    autoComplete="off"
+                    onChange={handleNoteChange}
+                    onBlur={handleNoteBlur}
+                    placeholder="Note"
+                    required
                   />
                   {formData.Note && (
                     <button
                       type="button"
-                      className="clear-input"
-                      onClick={() => handleInputChange('Note', '')}
-                      aria-label="Clear note"
+                      className="note-clear-btn"
+                      onClick={() => {
+                        setFormData(prev => ({ ...prev, Note: '' }));
+                        setShowSuggestions(false);
+                      }}
                     >
                       ×
                     </button>
                   )}
-                  <datalist id="notes-suggestions">
-                    {Array.from(new Set((transactions || []).map(t => t.Note).filter(n => n && n.trim().length > 0)))
-                      .slice(0, 50)
-                      .map((n) => (
-                        <option value={n} key={n} />
-                      ))}
-                  </datalist>
+                  {showSuggestions && (
+                    <div className="note-suggestions">
+                      {Array.from(new Set(
+                        (transactions || [])
+                          .map(t => t.Note)
+                          .filter(n => 
+                            n && 
+                            n.trim().length > 0 && 
+                            !n.includes('(') && 
+                            !n.includes(')') &&
+                            n.toLowerCase().includes(formData.Note.toLowerCase())
+                          )
+                      ))
+                        .slice(0, 10)
+                        .map((note) => (
+                          <div
+                            key={note}
+                            className="note-suggestion-item"
+                            onClick={() => handleNoteSelect(note)}
+                          >
+                            {note}
+                          </div>
+                        ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -368,6 +412,8 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
                   type="button"
                   className="cancel-btn"
                   onClick={() => {
+                    // Hide suggestions when canceling
+                    setShowSuggestions(false);
                     if (isEditMode && onClose) {
                       onClose();
                     } else if (onClose) {

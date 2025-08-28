@@ -17,6 +17,7 @@ const TransactionEditModal = ({ transaction, isOpen, onClose, onUpdate }) => {
     Currency: 'INR'
   });
   const [loading, setLoading] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     if (transaction && isOpen) {
@@ -35,6 +36,8 @@ const TransactionEditModal = ({ transaction, isOpen, onClose, onUpdate }) => {
         'Income/Expense': transaction['Income/Expense'] || 'Expense',
         Currency: transaction.Currency || 'INR'
       });
+      // Ensure suggestions don't show automatically when editing
+      setShowSuggestions(false);
     }
   }, [transaction, isOpen]);
 
@@ -44,6 +47,22 @@ const TransactionEditModal = ({ transaction, isOpen, onClose, onUpdate }) => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleNoteChange = (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, Note: value }));
+    setShowSuggestions(value.length > 0);
+  };
+
+  const handleNoteSelect = (note) => {
+    setFormData(prev => ({ ...prev, Note: note }));
+    setShowSuggestions(false);
+  };
+
+  const handleNoteBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => setShowSuggestions(false), 200);
   };
 
   const handleSubmit = async (e) => {
@@ -70,11 +89,17 @@ const TransactionEditModal = ({ transaction, isOpen, onClose, onUpdate }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+         <div className="modal-overlay" onClick={() => {
+       setShowSuggestions(false);
+       onClose();
+     }}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Edit Transaction</h3>
-          <button className="modal-close" onClick={onClose}>
+                     <button className="modal-close" onClick={() => {
+             setShowSuggestions(false);
+             onClose();
+           }}>
             <X size={20} />
           </button>
         </div>
@@ -177,14 +202,54 @@ const TransactionEditModal = ({ transaction, isOpen, onClose, onUpdate }) => {
 
             <div className="form-group">
               <label htmlFor="Note">Note</label>
-              <input
-                type="text"
-                id="Note"
-                name="Note"
-                value={formData.Note}
-                onChange={handleInputChange}
-                placeholder="Short note about the transaction"
-              />
+              <div className="note-input-container">
+                <input
+                  type="text"
+                  name="Note"
+                  value={formData.Note}
+                  onChange={handleNoteChange}
+                  onBlur={handleNoteBlur}
+                  placeholder="Note"
+                  required
+                />
+                {formData.Note && (
+                  <button
+                    type="button"
+                    className="note-clear-btn"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, Note: '' }));
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    ×
+                  </button>
+                )}
+                {showSuggestions && (
+                  <div className="note-suggestions">
+                    {Array.from(new Set(
+                      (state.transactions || [])
+                        .map(t => t.Note)
+                        .filter(n => 
+                          n && 
+                          n.trim().length > 0 && 
+                          !n.includes('(') && 
+                          !n.includes(')') &&
+                          n.toLowerCase().includes(formData.Note.toLowerCase())
+                        )
+                    ))
+                      .slice(0, 10)
+                      .map((note, index) => (
+                        <div
+                          key={index}
+                          className="note-suggestion-item"
+                          onClick={() => handleNoteSelect(note)}
+                        >
+                          {note}
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="form-group">

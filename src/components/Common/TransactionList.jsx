@@ -17,7 +17,19 @@ const TransactionList = ({
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editForm, setEditForm] = useState({});
+  const [editForm, setEditForm] = useState({
+    Date: '',
+    Account: '',
+    Category: '',
+    Subcategory: '',
+    Note: '',
+    INR: '',
+    'Income/Expense': '',
+    Description: '',
+    Amount: '',
+    Currency: 'INR'
+  });
+  const [showEditSuggestions, setShowEditSuggestions] = useState(false);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
   const [showSubcategoryDropdown, setShowSubcategoryDropdown] = useState(false);
@@ -141,6 +153,7 @@ const TransactionList = ({
     setSelectedTransaction(null);
     setIsEditMode(false);
     setEditForm({});
+    setShowEditSuggestions(false);
     document.body.classList.remove("modal-open");
   };
 
@@ -156,6 +169,8 @@ const TransactionList = ({
       Amount: selectedTransaction.INR || selectedTransaction.Amount || "",
       Date: selectedTransaction.Date || "",
     });
+    // Ensure suggestions don't show automatically when editing
+    setShowEditSuggestions(false);
   };
 
   const handleDeleteTransaction = () => {
@@ -242,6 +257,22 @@ const TransactionList = ({
     setShowToAccountDropdown(
       dropdownType === "toAccount" ? !showToAccountDropdown : false
     );
+  };
+
+  const handleEditNoteChange = (e) => {
+    const value = e.target.value;
+    setEditForm(prev => ({ ...prev, Note: value }));
+    setShowEditSuggestions(value.length > 0);
+  };
+
+  const handleEditNoteSelect = (note) => {
+    setEditForm(prev => ({ ...prev, Note: note }));
+    setShowEditSuggestions(false);
+  };
+
+  const handleEditNoteBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => setShowEditSuggestions(false), 200);
   };
 
   // Cleanup on unmount
@@ -442,8 +473,8 @@ const TransactionList = ({
                         </button>
                         <button
                           type="button"
-                          className={`type-btn ${editForm["Income/Expense"] === 'Transfer' ? 'active transfer' : ''}`}
-                          onClick={() => handleFormChange("Income/Expense", "Transfer")}
+                          className={`type-btn ${editForm["Income/Expense"] === 'Transfer-Out' ? 'active transfer' : ''}`}
+                          onClick={() => handleFormChange("Income/Expense", "Transfer-Out")}
                         >
                           Transfer
                         </button>
@@ -650,14 +681,54 @@ const TransactionList = ({
                     {/* Note Field */}
                     <div className="form-row">
                       <label>Note</label>
-                      <input
-                        type="text"
-                        value={editForm.Note}
-                        onChange={(e) =>
-                          handleFormChange("Note", e.target.value)
-                        }
-                        placeholder="Enter note"
-                      />
+                      <div className="note-input-container">
+                        <input
+                          type="text"
+                          name="Note"
+                          value={editForm.Note}
+                          onChange={handleEditNoteChange}
+                          onBlur={handleEditNoteBlur}
+                          placeholder="Note"
+                          required
+                        />
+                        {editForm.Note && (
+                          <button
+                            type="button"
+                            className="note-clear-btn"
+                            onClick={() => {
+                              setEditForm(prev => ({ ...prev, Note: '' }));
+                              setShowEditSuggestions(false);
+                            }}
+                          >
+                            ×
+                          </button>
+                        )}
+                        {showEditSuggestions && (
+                          <div className="note-suggestions">
+                            {Array.from(new Set(
+                              (transactions || [])
+                                .map(t => t.Note)
+                                .filter(n => 
+                                  n && 
+                                  n.trim().length > 0 && 
+                                  !n.includes('(') && 
+                                  !n.includes(')') &&
+                                  n.toLowerCase().includes(editForm.Note.toLowerCase())
+                                )
+                            ))
+                              .slice(0, 10)
+                              .map((note) => (
+                                <div
+                                  key={note}
+                                  className="note-suggestion-item"
+                                  onClick={() => handleEditNoteSelect(note)}
+                                >
+                                  {note}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Description Field */}

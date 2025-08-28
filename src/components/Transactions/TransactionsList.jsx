@@ -18,6 +18,7 @@ const TransactionsList = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [isClosingSearch, setIsClosingSearch] = useState(false);
   const [isHidingFilters, setIsHidingFilters] = useState(false);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
 
   const handleCloseSearch = () => {
     setIsClosingSearch(true);
@@ -39,6 +40,22 @@ const TransactionsList = () => {
     } else {
       setShowFilters(true);
     }
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    dispatch({ type: 'SET_SEARCH_TERM', payload: value });
+    setShowSearchSuggestions(value.length > 0);
+  };
+
+  const handleSearchSelect = (note) => {
+    dispatch({ type: 'SET_SEARCH_TERM', payload: note });
+    setShowSearchSuggestions(false);
+  };
+
+  const handleSearchBlur = () => {
+    // Delay hiding suggestions to allow for clicks
+    setTimeout(() => setShowSearchSuggestions(false), 200);
   };
 
   const [sortBy, setSortBy] = useState('date-desc');
@@ -354,7 +371,8 @@ const TransactionsList = () => {
                     type="text"
                     placeholder="Search all transactions..."
                     value={searchTerm}
-                    onChange={(e) => dispatch({ type: 'SET_SEARCH_TERM', payload: e.target.value })}
+                    onChange={handleSearchChange}
+                    onBlur={handleSearchBlur}
                     className="search-input"
                     autoFocus
                     style={{ animation: 'fadeIn 0.3s ease-out' }}
@@ -362,12 +380,40 @@ const TransactionsList = () => {
                   {searchTerm && (
                     <button 
                       className="clear-search-btn"
-                      onClick={() => dispatch({ type: 'SET_SEARCH_TERM', payload: '' })}
+                      onClick={() => {
+                        dispatch({ type: 'SET_SEARCH_TERM', payload: '' });
+                        setShowSearchSuggestions(false);
+                      }}
                       title="Clear Search"
                       style={{ animation: 'fadeIn 0.2s ease-out' }}
                     >
                       <X size={16} />
                     </button>
+                  )}
+                  {showSearchSuggestions && (
+                    <div className="search-suggestions">
+                      {Array.from(new Set(
+                        (transactions || [])
+                          .map(t => t.Note)
+                          .filter(n => 
+                            n && 
+                            n.trim().length > 0 && 
+                            !n.includes('(') && 
+                            !n.includes(')') &&
+                            n.toLowerCase().includes(searchTerm.toLowerCase())
+                          )
+                      ))
+                        .slice(0, 8)
+                        .map((note, index) => (
+                          <div
+                            key={index}
+                            className="search-suggestion-item"
+                            onClick={() => handleSearchSelect(note)}
+                          >
+                            {note}
+                          </div>
+                        ))}
+                    </div>
                   )}
                 </div>
                 <button 
