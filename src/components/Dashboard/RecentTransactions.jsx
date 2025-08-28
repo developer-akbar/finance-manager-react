@@ -25,7 +25,9 @@ const RecentTransactions = ({ transactions }) => {
         console.error('Failed to update transaction');
         return;
       }
-      dispatch({ type: 'UPDATE_TRANSACTION', payload: { id: transactionId, data: updatedData } });
+      const result = await response.json();
+      const updated = result.data || result.transaction || { ...updatedData, _id: transactionId };
+      dispatch({ type: 'UPDATE_TRANSACTION', payload: updated });
     } catch (error) {
       console.error('Error updating transaction:', error);
     }

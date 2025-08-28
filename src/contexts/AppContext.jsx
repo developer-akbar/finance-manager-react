@@ -192,10 +192,12 @@ export const AppProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
 
-      const response = await transactionsAPI.update(transaction.ID, transaction);
+      const idToUpdate = transaction._id || transaction.ID;
+      const response = await transactionsAPI.update(idToUpdate, transaction);
       
       if (response.success) {
-        dispatch({ type: 'UPDATE_TRANSACTION', payload: response.data });
+        const updated = response.data || response.transaction || transaction;
+        dispatch({ type: 'UPDATE_TRANSACTION', payload: updated });
         return { success: true, message: 'Transaction updated successfully' };
       } else {
         return { success: false, message: response.message || 'Failed to update transaction' };

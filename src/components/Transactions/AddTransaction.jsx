@@ -105,7 +105,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
       };
 
       if (isEditMode) {
-        await updateTransaction(transaction);
+        await updateTransaction({ ...transaction, ID: editTransaction?._id || editTransaction?.ID });
         if (onClose) onClose();
       } else {
         await addTransaction(transaction);
