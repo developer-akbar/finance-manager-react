@@ -47,6 +47,7 @@ export default function ProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pwdMsg, setPwdMsg] = useState('');
   const [pwdSaving, setPwdSaving] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
 
   const handleSaveProfile = async () => {
     try {
@@ -95,27 +96,35 @@ export default function ProfilePage() {
       <Card>
         <CardHeader title="Profile" description="Manage your personal information" />
         <CardContent>
-          <div className="pp-row">
-            <Avatar name={name || user?.username} />
+          <div className="pp-row" style={{justifyContent:'center', textAlign:'center'}}>
             <div>
-              <div className="pp-label">Username</div>
-              <div className="text-base">{user?.username}</div>
+              <Avatar name={name || user?.username} />
+              <div className="pp-label" style={{marginTop:'8px'}}>Details</div>
+              <div style={{marginTop:'4px'}}>Username: {user?.username}</div>
             </div>
           </div>
           <div className="pp-grid">
             <div>
               <label className="pp-label">Name</label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!editing} placeholder="Your name" />
+              {!editing ? (
+                <div className="pp-text">{name || '—'}</div>
+              ) : (
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+              )}
             </div>
             <div>
               <label className="pp-label">Email</label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!editing} placeholder="you@example.com" />
+              {!editing ? (
+                <div className="pp-text">{email || '—'}</div>
+              ) : (
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+              )}
             </div>
           </div>
           {message && <p className="pp-msg">{message}</p>}
           <div className="pp-actions">
             {!editing ? (
-              <Button onClick={() => setEditing(true)}>Edit</Button>
+              <Button onClick={() => setEditing(true)}>✎ Edit Details</Button>
             ) : (
               <>
                 <Button onClick={handleSaveProfile} disabled={saving}>{saving ? 'Saving...' : 'Save changes'}</Button>
@@ -127,22 +136,27 @@ export default function ProfilePage() {
       </Card>
 
       <Card>
-        <CardHeader title="Change Password" description="Update your password" />
+        <CardHeader title="Change Password" description={`Last updated: ${user?.passwordUpdatedAt ? new Date(user.passwordUpdatedAt).toLocaleString() : '—'}`} />
         <CardContent>
-          <form onSubmit={handleChangePassword} className="pp-form-grid">
-            <div>
-              <label className="pp-label">New Password</label>
-              <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password" />
-            </div>
-            <div>
-              <label className="pp-label">Confirm Password</label>
-              <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm password" />
-            </div>
-            {pwdMsg && <p className={`pp-msg ${pwdMsg.includes('successfully') ? '' : 'pp-err'}`}>{pwdMsg}</p>}
-            <div className="pp-form-full">
-              <Button type="submit" disabled={pwdSaving}>{pwdSaving ? 'Updating...' : 'Change Password'}</Button>
-            </div>
-          </form>
+          {!showPwd ? (
+            <Button onClick={() => setShowPwd(true)}>Change Password</Button>
+          ) : (
+            <form onSubmit={handleChangePassword} className="pp-form-grid">
+              <div>
+                <label className="pp-label">New Password</label>
+                <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password" />
+              </div>
+              <div>
+                <label className="pp-label">Confirm Password</label>
+                <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm password" />
+              </div>
+              {pwdMsg && <p className={`pp-msg ${pwdMsg.includes('successfully') ? '' : 'pp-err'}`}>{pwdMsg}</p>}
+              <div className="pp-form-full">
+                <Button type="submit" disabled={pwdSaving}>{pwdSaving ? 'Updating...' : 'Update Password'}</Button>
+                <Button variant="secondary" type="button" onClick={() => { setShowPwd(false); setPwdMsg(''); setNewPassword(''); setConfirmPassword(''); }} style={{marginLeft:'8px'}}>Cancel</Button>
+              </div>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>

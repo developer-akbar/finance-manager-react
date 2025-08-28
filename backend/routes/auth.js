@@ -245,7 +245,8 @@ router.get('/me', protect, async (req, res) => {
         username: user.username,
         email: user.email,
         createdAt: user.createdAt,
-        lastLogin: user.lastLogin
+        lastLogin: user.lastLogin,
+        passwordUpdatedAt: user.passwordUpdatedAt
       }
     });
   } catch (error) {
@@ -262,7 +263,6 @@ router.get('/me', protect, async (req, res) => {
 // @access  Private
 router.post('/change-password', [
   protect,
-  body('currentPassword').notEmpty().withMessage('Current password is required'),
   body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
 ], async (req, res) => {
   try {
@@ -271,15 +271,10 @@ router.post('/change-password', [
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    const { currentPassword, newPassword } = req.body;
+    const { newPassword } = req.body;
     const user = await User.findById(req.user.id).select('+password');
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
-    }
-
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch) {
-      return res.status(401).json({ success: false, message: 'Current password is incorrect' });
     }
 
     user.password = newPassword;
