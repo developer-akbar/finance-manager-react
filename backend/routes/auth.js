@@ -33,7 +33,7 @@ router.post('/register', [
       });
     }
 
-    const { username, email, password } = req.body;
+    const { username, email, password, name } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({
@@ -51,6 +51,7 @@ router.post('/register', [
 
     // Create user
     const user = await User.create({
+      name: name || '',
       username,
       email,
       password
@@ -141,6 +142,7 @@ router.post('/register', [
       success: true,
       message: 'User registered successfully',
       data: {
+        name: user.name,
         id: user._id,
         username: user.username,
         email: user.email,
@@ -238,6 +240,7 @@ router.get('/me', protect, async (req, res) => {
     res.json({
       success: true,
       data: {
+        name: user.name,
         id: user._id,
         username: user.username,
         email: user.email,
@@ -286,6 +289,43 @@ router.post('/change-password', [
   } catch (error) {
     console.error('Change password error:', error);
     res.status(500).json({ success: false, message: 'Server error during password change' });
+  }
+});
+
+// @desc    Update profile (name, email)
+// @route   PUT /api/auth/profile
+// @access  Private
+router.put('/profile', [
+  protect,
+  body('name').optional().isLength({ min: 1 }).withMessage('Name cannot be empty'),
+  body('email').optional().isEmail().withMessage('Please provide a valid email')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() });
+    }
+
+    const updates = {};
+    if (typeof req.body.name === 'string') updates.name = req.body.name;
+    if (typeof req.body.email === 'string') updates.email = req.body.email;
+
+    const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true });
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ success: false, message: 'Server error during profile update' });
   }
 });
 

@@ -99,6 +99,14 @@ export const authAPI = {
     return await apiRequest('/auth/me');
   },
 
+  // Update profile (name, email)
+  updateProfile: async (profile) => {
+    return await apiRequest('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profile),
+    });
+  },
+
   // Logout
   logout: () => {
     setAuthToken(null);
