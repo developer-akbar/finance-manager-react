@@ -57,8 +57,8 @@ const transactionSchema = new mongoose.Schema({
     default: ''
   },
   Amount: {
-    type: String,
-    required: [true, 'Amount string is required']
+    type: Number,
+    required: [true, 'Amount is required']
   },
   Currency: {
     type: String,
@@ -66,7 +66,9 @@ const transactionSchema = new mongoose.Schema({
   },
   ID: {
     type: String,
-    required: [true, 'Transaction ID is required']
+    default: function() {
+      return this.user + '_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+    }
   }
 }, {
   timestamps: true

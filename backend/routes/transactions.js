@@ -205,9 +205,8 @@ router.post('/', [
 // @access  Private
 router.put('/:id', [
   body('Date').notEmpty().withMessage('Date is required'),
-  body('INR').isNumeric().withMessage('Amount must be a number'),
-  body('Income/Expense').isIn(['Income', 'Expense', 'Transfer-Out']).withMessage('Type must be Income, Expense, or Transfer-Out'),
-  body('Amount').notEmpty().withMessage('Amount string is required')
+  body('Amount').isNumeric().withMessage('Amount must be a number'),
+  body('Income/Expense').isIn(['Income', 'Expense', 'Transfer-Out']).withMessage('Type must be Income, Expense, or Transfer-Out')
 ], async (req, res) => {
   try {
     // Check for validation errors
@@ -231,9 +230,16 @@ router.put('/:id', [
       });
     }
 
+    // Prepare update data
+    const updateData = {
+      ...req.body,
+      Date: convertDateForStorage(req.body.Date),
+      INR: parseFloat(req.body.Amount) // Convert Amount to INR for storage
+    };
+
     transaction = await Transaction.findOneAndUpdate(
       { _id: req.params.id, user: req.user.id },
-      { ...req.body, Date: convertDateForStorage(req.body.Date) },
+      updateData,
       { new: true, runValidators: true }
     );
 
