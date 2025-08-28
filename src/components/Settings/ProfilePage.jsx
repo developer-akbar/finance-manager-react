@@ -1,44 +1,39 @@
 import React, { useState } from 'react';
 import { useApp } from '../../contexts/AppContext';
 import { authAPI } from '../../services/api';
+import './ProfilePage.css';
 
 const Avatar = ({ name }) => {
   const initial = (name || '').trim().charAt(0).toUpperCase() || 'U';
   return (
-    <div className="w-16 h-16 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-semibold">
+    <div className="pp-avatar">
       {initial}
     </div>
   );
 };
 
 const Card = ({ children }) => (
-  <div className="bg-white dark:bg-[var(--background-elevated)] border border-[var(--border-primary)] rounded-xl shadow-sm">
-    {children}
-  </div>
+  <div className="pp-card">{children}</div>
 );
 
 const CardHeader = ({ title, description }) => (
-  <div className="p-6 border-b border-[var(--border-primary)]">
-    <h3 className="text-xl font-semibold text-[var(--text-primary)]">{title}</h3>
-    {description && <p className="text-sm text-[var(--text-secondary)] mt-1">{description}</p>}
+  <div className="pp-card-header">
+    <h3 className="pp-card-title">{title}</h3>
+    {description && <p className="pp-card-desc">{description}</p>}
   </div>
 );
 
 const CardContent = ({ children }) => (
-  <div className="p-6">{children}</div>
+  <div className="pp-card-content">{children}</div>
 );
 
 const Input = (props) => (
-  <input {...props} className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-[var(--input-bg)] border-[var(--border-primary)] ${props.className||''}`} />
+  <input {...props} className={`pp-input ${props.className||''}`} />
 );
 
-const Button = ({ children, variant = 'primary', ...props }) => {
-  const base = 'inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium transition-colors';
-  const styles = variant === 'secondary' ? 'bg-[var(--background-secondary)] text-[var(--text-primary)] border border-[var(--border-primary)] hover:bg-[var(--background-tertiary)]' : 'bg-blue-600 text-white hover:bg-blue-700';
-  return (
-    <button {...props} className={`${base} ${styles} ${props.className||''}`}>{children}</button>
-  );
-};
+const Button = ({ children, variant = 'primary', ...props }) => (
+  <button {...props} className={`pp-btn ${variant === 'secondary' ? 'secondary' : 'primary'} ${props.className||''}`}>{children}</button>
+);
 
 export default function ProfilePage() {
   const { user } = useApp();
@@ -96,29 +91,29 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="profile-page">
       <Card>
         <CardHeader title="Profile" description="Manage your personal information" />
         <CardContent>
-          <div className="flex items-center gap-4">
+          <div className="pp-row">
             <Avatar name={name || user?.username} />
             <div>
-              <div className="text-sm text-[var(--text-secondary)]">Username</div>
-              <div className="text-lg text-[var(--text-primary)] font-medium">{user?.username}</div>
+              <div className="pp-label">Username</div>
+              <div className="text-base">{user?.username}</div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+          <div className="pp-grid">
             <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-1">Name</label>
+              <label className="pp-label">Name</label>
               <Input value={name} onChange={(e) => setName(e.target.value)} disabled={!editing} placeholder="Your name" />
             </div>
             <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-1">Email</label>
+              <label className="pp-label">Email</label>
               <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} disabled={!editing} placeholder="you@example.com" />
             </div>
           </div>
-          {message && <p className="text-sm text-green-600 mt-3">{message}</p>}
-          <div className="mt-6 flex gap-3">
+          {message && <p className="pp-msg">{message}</p>}
+          <div className="pp-actions">
             {!editing ? (
               <Button onClick={() => setEditing(true)}>Edit</Button>
             ) : (
@@ -134,17 +129,17 @@ export default function ProfilePage() {
       <Card>
         <CardHeader title="Change Password" description="Update your password" />
         <CardContent>
-          <form onSubmit={handleChangePassword} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={handleChangePassword} className="pp-form-grid">
             <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-1">New Password</label>
+              <label className="pp-label">New Password</label>
               <Input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="New password" />
             </div>
             <div>
-              <label className="block text-sm text-[var(--text-secondary)] mb-1">Confirm Password</label>
+              <label className="pp-label">Confirm Password</label>
               <Input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm password" />
             </div>
-            {pwdMsg && <p className="text-sm col-span-full mt-1 {pwdMsg.includes('successfully') ? 'text-green-600' : 'text-red-600'}">{pwdMsg}</p>}
-            <div className="col-span-full">
+            {pwdMsg && <p className={`pp-msg ${pwdMsg.includes('successfully') ? '' : 'pp-err'}`}>{pwdMsg}</p>}
+            <div className="pp-form-full">
               <Button type="submit" disabled={pwdSaving}>{pwdSaving ? 'Updating...' : 'Change Password'}</Button>
             </div>
           </form>

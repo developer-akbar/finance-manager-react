@@ -1,7 +1,4 @@
 /* Modern Finance Manager - Apple-Inspired Design System */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* Import Common Styles */
 @import url('./styles/common.css');

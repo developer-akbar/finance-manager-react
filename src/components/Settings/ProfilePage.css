@@ -1,0 +1,68 @@
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.pp-card {
+  background: var(--background-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.pp-card-header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.pp-card-title {
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.pp-card-desc {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.pp-card-content { padding: var(--space-6); }
+
+.pp-row { display: flex; align-items: center; gap: var(--space-4); }
+
+.pp-avatar {
+  width: 64px; height: 64px; border-radius: 9999px; display: flex; align-items: center; justify-content: center;
+  background: #2563eb; color: #fff; font-size: 24px; font-weight: 600;
+}
+
+.pp-label { display: block; font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: var(--space-1); }
+
+.pp-grid {
+  display: grid; grid-template-columns: 1fr; gap: var(--space-4); margin-top: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .pp-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.pp-input {
+  width: 100%; padding: var(--space-3) var(--space-4); border: 1px solid var(--border-primary); border-radius: var(--radius-md);
+  background: var(--input-bg);
+}
+
+.pp-actions { margin-top: var(--space-6); display: flex; gap: var(--space-3); }
+
+.pp-btn { padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); font-size: var(--text-sm); font-weight: var(--font-medium); cursor: pointer; border: 1px solid transparent; }
+.pp-btn.primary { background: var(--accent-primary); color: var(--text-inverse); }
+.pp-btn.secondary { background: var(--background-secondary); color: var(--text-primary); border-color: var(--border-primary); }
+.pp-btn.primary:hover { filter: brightness(0.95); }
+
+.pp-msg { margin-top: var(--space-3); font-size: var(--text-sm); color: var(--accent-success); }
+.pp-err { color: var(--accent-error); }
+
+.pp-form-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-4); }
+@media (min-width: 768px) { .pp-form-grid { grid-template-columns: 1fr 1fr; } }
+.pp-form-full { grid-column: 1 / -1; }
+
