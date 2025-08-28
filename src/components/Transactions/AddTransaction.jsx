@@ -45,8 +45,15 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
         Amount: editTransaction.INR || editTransaction.Amount || ''
       };
     }
+    // Include current time in HH:MM:SS for server-side parsing; store date input separately
+    const isoDate = prefillDate || new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
     return {
-      Date: prefillDate || new Date().toISOString().split('T')[0],
+      Date: isoDate,
+      Time: `${hh}:${mm}:${ss}`,
       Account: '',
       FromAccount: '',
       ToAccount: '',

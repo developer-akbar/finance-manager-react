@@ -406,6 +406,23 @@ const TransactionList = ({
                               {transaction.Note}
                             </span>
                           )}
+                          {(() => {
+                            // Try to parse time portion from Date string like "DD/MM/YYYY HH:MM[:SS] [AM|PM]"
+                            const m = (transaction.Date || '').match(/\b(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?\b/i);
+                            if (!m) return null;
+                            let [_, hh, mm, ss, ap] = m;
+                            let hour = parseInt(hh, 10);
+                            if (!ap) {
+                              // Convert 24h to 12h
+                              ap = hour >= 12 ? 'PM' : 'AM';
+                              hour = hour % 12;
+                              if (hour === 0) hour = 12;
+                            } else {
+                              ap = ap.toUpperCase();
+                            }
+                            const timeText = `${hour}:${mm} ${ap}`;
+                            return <span className="account-text" style={{marginLeft: '8px'}}>{timeText}</span>;
+                          })()}
                           {showAccount && transaction.Account && (
                             <span className="account-text">
                               {transaction.Account}
