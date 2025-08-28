@@ -4,7 +4,7 @@ import { Save, ArrowLeft } from 'lucide-react';
 import { convertDateFormat } from '../../utils/calculations';
 import './AddTransaction.css';
 
-const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = null, setIsSubmitting = null }) => {
+const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = null, setIsSubmitting = null, prefillDate = '' }) => {
   const { state, addTransaction, updateTransaction, dispatch } = useApp();
   const { accounts, categories, transactions } = state;
 
@@ -46,7 +46,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
       };
     }
     return {
-      Date: new Date().toISOString().split('T')[0],
+      Date: prefillDate || new Date().toISOString().split('T')[0],
       Account: '',
       FromAccount: '',
       ToAccount: '',
@@ -61,6 +61,12 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
   });
 
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    if (prefillDate) {
+      setFormData(prev => ({ ...prev, Date: prefillDate }));
+    }
+  }, [prefillDate]);
 
   const [errors, setErrors] = useState({});
 
@@ -108,9 +114,8 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
         await updateTransaction({ ...transaction, ID: editTransaction?._id || editTransaction?.ID });
         if (onClose) onClose();
       } else {
-        await addTransaction(transaction);
-        
-        // Reset form
+        const result = await addTransaction(transaction);
+        // Stay on Transactions page; reset the form for quick entry
         setFormData({
           Date: new Date().toISOString().split('T')[0],
           Account: accounts[0] || '',
@@ -125,8 +130,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
           Description: ''
         });
 
-        // Show success message or redirect
-        dispatch({ type: 'SET_CURRENT_VIEW', payload: 'dashboard' });
+        // Keep on the same page (no redirect)
       }
     } catch (error) {
       console.error('Transaction operation failed:', error);

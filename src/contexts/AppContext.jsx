@@ -252,6 +252,8 @@ export const AppProvider = ({ children }) => {
             csvConversionDetails
           }
         });
+        // Immediately refresh transactions so UI reflects changes without manual reload
+        try { await refreshTransactions(); } catch {}
         return { success: true, message: 'Settings updated successfully' };
       } else {
         return { success: false, message: response.message || 'Failed to update settings' };

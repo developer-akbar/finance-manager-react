@@ -72,7 +72,7 @@ const Navigation = () => {
                 className={`nav-item ${state.currentView === item.id ? 'active' : ''}`}
                 onClick={() => {
                   if (state.currentView === item.id) {
-                    window.scrollTo(0, 0);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   } else {
                     window.scrollTo(0, 0);
                     dispatch({ type: 'SET_CURRENT_VIEW', payload: item.id });

@@ -319,7 +319,11 @@ const TransactionList = ({
 
           return (
             <div key={date} className="day-group">
-              <div className="day-header">
+              <div className="day-header" onClick={() => {
+                // Emit a custom event so TransactionsList can open Add modal with this date
+                const event = new CustomEvent('fm:add-transaction-for-date', { detail: { date } });
+                window.dispatchEvent(event);
+              }} style={{cursor:'pointer'}}>
                 <h3 className="day-title">
                   {(() => {
                     const dateObj = new Date(date);
@@ -764,7 +768,7 @@ const TransactionList = ({
             ) : (
               <>
                 <div className="modal-content">
-                  <div className="modal-row">
+                  <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                     <span className="modal-label">Type:</span>
                     <span
                       className={`modal-value type-badge ${selectedTransaction[
@@ -775,14 +779,14 @@ const TransactionList = ({
                     </span>
                   </div>
 
-                  <div className="modal-row">
+                  <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                     <span className="modal-label">Date:</span>
                     <span className="modal-value">
                       {selectedTransaction.Date}
                     </span>
                   </div>
 
-                  <div className="modal-row">
+                  <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                     <span className="modal-label">Account:</span>
                     <span className="modal-value">
                       {selectedTransaction.Account}
@@ -790,7 +794,7 @@ const TransactionList = ({
                   </div>
 
                   {selectedTransaction.Category && (
-                    <div className="modal-row">
+                    <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                       <span className="modal-label">Category:</span>
                       <span className="modal-value">
                         {selectedTransaction.Category}
@@ -799,7 +803,7 @@ const TransactionList = ({
                   )}
 
                   {selectedTransaction.Subcategory && (
-                    <div className="modal-row">
+                    <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                       <span className="modal-label">Subcategory:</span>
                       <span className="modal-value">
                         {selectedTransaction.Subcategory}
@@ -808,7 +812,7 @@ const TransactionList = ({
                   )}
 
                   {selectedTransaction.Note && (
-                    <div className="modal-row">
+                    <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                       <span className="modal-label">Note:</span>
                       <span className="modal-value">
                         {selectedTransaction.Note}
@@ -817,7 +821,7 @@ const TransactionList = ({
                   )}
 
                   {selectedTransaction.Description && (
-                    <div className="modal-row">
+                    <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                       <span className="modal-label">Description:</span>
                       <span className="modal-value">
                         {selectedTransaction.Description}
@@ -825,7 +829,7 @@ const TransactionList = ({
                     </div>
                   )}
 
-                  <div className="modal-row">
+                  <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
                     <span className="modal-label">Amount:</span>
                     <span
                       className={`modal-value amount ${selectedTransaction[

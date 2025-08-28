@@ -30,7 +30,14 @@ const MobileBottomNav = () => {
           <button
             key={item.id}
             className={`bottom-nav-item ${state.currentView === item.id ? 'active' : ''}`}
-            onClick={() => dispatch({ type: 'SET_CURRENT_VIEW', payload: item.id })}
+            onClick={() => {
+              if (state.currentView === item.id) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                window.scrollTo(0, 0);
+                dispatch({ type: 'SET_CURRENT_VIEW', payload: item.id });
+              }
+            }}
             title={item.title}
           >
             <Icon size={20} className="nav-icon" />

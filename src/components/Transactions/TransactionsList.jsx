@@ -15,6 +15,7 @@ const TransactionsList = () => {
   
   const [showFilters, setShowFilters] = useState(false);
   const [showAddTransaction, setShowAddTransaction] = useState(false);
+  const [prefillDate, setPrefillDate] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [isClosingSearch, setIsClosingSearch] = useState(false);
   const [isHidingFilters, setIsHidingFilters] = useState(false);
@@ -340,6 +341,19 @@ const TransactionsList = () => {
     setCurrentPage(1);
   }, [searchTerm, filters, sortBy, currentView, currentDate]);
 
+  // Listen to day header clicks to open Add modal with that date
+  React.useEffect(() => {
+    const handler = (e) => {
+      const { date } = e.detail || {};
+      if (!date) return;
+      const iso = new Date(date).toISOString().split('T')[0];
+      setPrefillDate(iso);
+      setShowAddTransaction(true);
+    };
+    window.addEventListener('fm:add-transaction-for-date', handler);
+    return () => window.removeEventListener('fm:add-transaction-for-date', handler);
+  }, []);
+
   return (
     <>
     <div className="transactions-list">
@@ -603,7 +617,7 @@ const TransactionsList = () => {
     {/* Add Transaction Modal */}
     {showAddTransaction && (
       <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-        <AddTransaction onClose={() => setShowAddTransaction(false)} />
+        <AddTransaction onClose={() => setShowAddTransaction(false)} editTransaction={null} isEditMode={false} setIsSubmitting={null} prefillDate={prefillDate} />
       </div>
     )}
   </>
