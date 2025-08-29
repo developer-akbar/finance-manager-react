@@ -1,6 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const UserSettings = require('../models/UserSettings');
+const Transaction = require('../models/Transaction');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -98,6 +99,52 @@ router.get('/', async (req, res) => {
       });
     }
 
+    // Merge inferred accounts/categories/subcategories from user's transactions
+    const userId = req.user.id;
+    const txns = await Transaction.find({ user: userId }).lean();
+    // Merge Accounts
+    const inferredAccountsSet = new Set();
+    txns.forEach(t => {
+      if (t.Account) inferredAccountsSet.add(t.Account);
+      if (t.FromAccount) inferredAccountsSet.add(t.FromAccount);
+      if (t.ToAccount) inferredAccountsSet.add(t.ToAccount);
+    });
+    const existingAccountsSet = new Set(userSettings.accounts || []);
+    const newAccounts = Array.from(inferredAccountsSet).filter(a => a && !existingAccountsSet.has(a));
+    if (newAccounts.length > 0) {
+      userSettings.accounts = Array.from(new Set([...(userSettings.accounts || []), ...newAccounts]));
+      // Place new accounts into an existing group or create Imported group
+      let importedGroup = (userSettings.accountGroups || []).find(g => g.name === 'Imported');
+      if (!importedGroup) {
+        importedGroup = { id: Date.now(), name: 'Imported' };
+        userSettings.accountGroups = [ ...(userSettings.accountGroups || []), importedGroup ];
+      }
+      const mapping = new Map(Object.entries(userSettings.accountMapping || {}));
+      const groupList = mapping.get(importedGroup.name) || [];
+      newAccounts.forEach(a => { if (!groupList.includes(a)) groupList.push(a); });
+      mapping.set(importedGroup.name, groupList);
+      userSettings.accountMapping = Object.fromEntries(mapping);
+    }
+
+    // Merge Categories and Subcategories
+    const categoriesObj = userSettings.categories ? Object(userSettings.categories) : {};
+    txns.forEach(t => {
+      const type = t['Income/Expense'];
+      if (type === 'Transfer' || type === 'Transfer-Out') return;
+      const cat = t.Category;
+      if (!cat) return;
+      if (!categoriesObj[cat]) {
+        categoriesObj[cat] = { type: type || 'Expense', subcategories: [] };
+      }
+      const sub = t.Subcategory;
+      if (sub && Array.isArray(categoriesObj[cat].subcategories) && !categoriesObj[cat].subcategories.includes(sub)) {
+        categoriesObj[cat].subcategories.push(sub);
+      }
+    });
+    userSettings.categories = categoriesObj;
+
+    await userSettings.save();
+
     res.json({
       success: true,
       data: {
@@ -180,7 +227,19 @@ router.put('/accounts', [
       userSettings = new UserSettings({ user: req.user.id });
     }
 
-    userSettings.accounts = req.body.accounts;
+    const oldAccounts = userSettings.accounts || [];
+    const newAccounts = req.body.accounts;
+    // Detect renames by length equality and one-off replacement is complex; handle direct replacement mapping via request optionally
+    // If client sends renameMap, apply to transactions
+    const renameMap = req.body.renameMap || {}; // { oldName: newName }
+    for (const [oldName, newName] of Object.entries(renameMap)) {
+      if (oldName && newName && oldName !== newName) {
+        await Transaction.updateMany({ user: req.user.id, Account: oldName }, { $set: { Account: newName } });
+        await Transaction.updateMany({ user: req.user.id, FromAccount: oldName }, { $set: { FromAccount: newName } });
+        await Transaction.updateMany({ user: req.user.id, ToAccount: oldName }, { $set: { ToAccount: newName } });
+      }
+    }
+    userSettings.accounts = newAccounts;
     await userSettings.save();
 
     res.json({
@@ -218,6 +277,13 @@ router.put('/categories', [
       userSettings = new UserSettings({ user: req.user.id });
     }
 
+    const renameMap = req.body.renameMap || {}; // { oldName: newName }
+    // Apply renames to transactions
+    for (const [oldName, newName] of Object.entries(renameMap)) {
+      if (oldName && newName && oldName !== newName) {
+        await Transaction.updateMany({ user: req.user.id, Category: oldName }, { $set: { Category: newName } });
+      }
+    }
     userSettings.categories = new Map(Object.entries(req.body.categories));
     await userSettings.save();
 
