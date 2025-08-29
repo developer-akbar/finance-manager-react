@@ -407,20 +407,20 @@ const TransactionList = ({
                             </span>
                           )}
                           {(() => {
-                            // Try to parse time portion from Date string like "DD/MM/YYYY HH:MM[:SS] [AM|PM]"
-                            const m = (transaction.Date || '').match(/\b(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?\b/i);
-                            if (!m) return null;
-                            let [_, hh, mm, ss, ap] = m;
-                            let hour = parseInt(hh, 10);
-                            if (!ap) {
-                              // Convert 24h to 12h
-                              ap = hour >= 12 ? 'PM' : 'AM';
-                              hour = hour % 12;
-                              if (hour === 0) hour = 12;
-                            } else {
-                              ap = ap.toUpperCase();
+                            // Prefer explicit Time field; fallback to time inside Date string
+                            let time24 = transaction.Time || '';
+                            if (!time24) {
+                              const m = (transaction.Date || '').match(/\b(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)?\b/i);
+                              if (!m) return null;
+                              let [_, hh, mm] = m; time24 = `${hh}:${mm}`;
                             }
-                            const timeText = `${hour}:${mm} ${ap}`;
+                            const parts = time24.split(':');
+                            if (parts.length < 2) return null;
+                            let hour = parseInt(parts[0], 10);
+                            const minute = parts[1];
+                            const ap = hour >= 12 ? 'PM' : 'AM';
+                            hour = hour % 12; if (hour === 0) hour = 12;
+                            const timeText = `${hour}:${minute} ${ap}`;
                             return <span className="account-text" style={{marginLeft: '8px'}}>{timeText}</span>;
                           })()}
                           {showAccount && transaction.Account && (

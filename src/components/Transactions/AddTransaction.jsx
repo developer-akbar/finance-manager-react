@@ -75,6 +75,23 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     }
   }, [prefillDate]);
 
+  // Helpers to format/display time
+  const getCurrentTime = () => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    return `${hh}:${mm}:${ss}`;
+  };
+  const getTimeDisplay = (time24) => {
+    if (!time24) return '';
+    const [h, m] = time24.split(':');
+    let hour = parseInt(h, 10);
+    const ap = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12; if (hour === 0) hour = 12;
+    return `${hour}:${m} ${ap}`;
+  };
+
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -237,7 +254,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
                 </div>
               </div>
 
-              {/* Date Field */}
+              {/* Date & Time Fields */}
               <div className="form-row">
                 <label htmlFor="date">Date</label>
                 <input
@@ -248,6 +265,15 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
                   className={errors.Date ? 'error' : ''}
                 />
                 {errors.Date && <span className="error-text">{errors.Date}</span>}
+              </div>
+              <div className="form-row">
+                <label htmlFor="time">Time</label>
+                <input
+                  type="time"
+                  id="time"
+                  value={formData.Time || getCurrentTime()}
+                  onChange={(e) => handleInputChange('Time', e.target.value)}
+                />
               </div>
 
               {/* Account Field */}

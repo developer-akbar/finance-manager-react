@@ -346,8 +346,12 @@ const TransactionsList = () => {
     const handler = (e) => {
       const { date } = e.detail || {};
       if (!date) return;
-      const iso = new Date(date).toISOString().split('T')[0];
-      setPrefillDate(iso);
+      const d = new Date(date);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      const localStr = `${yyyy}-${mm}-${dd}`;
+      setPrefillDate(localStr);
       setShowAddTransaction(true);
     };
     window.addEventListener('fm:add-transaction-for-date', handler);
@@ -607,7 +611,7 @@ const TransactionsList = () => {
     {/* Floating Action Button */}
     <button 
       className="fab"
-      onClick={() => setShowAddTransaction(true)}
+      onClick={() => { setPrefillDate(''); setShowAddTransaction(true); }}
       title="Add New Transaction"
       style={{ animation: 'fadeIn 0.3s ease-out' }}
     >
@@ -617,7 +621,7 @@ const TransactionsList = () => {
     {/* Add Transaction Modal */}
     {showAddTransaction && (
       <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-        <AddTransaction onClose={() => setShowAddTransaction(false)} editTransaction={null} isEditMode={false} setIsSubmitting={null} prefillDate={prefillDate} />
+        <AddTransaction onClose={() => { setShowAddTransaction(false); setPrefillDate(''); }} editTransaction={null} isEditMode={false} setIsSubmitting={null} prefillDate={prefillDate} />
       </div>
     )}
   </>
