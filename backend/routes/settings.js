@@ -126,22 +126,26 @@ router.get('/', async (req, res) => {
       userSettings.accountMapping = Object.fromEntries(mapping);
     }
 
-    // Merge Categories and Subcategories
-    const categoriesObj = userSettings.categories ? Object(userSettings.categories) : {};
+    // Merge Categories and Subcategories using Map to match schema
+    const existingMap = (userSettings.categories instanceof Map)
+      ? new Map(userSettings.categories)
+      : new Map(Object.entries(userSettings.categories || {}));
+
     txns.forEach(t => {
       const type = t['Income/Expense'];
-      if (type === 'Transfer' || type === 'Transfer-Out') return;
+      if (!type || type === 'Transfer' || type === 'Transfer-Out') return;
       const cat = t.Category;
       if (!cat) return;
-      if (!categoriesObj[cat]) {
-        categoriesObj[cat] = { type: type || 'Expense', subcategories: [] };
-      }
+      const current = existingMap.get(cat) || { type: type, subcategories: [] };
+      // Keep first seen type if not set; otherwise retain existing
+      if (!current.type) current.type = type;
+      const currentSubs = new Set(Array.isArray(current.subcategories) ? current.subcategories : []);
       const sub = t.Subcategory;
-      if (sub && Array.isArray(categoriesObj[cat].subcategories) && !categoriesObj[cat].subcategories.includes(sub)) {
-        categoriesObj[cat].subcategories.push(sub);
-      }
+      if (sub) currentSubs.add(sub);
+      existingMap.set(cat, { type: current.type, subcategories: Array.from(currentSubs) });
     });
-    userSettings.categories = categoriesObj;
+
+    userSettings.categories = existingMap;
 
     await userSettings.save();
 

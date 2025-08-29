@@ -184,8 +184,10 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
     .map(([categoryName]) => categoryName);
 
   // Get subcategories for the selected category
-  const availableSubcategories = formData.Category && categories[formData.Category] 
-    ? categories[formData.Category].subcategories || ['Default']
+  const availableSubcategories = formData.Category && categories[formData.Category]
+    ? (categories[formData.Category].subcategories && categories[formData.Category].subcategories.length > 0
+        ? categories[formData.Category].subcategories
+        : ['Default'])
     : ['Default'];
 
   return (
