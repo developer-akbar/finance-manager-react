@@ -18,6 +18,10 @@ const AccountManager = () => {
       setLoading(true);
       const response = await settingsAPI.update(settingsData);
       if (response.success) {
+        // Update local state optimistically if detailed data returned
+        if (response.data && response.data.accounts) {
+          // Minimal state refresh
+        }
         await loadData(); // Refresh data from backend
       } else {
         alert('Failed to save settings: ' + response.message);
@@ -154,6 +158,33 @@ const AccountManager = () => {
   return (
     <div className="account-manager">
       <h2>Account Management</h2>
+      {/* Ungrouped accounts mover */}
+      <div className="section">
+        <h3>Ungrouped Accounts</h3>
+        <div className="items-list">
+          {state.accounts.filter(a => !Object.values(state.accountMapping||{}).some(list => (list||[]).includes(a))).map(acc => (
+            <div key={acc} className="item">
+              <div className="item-content">
+                <span className="item-name">{acc}</span>
+                <div className="item-actions">
+                  <select value={selectedGroup} onChange={(e)=>setSelectedGroup(e.target.value)}>
+                    <option value="">Select group</option>
+                    {state.accountGroups.map(g => (<option key={g.id} value={g.name}>{g.name}</option>))}
+                  </select>
+                  <button onClick={async()=>{
+                    if (!selectedGroup) return;
+                    const updatedMapping = { ...(state.accountMapping||{}) };
+                    const list = updatedMapping[selectedGroup] || [];
+                    if (!list.includes(acc)) list.push(acc);
+                    updatedMapping[selectedGroup] = list;
+                    await saveSettings({ accountMapping: updatedMapping });
+                  }}>Move</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       
       {/* Account Groups Section */}
       <div className="section">

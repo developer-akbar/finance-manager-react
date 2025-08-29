@@ -130,6 +130,22 @@ const CategoryManager = () => {
   return (
     <div className="category-manager">
       <h2>Category Management</h2>
+      {/* Ungrouped categories mover: group by type or create user-defined groups if needed */}
+      <div className="section">
+        <h3>Ungrouped Categories</h3>
+        <div className="categories-list">
+          {Object.keys(state.categories).filter(cat => true /* placeholder for grouping logic */).map((cat) => (
+            <div key={cat} className="category-item">
+              <div className="category-header">
+                <div className="category-info">
+                  <span className="category-name">{cat}</span>
+                </div>
+                {/* Future: add grouping tags or move to group if grouping model is added for categories */}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       
       {/* Add New Category */}
       <div className="section">

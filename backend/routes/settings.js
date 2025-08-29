@@ -119,11 +119,13 @@ router.get('/', async (req, res) => {
         importedGroup = { id: Date.now(), name: 'Imported' };
         userSettings.accountGroups = [ ...(userSettings.accountGroups || []), importedGroup ];
       }
-      const mapping = new Map(Object.entries(userSettings.accountMapping || {}));
+      const mapping = (userSettings.accountMapping instanceof Map)
+        ? new Map(userSettings.accountMapping)
+        : new Map(Object.entries(userSettings.accountMapping || {}));
       const groupList = mapping.get(importedGroup.name) || [];
       newAccounts.forEach(a => { if (!groupList.includes(a)) groupList.push(a); });
       mapping.set(importedGroup.name, groupList);
-      userSettings.accountMapping = Object.fromEntries(mapping);
+      userSettings.accountMapping = mapping;
     }
 
     // Merge Categories and Subcategories using Map to match schema
@@ -249,7 +251,11 @@ router.put('/accounts', [
     res.json({
       success: true,
       message: 'Accounts updated successfully',
-      data: userSettings.accounts
+      data: {
+        accounts: userSettings.accounts,
+        accountGroups: userSettings.accountGroups,
+        accountMapping: Object.fromEntries(new Map(userSettings.accountMapping))
+      }
     });
   } catch (error) {
     console.error('Update accounts error:', error);
