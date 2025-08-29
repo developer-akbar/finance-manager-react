@@ -159,6 +159,31 @@ const TransactionList = ({
 
   const handleEditTransaction = () => {
     setIsEditMode(true);
+    // Extract time in 24h from Time field or embedded Date string
+    const extractTime24 = (t) => {
+      if (!t) return '';
+      // Already 24h like HH:MM[:SS]
+      const m24 = t.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+      if (m24) {
+        const hh = m24[1].padStart(2, '0');
+        const mm = m24[2];
+        const ss = (m24[3] || '00').padStart(2, '0');
+        return `${hh}:${mm}:${ss}`;
+      }
+      // Embedded with AM/PM
+      const m12 = t.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM)/i);
+      if (m12) {
+        let hh = parseInt(m12[1], 10);
+        const mm = m12[2];
+        const ss = (m12[3] || '00');
+        const ap = m12[4].toUpperCase();
+        if (ap === 'PM' && hh !== 12) hh += 12;
+        if (ap === 'AM' && hh === 12) hh = 0;
+        return `${String(hh).padStart(2,'0')}:${mm}:${ss.padStart(2,'0')}`;
+      }
+      return '';
+    };
+    const existingTime = selectedTransaction.Time || extractTime24(selectedTransaction.Date || '');
     setEditForm({
       Category: selectedTransaction.Category || "",
       Subcategory: selectedTransaction.Subcategory || "",
@@ -168,6 +193,7 @@ const TransactionList = ({
       "Income/Expense": selectedTransaction["Income/Expense"] || "Expense",
       Amount: selectedTransaction.INR || selectedTransaction.Amount || "",
       Date: selectedTransaction.Date || "",
+      Time: existingTime
     });
     // Ensure suggestions don't show automatically when editing
     setShowEditSuggestions(false);
@@ -502,31 +528,44 @@ const TransactionList = ({
                       </div>
                     </div>
 
-                    {/* Date Field */}
-                    <div className="form-row">
-                      <label>Date</label>
-                      <input
-                        type="date"
-                        value={
-                          editForm.Date
-                            ? new Date(
-                                editForm.Date.split("/").reverse().join("-")
-                              )
-                                .toISOString()
-                                .split("T")[0]
-                            : ""
-                        }
-                        onChange={(e) => {
-                          const date = new Date(e.target.value);
-                          const formattedDate = `${date
-                            .getDate()
-                            .toString()
-                            .padStart(2, "0")}/${(date.getMonth() + 1)
-                            .toString()
-                            .padStart(2, "0")}/${date.getFullYear()}`;
-                          handleFormChange("Date", formattedDate);
-                        }}
-                      />
+                    {/* Date & Time Fields */}
+                    <div className="form-row" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'var(--space-4)'}}>
+                      <div>
+                        <label>Date</label>
+                        <input
+                          type="date"
+                          value={
+                            editForm.Date
+                              ? new Date(
+                                  editForm.Date.split("/").reverse().join("-")
+                                )
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const date = new Date(e.target.value);
+                            const formattedDate = `${date
+                              .getDate()
+                              .toString()
+                              .padStart(2, "0")}/${(date.getMonth() + 1)
+                              .toString()
+                              .padStart(2, "0")}/${date.getFullYear()}`;
+                            handleFormChange("Date", formattedDate);
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label>Time</label>
+                        <input
+                          type="time"
+                          value={(editForm.Time || '').slice(0,5)}
+                          onChange={(e) => {
+                            const v = e.target.value; // HH:MM
+                            handleFormChange('Time', v.length === 5 ? `${v}:00` : v);
+                          }}
+                        />
+                      </div>
                     </div>
 
                     {/* Account Field */}
