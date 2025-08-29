@@ -139,22 +139,7 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
         if (onClose) onClose();
       } else {
         const result = await addTransaction(transaction);
-        // Stay on Transactions page; reset the form for quick entry
-        setFormData({
-          Date: new Date().toISOString().split('T')[0],
-          Account: accounts[0] || '',
-          FromAccount: accounts[0] || '',
-          ToAccount: accounts[1] || '',
-          Category: '',
-          Subcategory: '',
-          'Income/Expense': 'Expense',
-          Amount: '',
-          Currency: 'INR',
-          Note: '',
-          Description: ''
-        });
-
-        // Keep on the same page (no redirect)
+        if (onClose) onClose();
       }
     } catch (error) {
       console.error('Transaction operation failed:', error);
@@ -254,26 +239,28 @@ const AddTransaction = ({ isEditMode = false, editTransaction = null, onClose = 
                 </div>
               </div>
 
-              {/* Date & Time Fields */}
-              <div className="form-row">
-                <label htmlFor="date">Date</label>
-                <input
-                  type="date"
-                  id="date"
-                  value={formData.Date}
-                  onChange={(e) => handleInputChange('Date', e.target.value)}
-                  className={errors.Date ? 'error' : ''}
-                />
-                {errors.Date && <span className="error-text">{errors.Date}</span>}
-              </div>
-              <div className="form-row">
-                <label htmlFor="time">Time</label>
-                <input
-                  type="time"
-                  id="time"
-                  value={formData.Time || getCurrentTime()}
-                  onChange={(e) => handleInputChange('Time', e.target.value)}
-                />
+              {/* Date & Time Fields (side-by-side) */}
+              <div className="form-row" style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'var(--space-4)'}}>
+                <div>
+                  <label htmlFor="date">Date</label>
+                  <input
+                    type="date"
+                    id="date"
+                    value={formData.Date}
+                    onChange={(e) => handleInputChange('Date', e.target.value)}
+                    className={errors.Date ? 'error' : ''}
+                  />
+                  {errors.Date && <span className="error-text">{errors.Date}</span>}
+                </div>
+                <div>
+                  <label htmlFor="time">Time</label>
+                  <input
+                    type="time"
+                    id="time"
+                    value={formData.Time || ''}
+                    onChange={(e) => handleInputChange('Time', e.target.value)}
+                  />
+                </div>
               </div>
 
               {/* Account Field */}

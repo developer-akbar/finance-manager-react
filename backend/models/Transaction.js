@@ -11,6 +11,10 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Date is required']
   },
+  Time: {
+    type: String,
+    default: ''
+  },
   Account: {
     type: String,
     required: function() {

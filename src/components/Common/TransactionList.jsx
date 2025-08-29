@@ -796,11 +796,22 @@ const TransactionList = ({
                     </span>
                   </div>
 
-                  <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
+                  <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer', display:'grid', gridTemplateColumns:'auto 1fr auto', gap:'8px', alignItems:'center'}}>
                     <span className="modal-label">Date:</span>
-                    <span className="modal-value">
-                      {selectedTransaction.Date}
-                    </span>
+                    <span className="modal-value">{selectedTransaction.Date}</span>
+                    {(() => {
+                      let time24 = selectedTransaction.Time || '';
+                      if (!time24) {
+                        const m = (selectedTransaction.Date || '').match(/\b(\d{1,2}):(\d{2})/);
+                        if (m) time24 = `${m[1]}:${m[2]}`;
+                      }
+                      if (!time24) return null;
+                      const [h, m] = time24.split(':');
+                      let hour = parseInt(h, 10);
+                      const ap = hour >= 12 ? 'PM' : 'AM';
+                      hour = hour % 12; if (hour === 0) hour = 12;
+                      return <span className="modal-value">{`${hour}:${m} ${ap}`}</span>;
+                    })()}
                   </div>
 
                   <div className="modal-row" onClick={handleEditTransaction} style={{cursor:'pointer'}}>
